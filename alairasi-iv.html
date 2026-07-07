@@ -11,7 +11,8 @@
     .sheet h1{font-size:1.3em;margin-bottom:4px}
     .sheet .demands{font-size:.92em;padding-left:20px;margin:8px 0 16px}
     .sheet .consent-note{font-size:.82em;color:#333;border:1px solid #ccc;padding:8px 10px;border-radius:6px;margin-bottom:16px}
-    table.sig-table{width:100%;border-collapse:collapse;font-size:.92em}
+    .table-scroll{overflow-x:auto}
+    table.sig-table{width:100%;min-width:640px;border-collapse:collapse;font-size:.92em}
     table.sig-table th,table.sig-table td{border:1px solid #333;padding:6px 8px;text-align:left}
     table.sig-table th{background:#f0f0f0}
     table.sig-table td.num{width:28px;text-align:center}
@@ -21,6 +22,11 @@
     @media print {
       .no-print{display:none}
       .sheet{margin:0;max-width:100%}
+      .table-scroll{overflow-x:visible}
+      table.sig-table{min-width:0}
+    }
+    @media (max-width:480px){
+      .sheet{padding:0 10px}
     }
   </style>
 </head>
@@ -47,6 +53,7 @@
       adatkezelési tájékoztatóban foglaltak szerint.
     </p>
 
+    <div class="table-scroll">
     <table class="sig-table">
       <thead>
         <tr>
@@ -76,6 +83,7 @@
         <tr><td class="num">15</td><td></td><td></td><td></td><td></td></tr>
       </tbody>
     </table>
+    </div>
 
     <p class="return-info">
       Kérjük, a kitöltött ívet küldd vissza az alábbi módok egyikén:<br />
