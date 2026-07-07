@@ -83,6 +83,7 @@ form,
 
 label{display:block;margin:16px 0 0}
 label:first-child{margin-top:0}
+[hidden]{display:none !important}
 
 input,select,button{
   width:100%;

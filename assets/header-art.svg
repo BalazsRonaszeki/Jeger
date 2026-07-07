@@ -1,81 +1,75 @@
-<svg viewBox="0 0 1200 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+<svg viewBox="0 0 1600 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#bfe4f2"/>
-      <stop offset="60%" stop-color="#e3f4e9"/>
-      <stop offset="100%" stop-color="#eef8e6"/>
+      <stop offset="100%" stop-color="#e9f6ea"/>
     </linearGradient>
     <linearGradient id="hills" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#bfdd9c"/>
-      <stop offset="100%" stop-color="#a6cf82"/>
+      <stop offset="0%" stop-color="#c3dfa0"/>
+      <stop offset="100%" stop-color="#aad187"/>
     </linearGradient>
     <linearGradient id="forest" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#6fa856"/>
-      <stop offset="100%" stop-color="#4f8c40"/>
+      <stop offset="0%" stop-color="#5f9b49"/>
+      <stop offset="100%" stop-color="#437332"/>
     </linearGradient>
-    <linearGradient id="fieldA" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#8fc45f"/>
-      <stop offset="100%" stop-color="#78b34a"/>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#93c85e"/>
+      <stop offset="100%" stop-color="#7cb648"/>
     </linearGradient>
-    <linearGradient id="fieldB" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#6fae46"/>
-      <stop offset="100%" stop-color="#5d9c3b"/>
-    </linearGradient>
+
+    <g id="flower">
+      <circle cx="-6" cy="0" r="3.2" fill="currentColor"/>
+      <circle cx="6" cy="0" r="3.2" fill="currentColor"/>
+      <circle cx="0" cy="-6" r="3.2" fill="currentColor"/>
+      <circle cx="0" cy="6" r="3.2" fill="currentColor"/>
+      <circle cx="0" cy="0" r="2.6" fill="#fff8dc"/>
+    </g>
+
+    <g id="tree">
+      <circle cx="-16" cy="4" r="17" fill="#3f6b30"/>
+      <circle cx="14" cy="0" r="20" fill="#4d7e39"/>
+      <circle cx="-2" cy="-16" r="19" fill="#548a3e"/>
+      <circle cx="0" cy="10" r="15" fill="#3f6b30"/>
+    </g>
   </defs>
 
-  <rect width="1200" height="320" fill="url(#sky)"/>
+  <rect width="1600" height="240" fill="url(#sky)"/>
 
-  <circle cx="1040" cy="66" r="42" fill="#fff2b8" opacity="0.85"/>
-
-  <g fill="#ffffff" opacity="0.65">
-    <ellipse cx="170" cy="58" rx="60" ry="15"/>
-    <ellipse cx="215" cy="50" rx="42" ry="12"/>
-    <ellipse cx="640" cy="90" rx="50" ry="13"/>
+  <circle cx="1430" cy="60" r="30" fill="#fff2b8" opacity="0.9"/>
+  <g fill="#ffffff" opacity="0.6">
+    <ellipse cx="220" cy="48" rx="60" ry="14"/>
+    <ellipse cx="270" cy="40" rx="40" ry="11"/>
   </g>
 
   <!-- distant hills -->
-  <path d="M0,150 C160,120 320,165 520,140 C740,113 940,155 1200,125 L1200,320 L0,320 Z" fill="url(#hills)"/>
+  <path d="M0,132 C200,108 420,148 660,122 C920,98 1180,138 1600,112 L1600,240 L0,240 Z" fill="url(#hills)"/>
 
-  <!-- forest band with treetop texture -->
-  <path d="M0,190 C180,165 360,200 560,178 C800,152 980,192 1200,168 L1200,320 L0,320 Z" fill="url(#forest)"/>
-  <g fill="#457436" opacity="0.55">
-    <circle cx="60" cy="188" r="16"/>
-    <circle cx="90" cy="180" r="20"/>
-    <circle cx="125" cy="190" r="15"/>
-    <circle cx="330" cy="196" r="17"/>
-    <circle cx="365" cy="188" r="21"/>
-    <circle cx="400" cy="198" r="14"/>
-    <circle cx="700" cy="168" r="16"/>
-    <circle cx="735" cy="160" r="20"/>
-    <circle cx="770" cy="170" r="15"/>
-    <circle cx="1010" cy="180" r="17"/>
-    <circle cx="1045" cy="172" r="21"/>
-    <circle cx="1080" cy="182" r="15"/>
+  <!-- forest band -->
+  <path d="M0,168 C220,146 440,178 700,156 C960,132 1220,172 1600,150 L1600,240 L0,240 Z" fill="url(#forest)"/>
+
+  <!-- tree clusters -->
+  <use href="#tree" x="130" y="145"/>
+  <use href="#tree" x="195" y="158"/>
+  <use href="#tree" x="1080" y="132"/>
+  <use href="#tree" x="1145" y="148"/>
+  <use href="#tree" x="1460" y="150"/>
+
+  <!-- foreground agricultural field -->
+  <path d="M0,205 C260,186 480,218 720,198 C980,178 1240,210 1600,190 L1600,240 L0,240 Z" fill="url(#field)"/>
+  <g stroke="#5c8f3a" stroke-width="2.5" opacity="0.4" fill="none">
+    <path d="M0,214 C260,196 480,226 720,207"/>
+    <path d="M0,224 C260,206 480,235 720,217"/>
+    <path d="M900,203 C1140,186 1340,208 1600,196"/>
+    <path d="M900,213 C1140,196 1340,218 1600,206"/>
   </g>
 
-  <!-- foreground agricultural field rows -->
-  <path d="M0,230 C220,205 380,245 640,225 C880,207 1000,238 1200,215 L1200,320 L0,320 Z" fill="url(#fieldA)"/>
-  <path d="M0,265 C240,245 420,278 660,260 C900,242 1040,270 1200,250 L1200,320 L0,320 Z" fill="url(#fieldB)"/>
-
-  <g stroke="#3f6b2d" stroke-width="2" opacity="0.3" fill="none">
-    <path d="M0,278 C240,258 420,290 660,272"/>
-    <path d="M0,292 C240,272 420,304 660,286"/>
-    <path d="M660,272 C900,254 1040,282 1200,262"/>
-    <path d="M660,286 C900,268 1040,296 1200,276"/>
-  </g>
-
-  <!-- blossoming meadow: scattered flowers -->
+  <!-- blossoming meadow -->
   <g>
-    <circle cx="90" cy="260" r="4" fill="#f4d35e"/>
-    <circle cx="150" cy="278" r="4" fill="#ea9fc0"/>
-    <circle cx="230" cy="255" r="4" fill="#ffffff"/>
-    <circle cx="310" cy="272" r="4" fill="#f4d35e"/>
-    <circle cx="470" cy="262" r="4" fill="#c9a8e6"/>
-    <circle cx="540" cy="280" r="4" fill="#ea9fc0"/>
-    <circle cx="770" cy="258" r="4" fill="#ffffff"/>
-    <circle cx="850" cy="276" r="4" fill="#f4d35e"/>
-    <circle cx="930" cy="260" r="4" fill="#ea9fc0"/>
-    <circle cx="1110" cy="270" r="4" fill="#c9a8e6"/>
-    <circle cx="1160" cy="255" r="4" fill="#f4d35e"/>
+    <use href="#flower" x="360" y="188" color="#f4d35e"/>
+    <use href="#flower" x="410" y="205" color="#ea9fc0"/>
+    <use href="#flower" x="470" y="182" color="#ffffff"/>
+    <use href="#flower" x="760" y="192" color="#c9a8e6"/>
+    <use href="#flower" x="815" y="176" color="#f4d35e"/>
+    <use href="#flower" x="500" y="210" color="#f4d35e"/>
   </g>
 </svg>

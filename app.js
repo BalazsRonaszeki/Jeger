@@ -3,9 +3,12 @@ const msg = document.getElementById('msg');
 const isFarmer = document.getElementById('isFarmer');
 const hectaresGroup = document.getElementById('hectaresGroup');
 
-isFarmer.addEventListener('change', () => {
+function syncHectaresVisibility() {
   hectaresGroup.hidden = isFarmer.value !== 'yes';
-});
+}
+
+isFarmer.addEventListener('change', syncHectaresVisibility);
+syncHectaresVisibility();
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
