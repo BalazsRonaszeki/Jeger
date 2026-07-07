@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JÉGER - Aláírásgyűjtés</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Aláírás a JÉGER üzemeltetésének átvételéért</h1>
+    <p>Rövid tájékoztató: célunk, hogy a JÉGER berendezések üzemeltetését a helyi gazdák dönthessék el.</p>
+
+    <form id="sigForm" enctype="multipart/form-data">
+      <label>Név (kötelező)
+        <input name="name" required />
+      </label>
+
+      <label>Lakcím (kötelező)
+        <input name="address" required />
+      </label>
+
+      <label>E-mail (kötelező)
+        <input name="email" type="email" required />
+      </label>
+
+      <label>Gazdálkodó?
+        <select name="is_farmer">
+          <option value="no">Nem</option>
+          <option value="yes">Igen</option>
+        </select>
+      </label>
+
+      <label>Hektár (opcionális)
+        <input name="hectares" type="number" min="0" />
+      </label>
+
+      <label>Aláírás-ív feltöltése (PDF, opcionális)
+        <input name="signature_pdf" type="file" accept="application/pdf" />
+      </label>
+
+      <!-- Honeypot mező: rejtett, ember nem tölti ki -->
+      <input name="hp_field" type="text" style="display:none" />
+
+      <button type="submit">Aláírok</button>
+    </form>
+
+    <div id="msg" role="status"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
