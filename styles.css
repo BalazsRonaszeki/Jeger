@@ -45,8 +45,10 @@ body{
 }
 .header-art{
   width:100%;
-  height:clamp(90px,18vw,200px);
+  aspect-ratio:1824/862;
+  max-height:340px;
   object-fit:cover;
+  object-position:center 42%;
   display:block;
 }
 

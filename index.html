@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="header-banner">
-    <img src="assets/header-art.svg" alt="" class="header-art" />
+    <img src="assets/header-art.jpg" alt="" class="header-art" />
   </div>
   <main class="container">
     <h1>Aláírás a JÉGER üzemeltetésének átvételéért</h1>
@@ -44,19 +44,19 @@
 
     <form id="sigForm">
       <label>Név (kötelező)
-        <input name="name" required />
+        <input name="name" autocomplete="name" required />
       </label>
 
       <label>Település (kötelező)
-        <input name="settlement" required />
+        <input name="settlement" autocomplete="address-level2" required />
       </label>
 
       <label>Utca, házszám (kötelező)
-        <input name="street_address" required />
+        <input name="street_address" autocomplete="street-address" required />
       </label>
 
       <label>E-mail (kötelező)
-        <input name="email" type="email" required />
+        <input name="email" type="email" autocomplete="email" required />
       </label>
 
       <div class="field-group">
