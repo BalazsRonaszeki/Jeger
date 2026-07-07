@@ -56,9 +56,15 @@ h2{
   margin:28px 0 12px;
 }
 
+.field-group{margin:16px 0 0}
+.field-group label{margin:0;font-weight:600}
+.field-hint{margin:4px 0 0;font-size:.86em;color:var(--color-muted)}
+.field-group select{margin-top:8px}
+
 .intro,
 form,
-.paper-option{
+.paper-option,
+.faq{
   background:var(--color-surface);
   border:1px solid var(--color-border);
   border-radius:var(--radius);
@@ -127,6 +133,28 @@ button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
 .paper-option a{color:var(--color-primary-dark);font-weight:600;text-decoration:none}
 .paper-option a:hover{text-decoration:underline}
 
+.faq details{
+  border-top:1px solid var(--color-border);
+  padding:12px 0;
+}
+.faq details:first-of-type{border-top:0;padding-top:0}
+.faq summary{
+  cursor:pointer;
+  font-weight:600;
+  color:var(--color-primary-dark);
+  list-style:none;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{
+  content:"+";
+  display:inline-block;
+  width:1.1em;
+  color:var(--color-accent);
+  font-weight:700;
+}
+.faq details[open] summary::before{content:"–"}
+.faq details p{margin:10px 0 0;color:var(--color-text)}
+
 footer{margin-top:8px;font-size:.9em;color:var(--color-muted);text-align:center}
 footer a{color:var(--color-muted)}
 
@@ -138,6 +166,6 @@ footer a{color:var(--color-muted)}
 
 @media (max-width:480px){
   .container{padding:20px 16px 36px}
-  .intro,form,.paper-option,.legal{padding:18px}
+  .intro,form,.paper-option,.faq,.legal{padding:18px}
   h1{margin-bottom:16px}
 }

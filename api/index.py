@@ -65,6 +65,7 @@ async def submit(request: Request,
                  is_farmer: str = Form(''),
                  hectares: str = Form(None),
                  consent: str = Form(None),
+                 updates_optin: str = Form(None),
                  hp_field: str = Form(None)):
     ip = ip_from_request(request)
     if not check_rate(ip):
@@ -88,6 +89,7 @@ async def submit(request: Request,
         'is_farmer': is_farmer,
         'hectares': hectares,
         'consent': True,
+        'updates_optin': updates_optin == 'yes',
         'ip': ip,
         'created_at': int(time.time())
     }

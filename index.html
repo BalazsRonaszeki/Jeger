@@ -34,8 +34,8 @@
       <ol class="demands">
         <li>A JÉGER rendszer — hivatalos megnevezésén <em>Országos Jégkármérséklő Rendszer</em> — azonnali
           leállítása, és üzemeltetésének átadása a helyi gazdák számára.</li>
-        <li>Minden egyéb, időjárás-befolyásolására alkalmas rendszer telepítésének azonnali törvényi
-          tiltása, magánszemélyek és intézmények számára egyaránt.</li>
+        <li>Minden egyéb, időjárás-befolyásolására alkalmas rendszer telepítésének és üzemeltetésének
+          azonnali törvényi vagy rendeleti tiltása, magánszemélyek és intézmények számára egyaránt.</li>
       </ol>
     </section>
 
@@ -52,13 +52,15 @@
         <input name="email" type="email" required />
       </label>
 
-      <label>Ön gazdálkodó?
+      <div class="field-group">
+        <label for="isFarmer">Ön gazdálkodó?</label>
+        <p class="field-hint">Mindenki aláírását várjuk, aki az ügyünk mellé áll, nem csak gazdálkodókat!</p>
         <select name="is_farmer" id="isFarmer">
           <option value="">— nem kívánom megadni —</option>
           <option value="yes">Igen</option>
           <option value="no">Nem</option>
         </select>
-      </label>
+      </div>
 
       <label id="hectaresGroup" hidden>Hány hektáron gazdálkodik? (opcionális)
         <input name="hectares" type="number" min="0" />
@@ -71,6 +73,11 @@
         <input type="checkbox" name="consent" value="yes" required />
         Elolvastam és elfogadom az <a href="adatkezeles.html" target="_blank" rel="noopener">adatkezelési
         tájékoztatót</a>, és önként hozzájárulok a megadott adataim fenti célból történő kezeléséhez.
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" name="updates_optin" value="yes" />
+        Szeretnék az e-mail címemre tájékoztatást kapni az ügy további sorsáról.
       </label>
 
       <button type="submit">Aláírok</button>
@@ -86,6 +93,43 @@
         az ív alján található elérhetőségek egyikére.
       </p>
       <p><a href="alairasi-iv.html" target="_blank" rel="noopener">Aláírásgyűjtő ív megnyitása és nyomtatása →</a></p>
+    </section>
+
+    <section class="faq">
+      <h2>Gyakran ismételt kérdések</h2>
+
+      <details>
+        <summary>Mi történik az aláírásokkal?</summary>
+        <p>Az aláírásokat és követeléseinket közvetlenül be fogjuk nyújtani az Agrár- és
+          Élelmiszergazdaságért Felelős Minisztériumnak. Azok számára, akik ezt jóváhagyták, további
+          tájékoztatást adunk ügyünk fejleményeiről.</p>
+      </details>
+
+      <details>
+        <summary>Meddig lehet aláírni a petíciót?</summary>
+        <p>2026. augusztus 8-áig várjuk az aláírásokat.</p>
+      </details>
+
+      <details>
+        <summary>Milyen politikai szervezet áll a kezdeményezés mögött?</summary>
+        <p>Semmiféle politikai szervezet nem áll mögöttünk. Egyszerű gazdálkodók, egyszerű állampolgárok
+          vagyunk, akik a demokrácia nyújtotta eszközökkel szereznek érvényt közös érdekeinknek.</p>
+      </details>
+
+      <details>
+        <summary>Mi történik az adataimmal?</summary>
+        <p>Az adataidat kizárólag az aláírásgyűjtéshez, illetve — amennyiben beleegyeztél — az ügyünkről
+          való későbbi tájékoztatáshoz használjuk fel. Amint az ügyünk lezárult, minden adatot törölni
+          fogunk. Bővebb információt az <a href="adatkezeles.html">adatkezelési tájékoztatóban</a> találsz.</p>
+      </details>
+
+      <details>
+        <summary>Csak gazdálkodók írhatnak alá?</summary>
+        <p>Nem, nem csak gazdálkodók. Mindenki aláírására számítunk, aki nem ért egyet az időjárás-
+          befolyásoló rendszerek központi, társadalmi kontroll nélküli üzemeltetésével. Ugyan a gazdák
+          érintettek elsősorban az időjárás-manipuláció következményei által, közvetve kihatnak ezek az
+          élelmiszerek árára, minőségére, és a teljes ökoszisztémánkra is.</p>
+      </details>
     </section>
 
     <footer>
