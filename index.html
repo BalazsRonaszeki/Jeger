@@ -9,9 +9,34 @@
 <body>
   <main class="container">
     <h1>Aláírás a JÉGER üzemeltetésének átvételéért</h1>
-    <p>Rövid tájékoztató: célunk, hogy a JÉGER berendezések üzemeltetését a helyi gazdák dönthessék el.</p>
 
-    <form id="sigForm" enctype="multipart/form-data">
+    <section class="intro">
+      <p>
+        A JÉGER rendszer üzemeltetésének mellékhatása — különösen a csapadékképződésre gyakorolt hatása —
+        a társadalomban, a gazdák körében kifejezetten vitatott kérdés. Az elmúlt években Magyarországon
+        kialakult klíma nem hagy teret arra, hogy akár csak néhány milliméter csapadékot is elveszítsünk.
+        Nincs időnk kísérletezni: Gyarmat környékén már az akácerdők is elkezdtek kiszáradni, így nem csak
+        a mezőgazdaság, de az egész ökoszisztéma szenved a mostanra már többéves aszálytól.
+      </p>
+      <p>
+        Jelenleg Magyarországon összesen <strong>986</strong> JÉGER rendszer — hivatalos nevén Országos
+        Jégkármérséklő Rendszer — üzemel.
+      </p>
+      <p>
+        A kezdeményezés Gyarmatról indul, de szívesen fogadunk aláírásokat más községekből is — minél
+        több berendezés kerül polgári üzemeltetés alá, illetve lekapcsolásra, annál nagyobb hatás várható.
+      </p>
+
+      <h2>Követeléseink</h2>
+      <ol class="demands">
+        <li>A JÉGER rendszer — hivatalos megnevezésén <em>Országos Jégkármérséklő Rendszer</em> — azonnali
+          leállítása, és üzemeltetésének átadása a helyi gazdák számára.</li>
+        <li>Minden egyéb, időjárás-befolyásolására alkalmas rendszer telepítésének azonnali törvényi
+          tiltása, magánszemélyek és intézmények számára egyaránt.</li>
+      </ol>
+    </section>
+
+    <form id="sigForm">
       <label>Név (kötelező)
         <input name="name" required />
       </label>
@@ -24,28 +49,45 @@
         <input name="email" type="email" required />
       </label>
 
-      <label>Gazdálkodó?
-        <select name="is_farmer">
-          <option value="no">Nem</option>
+      <label>Ön gazdálkodó?
+        <select name="is_farmer" id="isFarmer">
+          <option value="">— nem kívánom megadni —</option>
           <option value="yes">Igen</option>
+          <option value="no">Nem</option>
         </select>
       </label>
 
-      <label>Hektár (opcionális)
+      <label id="hectaresGroup" hidden>Hány hektáron gazdálkodik? (opcionális)
         <input name="hectares" type="number" min="0" />
       </label>
 
-      <label>Aláírás-ív feltöltése (PDF, opcionális)
-        <input name="signature_pdf" type="file" accept="application/pdf" />
-      </label>
-
       <!-- Honeypot mező: rejtett, ember nem tölti ki -->
-      <input name="hp_field" type="text" style="display:none" />
+      <input name="hp_field" type="text" style="display:none" tabindex="-1" autocomplete="off" />
+
+      <label class="consent">
+        <input type="checkbox" name="consent" value="yes" required />
+        Elolvastam és elfogadom az <a href="adatkezeles.html" target="_blank" rel="noopener">adatkezelési
+        tájékoztatót</a>, és önként hozzájárulok a megadott adataim fenti célból történő kezeléséhez.
+      </label>
 
       <button type="submit">Aláírok</button>
     </form>
 
     <div id="msg" role="status"></div>
+
+    <section class="paper-option">
+      <h2>Inkább papíron írnád alá?</h2>
+      <p>
+        Töltsd le és nyomtasd ki az aláírásgyűjtő ívet — akár a szomszédaid, ismerőseid aláírását is
+        összegyűjtheted rajta. A kitöltött ívet postázd, vagy szkennelve/lefotózva küldd el e-mailben
+        az ív alján található elérhetőségek egyikére.
+      </p>
+      <p><a href="alairasi-iv.html" target="_blank" rel="noopener">Aláírásgyűjtő ív megnyitása és nyomtatása →</a></p>
+    </section>
+
+    <footer>
+      <p><a href="adatkezeles.html">Adatkezelési tájékoztató</a></p>
+    </footer>
   </main>
   <script src="app.js"></script>
 </body>

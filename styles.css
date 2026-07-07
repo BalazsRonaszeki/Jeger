@@ -1,5 +1,21 @@
-body{font-family: Arial, sans-serif;background:#f6f7fb;color:#111}
+body{font-family: Arial, sans-serif;background:#f6f7fb;color:#111;line-height:1.5}
 .container{max-width:680px;margin:32px auto;background:#fff;padding:24px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+h1{margin-top:0}
+.intro p{margin:12px 0}
+.demands{padding-left:20px}
+.demands li{margin:10px 0}
 label{display:block;margin:12px 0}
-input,select,button{width:100%;padding:8px;margin-top:6px}
-button{background:#0070f3;color:#fff;border:0;border-radius:6px;padding:10px;font-weight:600}
+input,select,button{width:100%;padding:8px;margin-top:6px;font:inherit}
+label.consent{display:flex;align-items:flex-start;gap:8px;font-size:.92em}
+label.consent input{width:auto;margin-top:3px}
+button{background:#0070f3;color:#fff;border:0;border-radius:6px;padding:10px;font-weight:600;cursor:pointer}
+button:hover{background:#0059c1}
+#msg{margin-top:12px;font-weight:600}
+.paper-option{margin-top:32px;padding-top:20px;border-top:1px solid #eee}
+footer{margin-top:24px;font-size:.9em;color:#555}
+footer a{color:#555}
+
+.legal h2{margin-top:28px;font-size:1.1em}
+.legal .updated{color:#666;font-size:.9em}
+.legal ul{padding-left:20px}
+.legal li{margin:6px 0}

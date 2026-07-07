@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aláírásgyűjtő ív — JÉGER petíció</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{background:#fff}
+    .sheet{max-width:900px;margin:24px auto;padding:0 16px}
+    .sheet h1{font-size:1.3em;margin-bottom:4px}
+    .sheet .demands{font-size:.92em;padding-left:20px;margin:8px 0 16px}
+    .sheet .consent-note{font-size:.82em;color:#333;border:1px solid #ccc;padding:8px 10px;border-radius:6px;margin-bottom:16px}
+    table.sig-table{width:100%;border-collapse:collapse;font-size:.92em}
+    table.sig-table th,table.sig-table td{border:1px solid #333;padding:6px 8px;text-align:left}
+    table.sig-table th{background:#f0f0f0}
+    table.sig-table td.num{width:28px;text-align:center}
+    table.sig-table td.sig{width:120px}
+    .return-info{margin-top:18px;font-size:.92em}
+    .print-btn{display:inline-block;margin:16px 0;padding:10px 16px;background:#0070f3;color:#fff;border:0;border-radius:6px;font-weight:600;cursor:pointer}
+    @media print {
+      .no-print{display:none}
+      .sheet{margin:0;max-width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <button class="print-btn no-print" onclick="window.print()">Nyomtatás / PDF mentés</button>
+    <p class="no-print"><a href="index.html">&larr; Vissza a főoldalra</a></p>
+
+    <h1>Aláírásgyűjtő ív a JÉGER üzemeltetésének átvételéért</h1>
+    <p>
+      Alulírottak a következő követelések mellett tesszük le voksunkat aláírásunkkal. Jelenleg
+      Magyarországon összesen <strong>986</strong> JÉGER rendszer üzemel.
+    </p>
+    <ol class="demands">
+      <li>A JÉGER rendszer — hivatalos megnevezésén <em>Országos Jégkármérséklő Rendszer</em> — azonnali
+        leállítása, és üzemeltetésének átadása a helyi gazdák számára.</li>
+      <li>Minden egyéb, időjárás-befolyásolására alkalmas rendszer telepítésének azonnali törvényi
+        tiltása, magánszemélyek és intézmények számára egyaránt.</li>
+    </ol>
+
+    <p class="consent-note">
+      Aláírásommal önkéntesen hozzájárulok, hogy a fent megadott adataimat a szervezők a petíció
+      céljából kezeljék, a <strong>jeger-peticio.com/adatkezeles.html</strong> oldalon elérhető
+      adatkezelési tájékoztatóban foglaltak szerint.
+    </p>
+
+    <table class="sig-table">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Név (nyomtatott betűkkel)</th>
+          <th>Lakcím</th>
+          <th>E-mail (opcionális)</th>
+          <th class="sig">Aláírás</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 15 üres sor kitöltésre -->
+        <tr><td class="num">1</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">2</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">3</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">4</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">5</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">6</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">7</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">8</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">9</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">10</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">11</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">12</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">13</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">14</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="num">15</td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="return-info">
+      Kérjük, a kitöltött ívet küldd vissza az alábbi módok egyikén:<br />
+      Postán: <strong>Mezőgter Kft., 9126 Gyarmat, Ady Endre utca 7.</strong><br />
+      E-mailben (lefotózva/beszkennelve): <strong>info@jeger-peticio.com</strong>
+    </p>
+  </div>
+</body>
+</html>

@@ -1,5 +1,11 @@
 const form = document.getElementById('sigForm');
 const msg = document.getElementById('msg');
+const isFarmer = document.getElementById('isFarmer');
+const hectaresGroup = document.getElementById('hectaresGroup');
+
+isFarmer.addEventListener('change', () => {
+  hectaresGroup.hidden = isFarmer.value !== 'yes';
+});
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -15,6 +21,7 @@ form.addEventListener('submit', async (e) => {
     if (res.ok) {
       msg.textContent = 'Köszönjük, az aláírás regisztrálva.';
       form.reset();
+      hectaresGroup.hidden = true;
     } else {
       msg.textContent = json.detail || 'Hiba történt.';
     }

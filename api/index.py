@@ -1,7 +1,7 @@
 import os
 import time
 import uuid
-from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException
+from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
@@ -62,10 +62,10 @@ async def submit(request: Request,
                  name: str = Form(...),
                  address: str = Form(...),
                  email: str = Form(...),
-                 is_farmer: str = Form('no'),
+                 is_farmer: str = Form(''),
                  hectares: str = Form(None),
-                 hp_field: str = Form(None),
-                 signature_pdf: UploadFile | None = File(None)):
+                 consent: str = Form(None),
+                 hp_field: str = Form(None)):
     ip = ip_from_request(request)
     if not check_rate(ip):
         raise HTTPException(status_code=429, detail='Túl sok kérést küldött; próbálja később')
@@ -74,26 +74,10 @@ async def submit(request: Request,
     if hp_field:
         raise HTTPException(status_code=400, detail='Invalid submission')
 
-    record_id = str(uuid.uuid4())
-    file_url = None
+    if consent != 'yes':
+        raise HTTPException(status_code=400, detail='Az adatkezelési tájékoztató elfogadása kötelező')
 
-    if signature_pdf:
-        filename = f"{int(time.time())}_{record_id}.pdf"
-        path = Path(UPLOAD_DIR) / filename
-        contents = await signature_pdf.read()
-        with open(path, 'wb') as f:
-            f.write(contents)
-        # If Supabase storage configured, upload there
-        if supabase_client:
-            try:
-                bucket = supabase_client.storage.from_('signatures')
-                res = bucket.upload(filename, path.read_bytes())
-                if res:
-                    file_url = f"{SUPABASE_URL}/storage/v1/object/public/signatures/{filename}"
-            except Exception:
-                file_url = str(path)
-        else:
-            file_url = str(path)
+    record_id = str(uuid.uuid4())
 
     # Persist record: try Supabase table 'signatures', fall back to local CSV
     record = {
@@ -103,7 +87,7 @@ async def submit(request: Request,
         'email': email,
         'is_farmer': is_farmer,
         'hectares': hectares,
-        'file_url': file_url,
+        'consent': True,
         'ip': ip,
         'created_at': int(time.time())
     }

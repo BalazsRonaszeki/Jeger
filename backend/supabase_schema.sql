@@ -6,10 +6,14 @@ CREATE TABLE IF NOT EXISTS public.signatures (
   email text NOT NULL,
   is_farmer text,
   hectares text,
-  file_url text,
+  consent boolean NOT NULL DEFAULT false,
   ip text,
   created_at bigint
 );
 
 -- Index a későbbi lekérdezésekhez
 CREATE INDEX IF NOT EXISTS idx_signatures_created_at ON public.signatures (created_at);
+
+-- Migráció egy már létező táblához (ha korábban a schema.sql-t file_url oszloppal futtattad le):
+-- ALTER TABLE public.signatures ADD COLUMN IF NOT EXISTS consent boolean NOT NULL DEFAULT false;
+-- ALTER TABLE public.signatures DROP COLUMN IF EXISTS file_url;
