@@ -44,9 +44,7 @@ form.addEventListener('submit', async (e) => {
     });
     const json = await res.json();
     if (res.ok) {
-      msg.textContent = 'Köszönjük, az aláírás regisztrálva.';
-      form.reset();
-      hectaresGroup.hidden = true;
+      window.location.href = 'koszonjuk.html';
     } else {
       msg.textContent = json.detail || 'Hiba történt.';
     }
