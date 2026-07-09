@@ -91,6 +91,59 @@ form,
   margin-bottom:24px;
 }
 
+.progress-card{
+  background:var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px 24px;
+  margin-bottom:24px;
+  text-align:center;
+}
+.progress-label{
+  font-family:var(--font-heading);
+  font-weight:600;
+  font-size:.92em;
+  color:var(--color-muted);
+  margin-bottom:12px;
+}
+.progress-bar-track{
+  position:relative;
+  height:22px;
+  border-radius:999px;
+  background:var(--color-bg);
+  border:1px solid var(--color-border);
+  overflow:hidden;
+}
+.progress-bar-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--color-primary),var(--color-accent));
+  transition:width 1.1s cubic-bezier(.22,.8,.28,1);
+  position:relative;
+  overflow:hidden;
+}
+.progress-bar-fill::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 10px,transparent 10px 20px);
+  animation:progress-stripes 1.4s linear infinite;
+}
+@keyframes progress-stripes{
+  from{background-position:0 0}
+  to{background-position:28px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  .progress-bar-fill{transition:none}
+  .progress-bar-fill::after{animation:none}
+}
+.progress-numbers{margin-top:12px;font-family:var(--font-heading)}
+.progress-numbers strong{font-size:1.6em;color:var(--color-primary-dark)}
+.progress-numbers span{font-size:1.1em;color:var(--color-muted)}
+.progress-hint{margin:8px 0 0;font-size:.86em;color:var(--color-muted)}
+
 .intro p{margin:0 0 14px;color:var(--color-text)}
 .intro p:last-child{margin-bottom:0}
 .intro strong{color:var(--color-accent)}
@@ -214,6 +267,6 @@ footer a{color:var(--color-muted)}
 
 @media (max-width:480px){
   .container{padding:20px 16px 36px}
-  .intro,form,.faq,.legal{padding:18px}
+  .intro,form,.faq,.legal,.progress-card{padding:18px}
   h1{margin-bottom:16px}
 }

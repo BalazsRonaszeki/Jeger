@@ -16,6 +16,17 @@
   <main class="container">
     <h1>Aláírás a JÉGER üzemeltetésének átvételéért</h1>
 
+    <section class="progress-card" id="progressCard" aria-live="polite">
+      <div class="progress-label">Eddig ennyien álltak mellénk:</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+      <div class="progress-numbers">
+        <strong id="progressCount">…</strong><span id="progressTarget"></span>
+      </div>
+      <p class="progress-hint" id="progressHint">&nbsp;</p>
+    </section>
+
     <section class="intro">
       <p>
         A JÉGER rendszer üzemeltetésének mellékhatása — különösen a csapadékképződésre gyakorolt hatása —
@@ -133,6 +144,7 @@
       <p><a href="adatkezeles.html">Adatkezelési tájékoztató</a></p>
     </footer>
   </main>
+  <script src="progress.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -116,6 +116,24 @@ async def submit(request: Request,
     return JSONResponse({'ok': True})
 
 
+@app.get('/api/count')
+async def count():
+    if supabase_client:
+        try:
+            res = supabase_client.table('signatures').select('id', count='exact').limit(1).execute()
+            return JSONResponse({'count': res.count or 0})
+        except Exception:
+            return JSONResponse({'count': None})
+
+    # Fallback ohne Supabase: lokale CSV zeilenweise zählen (minus Header)
+    csvfile = Path(UPLOAD_DIR) / 'submissions.csv'
+    if not csvfile.exists():
+        return JSONResponse({'count': 0})
+    with open(csvfile, 'r', encoding='utf-8') as fh:
+        zeilen = sum(1 for _ in fh)
+    return JSONResponse({'count': max(0, zeilen - 1)})
+
+
 @app.get('/api/admin/export')
 async def admin_export(request: Request, password: str = None):
     # simple admin protection via query param or header
