@@ -78,5 +78,7 @@ export default async function middleware(request) {
     return unauthorized();
   }
 
-  // Hitelesített GET: hagyjuk, hogy a Vercel a statikus fájlt normálisan kiszolgálja.
+  // Hitelesített GET: engedjük tovább a statikus fájlhoz (explicit "continue" jelzés,
+  // hogy beágyazott aloldalak / assetek se akadjanak el a middleware-en).
+  return new Response(null, { headers: { 'x-middleware-next': '1' } });
 }
