@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>JÉGER-kezdeményezés — Ki felügyeli, ami a felhőink fölé kerül?</title>
+<meta name="description" content="Közérthető háttéranyag a JÉGER jégeső-elhárítási rendszerről: tudomány, technológia, felügyelet.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1ea;
+  --surface:#ffffff;
+  --surface-2:#e4e9df;
+  --ink:#1b2420;
+  --ink-soft:#48544c;
+  --ink-faint:#7c887e;
+  --line:#ccd6c8;
+  --accent:#b3560a;
+  --accent-ink:#ffffff;
+  --accent-soft:#f3e2d2;
+  --silver:#4c6b78;
+  --silver-soft:#dde7ea;
+  --shadow: 0 1px 2px rgba(20,30,25,.05), 0 10px 28px -14px rgba(20,30,25,.22);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#12181a;
+    --surface:#1a2224;
+    --surface-2:#212b2c;
+    --ink:#e9ede5;
+    --ink-soft:#b6c1b8;
+    --ink-faint:#7e8a83;
+    --line:#2c3a37;
+    --accent:#e0873d;
+    --accent-ink:#1b1206;
+    --accent-soft:#3a2a17;
+    --silver:#8bb0bd;
+    --silver-soft:#20343a;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181a;
+  --surface:#1a2224;
+  --surface-2:#212b2c;
+  --ink:#e9ede5;
+  --ink-soft:#b6c1b8;
+  --ink-faint:#7e8a83;
+  --line:#2c3a37;
+  --accent:#e0873d;
+  --accent-ink:#1b1206;
+  --accent-soft:#3a2a17;
+  --silver:#8bb0bd;
+  --silver-soft:#20343a;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-size:18px;
+  line-height:1.62;
+}
+::selection{background:var(--accent);color:var(--accent-ink)}
+a{color:var(--silver)}
+a:hover{color:var(--accent)}
+
+h1,h2,h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; text-wrap:balance; margin:0; letter-spacing:-.01em}
+.eyebrow{
+  font-family:'IBM Plex Mono', ui-monospace, monospace;
+  font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); font-weight:600;
+}
+.status-eyebrow{
+  font-family:'IBM Plex Mono', ui-monospace, monospace;
+  font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+  .reveal.d1{animation-delay:.08s}
+  .reveal.d2{animation-delay:.16s}
+  .reveal.d3{animation-delay:.24s}
+  @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:translateY(0)}}
+}
+
+/* ---------- warning stripe divider ---------- */
+.stripe{
+  height:7px;
+  background: repeating-linear-gradient(-45deg, var(--accent), var(--accent) 10px, var(--ink) 10px, var(--ink) 20px);
+  opacity:.85;
+}
+
+/* ---------- hero ---------- */
+.hero{
+  padding: 4.2rem 0 3.4rem;
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in srgb, var(--silver) 16%, transparent), transparent),
+    var(--bg);
+  border-bottom:1px solid var(--line);
+}
+.wrap{max-width:760px; margin:0 auto; padding:0 1.6rem}
+.wrap-wide{max-width:960px; margin:0 auto; padding:0 1.6rem}
+.hero .eyebrow{display:flex; align-items:center; gap:.6em; margin-bottom:1.1rem}
+.hero .eyebrow::before{content:""; width:1.6em; height:2px; background:var(--accent); display:inline-block}
+.hero h1{font-size:clamp(2.3rem, 1.6rem + 3vw, 3.6rem); font-weight:700; max-width:13ch}
+.hero .lede{
+  font-size:1.22rem; color:var(--ink-soft); max-width:56ch; margin-top:1.2rem;
+}
+.hero .statline{
+  margin-top:2.2rem; display:grid; gap:1.1rem;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  border-top:1px solid var(--line); padding-top:1.6rem;
+}
+.stat b{
+  display:block; font-family:'Bricolage Grotesque',sans-serif; font-weight:700;
+  font-size:1.7rem; color:var(--ink); font-variant-numeric:tabular-nums;
+}
+.stat span{font-size:.82rem; color:var(--ink-faint)}
+
+/* ---------- section shell ---------- */
+section{padding:3.6rem 0}
+section.tinted{background:var(--surface-2)}
+.section-head{margin-bottom:1.6rem}
+.section-head h2{font-size:clamp(1.5rem,1.2rem + 1.2vw,2.1rem); font-weight:700}
+.section-head .eyebrow{display:block; margin-bottom:.6rem}
+p{margin:0 0 1.1rem}
+p:last-child{margin-bottom:0}
+.lead-p{font-size:1.08rem; color:var(--ink-soft)}
+
+/* ---------- citations ---------- */
+sup.cite{
+  font-family:'IBM Plex Mono',monospace; font-size:.62em; font-weight:600;
+  color:var(--accent); cursor:pointer; margin-left:.1em;
+}
+sup.cite a{color:inherit; text-decoration:none}
+sup.cite a:hover{text-decoration:underline}
+
+/* ---------- profile cards ---------- */
+.profiles{display:grid; gap:1.1rem; margin-top:1.8rem}
+@media(min-width:680px){.profiles{grid-template-columns:1fr 1fr}}
+.profile{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:1.5rem 1.6rem; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:.7rem;
+}
+.profile .who{display:flex; align-items:baseline; justify-content:space-between; gap:.6em; flex-wrap:wrap}
+.profile h3{font-size:1.15rem}
+.profile .role{
+  font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--silver); white-space:nowrap;
+}
+.profile p{font-size:.98rem; color:var(--ink-soft); margin:0}
+
+/* ---------- refs ---------- */
+.refs{font-size:.88rem; color:var(--ink-soft)}
+.refs ol{padding-left:1.3em; margin:0; display:grid; gap:.55rem}
+.refs li::marker{font-family:'IBM Plex Mono',monospace; color:var(--accent); font-weight:600}
+.refs a{word-break:break-word}
+
+/* ---------- open-note ---------- */
+.opennote{
+  background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius:9px; padding:1rem 1.2rem; font-size:.9rem; color:var(--ink-soft); margin-top:1.4rem;
+}
+.opennote b{color:var(--ink)}
+
+/* ---------- media cards ---------- */
+.media-grid{display:grid; gap:1.1rem; margin-top:1.8rem}
+.media-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:1.3rem 1.5rem; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:.5rem;
+}
+.media-card .who{display:flex; align-items:baseline; justify-content:space-between; gap:.6em; flex-wrap:wrap}
+.media-card h3{font-size:1.05rem}
+.media-card .role{
+  font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--silver); white-space:nowrap;
+}
+.media-card p{font-size:.94rem; color:var(--ink-soft); margin:0}
+.media-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:var(--accent); text-decoration:none}
+.media-card a.watch:hover{text-decoration:underline}
+.media-card.placeholder{
+  background:transparent; border:1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
+  box-shadow:none;
+}
+.media-card.placeholder .role{color:var(--accent)}
+
+footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
+
+/* ---------- diagrams ---------- */
+.figure{margin:1.8rem 0 0}
+.diagram-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:1.5rem 1.5rem 1.2rem; box-shadow:var(--shadow); overflow-x:auto;
+}
+.figure svg{display:block; width:100%; height:auto; min-width:420px; color:var(--ink)}
+.figure figcaption{
+  margin-top:.8rem; font-size:.92rem; color:var(--ink-soft); max-width:62ch;
+}
+.figure figcaption .src-note{
+  display:block; margin-top:.3rem; font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint);
+}
+.lbl{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.02em}
+.lbl-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.09em}
+.lbl-lg{font-family:'Bricolage Grotesque',sans-serif; font-size:13.5px; font-weight:700}
+.acc{color:var(--accent)}
+.slv{color:var(--silver)}
+.dim{opacity:.5}
+.dim2{opacity:.28}
+.diagram-card svg [class*="fill-"]{fill:currentColor}
+.diagram-card svg [class*="stroke-"]{stroke:currentColor}
+
+@media(prefers-reduced-motion:no-preference){
+  .rising{animation:rise-fade 3.1s linear infinite; transform-box:fill-box; transform-origin:center}
+  .rising.p2{animation-delay:-1.05s}
+  .rising.p3{animation-delay:-2.1s}
+  @keyframes rise-fade{
+    0%{transform:translate(0,0); opacity:0}
+    12%{opacity:.95}
+    85%{opacity:.95}
+    100%{transform:translate(var(--dx,0),var(--dy,-200px)); opacity:0}
+  }
+  .embryo{animation:embryo-journey 6.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes embryo-journey{
+    0%{transform:translate(0,0) scale(.65); opacity:.95}
+    52%{transform:translate(8px,-255px) scale(1.55); opacity:1}
+    68%{transform:translate(10px,-245px) scale(1.55); opacity:1}
+    100%{transform:translate(34px,145px) scale(2.5); opacity:0}
+  }
+  .cloud-drift{animation:drift-sea 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  .cloud-drift.cB{animation-delay:-13s}
+  .cloud-mature{animation:mature-fade 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  .cloud-mature.cB{animation-delay:-13s}
+  .cloud-rain{animation:mature-fade 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  .cloud-rain.cB{animation-delay:-13s}
+  .cloud-rain line{animation:rain-streak .5s linear infinite}
+  @keyframes drift-sea{
+    0%{transform:translateX(0); opacity:0}
+    8%{opacity:1}
+    85%{opacity:1}
+    100%{transform:translateX(640px); opacity:0}
+  }
+  @keyframes mature-fade{
+    0%{opacity:0} 35%{opacity:0} 55%{opacity:1} 80%{opacity:1} 95%{opacity:0} 100%{opacity:0}
+  }
+  .land-cloud{animation:drift-land 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  .land-mature{animation:mature-fade-land 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  .land-rain{animation:mature-fade-land 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes drift-land{
+    0%{transform:translateX(0) scale(.35); opacity:0}
+    40%{transform:translateX(0) scale(.35); opacity:0}
+    56%{transform:translateX(0) scale(1); opacity:1}
+    82%{transform:translateX(150px) scale(1); opacity:1}
+    96%{transform:translateX(200px) scale(1); opacity:0}
+    100%{transform:translateX(200px) scale(1); opacity:0}
+  }
+  @keyframes mature-fade-land{
+    0%{opacity:0} 58%{opacity:0} 70%{opacity:1} 90%{opacity:1} 97%{opacity:0} 100%{opacity:0}
+  }
+  @keyframes rain-streak{0%{stroke-dashoffset:0} 100%{stroke-dashoffset:-11px}}
+
+  /* the storm drifts exactly like the ordinary clouds — just taller, darker, offset in time */
+  .storm-cell{animation:drift-sea 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  .storm-mature{animation:storm-rain-fade 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  .storm-rain{animation:storm-rain-fade 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  .storm-rain line{animation:rain-streak .4s linear infinite}
+  @keyframes storm-rain-fade{
+    0%{opacity:0} 12%{opacity:0} 22%{opacity:1} 75%{opacity:1} 86%{opacity:0} 100%{opacity:0}
+  }
+  .storm-lightning{animation:storm-lightning-flash 26s linear infinite; animation-delay:-4s}
+  @keyframes storm-lightning-flash{
+    0%,24%,25.3%,38%,39.3%,52%,53.3%,66%,67.3%,100%{opacity:0}
+    24.6%{opacity:1} 38.6%{opacity:1} 52.6%{opacity:1} 66.6%{opacity:1}
+  }
+  .storm-flash{animation:storm-scene-flash 26s linear infinite; animation-delay:-4s}
+  @keyframes storm-scene-flash{
+    0%,24%,25.3%,38%,39.3%,52%,53.3%,66%,67.3%,100%{opacity:0}
+    24.6%{opacity:.22} 38.6%{opacity:.18} 52.6%{opacity:.2} 66.6%{opacity:.18}
+  }
+
+  /* the small ice cloudlet: an occasional companion, not the whole storm — purely a natural phenomenon here, no intervention */
+  .ice-cloudlet{animation:ice-appear 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  @keyframes ice-appear{
+    0%,30%{opacity:0} 40%{opacity:1} 58%{opacity:1} 68%,100%{opacity:0}
+  }
+  .ice-label{animation:ice-appear 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+
+  /* a second storm, born over land above the forest — hail doesn't care whether the storm started over sea or land */
+  .storm-cell-land{animation:drift-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  .storm-mature-land{animation:storm-rain-fade-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  .storm-rain-land{animation:storm-rain-fade-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  .storm-rain-land line{animation:rain-streak .4s linear infinite}
+  @keyframes storm-rain-fade-land{
+    0%{opacity:0} 40%{opacity:0} 50%{opacity:1} 78%{opacity:1} 88%{opacity:0} 100%{opacity:0}
+  }
+  .storm-lightning-land{animation:storm-lightning-flash-land 26s linear infinite; animation-delay:-9s}
+  @keyframes storm-lightning-flash-land{
+    0%,52%,53.3%,63%,64.3%,73%,74.3%,100%{opacity:0}
+    52.6%{opacity:1} 63.6%{opacity:1} 73.6%{opacity:1}
+  }
+  .storm-flash-land{animation:storm-scene-flash-land 26s linear infinite; animation-delay:-9s}
+  @keyframes storm-scene-flash-land{
+    0%,52%,53.3%,63%,64.3%,73%,74.3%,100%{opacity:0}
+    52.6%{opacity:.2} 63.6%{opacity:.18} 73.6%{opacity:.2}
+  }
+  .ice-cloudlet-land{animation:ice-appear-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  @keyframes ice-appear-land{
+    0%,56%{opacity:0} 64%{opacity:1} 80%{opacity:1} 88%,100%{opacity:0}
+  }
+  .ice-label-land{animation:ice-appear-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+
+  /* dedicated variants for the 04. method scenes: the ice cloudlet shrinks away as the defender neutralises it */
+  .ice-cloudlet-v{animation:ice-appear-v 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  @keyframes ice-appear-v{
+    0%,30%{opacity:0; transform:scale(.35)}
+    38%{opacity:1; transform:scale(1)}
+    53%{opacity:1; transform:scale(1)}
+    64%{opacity:0; transform:scale(.1)}
+    100%{opacity:0; transform:scale(.1)}
+  }
+  .ice-label-v{animation:ice-appear-v 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  .ice-cloudlet-v-land{animation:ice-appear-v-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  @keyframes ice-appear-v-land{
+    0%,56%{opacity:0; transform:scale(.35)}
+    64%{opacity:1; transform:scale(1)}
+    78%{opacity:1; transform:scale(1)}
+    86%{opacity:0; transform:scale(.1)}
+    100%{opacity:0; transform:scale(.1)}
+  }
+  .ice-label-v-land{animation:ice-appear-v-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+
+  /* defenders shared by the three method-scenes: generator smoke, rocket launch, plane pass, impact flash */
+  .gen-mini-smoke{animation:rise-fade 3.4s linear infinite; transform-box:fill-box; transform-origin:center}
+  .rocket-mini{animation:rocket-mini-launch 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  @keyframes rocket-mini-launch{
+    0%,38%{transform:translate(0,0); opacity:0}
+    42%{opacity:1}
+    52%{transform:translate(-141px,-203px); opacity:1}
+    55%{transform:translate(-145px,-207px); opacity:0}
+    100%{transform:translate(-145px,-207px); opacity:0}
+  }
+  .plane-mini-v{animation:plane-mini-v-fly 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  @keyframes plane-mini-v-fly{
+    0%,36%{transform:translate(0,0); opacity:0}
+    40%{opacity:1}
+    52%{transform:translate(-380px,10px); opacity:1}
+    62%{transform:translate(-560px,12px); opacity:0}
+    100%{transform:translate(-560px,12px); opacity:0}
+  }
+  .rocket-mini-trail{animation:rocket-mini-trail-fade 26s linear infinite; animation-delay:-4s}
+  @keyframes rocket-mini-trail-fade{
+    0%,38%{opacity:0} 42%{opacity:.6} 52%{opacity:.6} 55%{opacity:0} 100%{opacity:0}
+  }
+  .rocket-mini-land{animation:rocket-mini-launch-land 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes rocket-mini-launch-land{
+    0%,66%{transform:translateY(0); opacity:0}
+    70%{opacity:1}
+    79%{transform:translateY(-171px); opacity:1}
+    82%{transform:translateY(-174px); opacity:0}
+    100%{transform:translateY(-174px); opacity:0}
+  }
+  .rocket-mini-trail-land{animation:rocket-mini-trail-fade-land 26s linear infinite}
+  @keyframes rocket-mini-trail-fade-land{
+    0%,66%{opacity:0} 70%{opacity:.6} 79%{opacity:.6} 82%{opacity:0} 100%{opacity:0}
+  }
+  .plane-mini{animation:plane-mini-fly 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes plane-mini-fly{
+    0%,41%{transform:translate(0,0); opacity:0}
+    45%{opacity:1}
+    59%{transform:translate(175px,-58px); opacity:1}
+    63%{opacity:0}
+    100%{transform:translate(175px,-58px); opacity:0}
+  }
+  .plane-mini-land{animation:plane-mini-fly-land 26s linear infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes plane-mini-fly-land{
+    0%,63%{transform:translate(0,0); opacity:0}
+    67%{opacity:1}
+    80%{transform:translate(150px,-50px); opacity:1}
+    84%{opacity:0}
+    100%{transform:translate(150px,-50px); opacity:0}
+  }
+  .impact-burst-v{animation:impact-flash-v 26s linear infinite; animation-delay:-4s; transform-box:fill-box; transform-origin:center}
+  @keyframes impact-flash-v{
+    0%,49%{opacity:0; transform:scale(.3)}
+    52%{opacity:1; transform:scale(1.4)}
+    60%{opacity:0; transform:scale(2.2)}
+    100%{opacity:0}
+  }
+  .impact-burst-v-land{animation:impact-flash-v-land 26s linear infinite; animation-delay:-9s; transform-box:fill-box; transform-origin:center}
+  @keyframes impact-flash-v-land{
+    0%,75%{opacity:0; transform:scale(.3)}
+    80%{opacity:1; transform:scale(1.4)}
+    88%{opacity:0; transform:scale(2.2)}
+    100%{opacity:0}
+  }
+
+  /* method diagrams: aircraft pass and rocket launch */
+  .plane{animation:plane-fly 7s ease-in-out infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes plane-fly{
+    0%{transform:translate(0,0)}
+    45%{transform:translate(380px,-78px)}
+    58%{transform:translate(430px,-84px)}
+    100%{transform:translate(780px,-118px)}
+  }
+  .plane-puff{animation:puff-appear 7s ease-in-out infinite; transform-box:fill-box; transform-origin:center}
+  .plane-puff.pp2{animation-delay:.25s}
+  .plane-puff.pp3{animation-delay:.5s}
+  @keyframes puff-appear{
+    0%,42%{opacity:0; transform:scale(.4)}
+    50%{opacity:.9; transform:scale(1)}
+    66%{opacity:0; transform:scale(1.8)}
+    100%{opacity:0}
+  }
+  .rocket{animation:rocket-launch 4.5s cubic-bezier(.32,.6,.2,1) infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes rocket-launch{
+    0%{transform:translateY(0); opacity:0}
+    6%{opacity:1}
+    55%{transform:translateY(-262px); opacity:1}
+    60%{transform:translateY(-266px); opacity:0}
+    100%{transform:translateY(-266px); opacity:0}
+  }
+  .rocket-trail{animation:trail-fade 4.5s cubic-bezier(.32,.6,.2,1) infinite}
+  @keyframes trail-fade{
+    0%{opacity:0} 6%{opacity:.55} 50%{opacity:.55} 58%{opacity:0} 100%{opacity:0}
+  }
+  .rocket-burst{animation:burst-flash 4.5s cubic-bezier(.32,.6,.2,1) infinite; transform-box:fill-box; transform-origin:center}
+  @keyframes burst-flash{
+    0%,52%{opacity:0; transform:scale(.3)}
+    58%{opacity:1; transform:scale(1.3)}
+    68%{opacity:0; transform:scale(2)}
+    100%{opacity:0}
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .embryo{opacity:.9}
+  .cloud-mature{opacity:.45}
+  .cloud-rain{opacity:.6}
+  .land-cloud{transform:translateX(90px) scale(.9); opacity:.85}
+  .land-mature{opacity:.5}
+  .land-rain{opacity:.55}
+  .storm-cell{transform:translateX(320px); opacity:.9}
+  .storm-mature,.storm-rain{opacity:.6}
+  .storm-lightning,.storm-flash{opacity:0}
+  .ice-cloudlet,.ice-label{opacity:.9}
+  .storm-cell-land{transform:translateX(70px) scale(1); opacity:.85}
+  .storm-mature-land,.storm-rain-land{opacity:.55}
+  .storm-lightning-land,.storm-flash-land{opacity:0}
+  .ice-cloudlet-land,.ice-label-land{opacity:.85}
+  .plane{transform:translate(380px,-78px)}
+  .plane-puff{opacity:.7; transform:scale(1)}
+  .rocket{transform:translateY(-150px); opacity:.9}
+  .rocket-trail{opacity:.5}
+  .rocket-burst{opacity:0}
+  .ice-cloudlet-v,.ice-label-v,.ice-cloudlet-v-land,.ice-label-v-land{opacity:.9; transform:scale(1)}
+  .gen-mini-smoke{opacity:.5}
+  .rocket-mini,.rocket-mini-land,.plane-mini,.plane-mini-land,.impact-burst-v,.impact-burst-v-land{opacity:0}
+  .rocket-mini-trail,.rocket-mini-trail-land{opacity:.4}
+}
+
+/* ---------- method headers ---------- */
+.method-head{display:flex; align-items:center; gap:.7em; margin:2.4rem 0 0}
+.method-head:first-of-type{margin-top:1.8rem}
+.method-num{
+  flex:none; width:2rem; height:2rem; border-radius:50%;
+  background:var(--accent); color:var(--accent-ink);
+  font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1.05rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.method-head h3{font-size:1.35rem; font-weight:700}
+
+/* ---------- scenic (water-cycle) figure ---------- */
+.diagram-card.scenic{padding:0; overflow-x:auto; overflow-y:hidden; border-radius:14px}
+.diagram-card.scenic svg{min-width:520px}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow reveal">Munkapéldány — nyilvános honlap-szöveg tervezete</div>
+    <h1 class="reveal d1">Ki felügyeli, ami a felhőink fölé kerül?</h1>
+    <p class="lede reveal d2">Magyarországon 986 hivatalos, ezüst-jodidot kibocsátó talajgenerátor működik a NAK üzemeltetésében<sup class="cite"><a href="#r1">1</a></sup> — plusz ismeretlen számú, magánkézben lévő civil rendszer. Ez utóbbi Európa legnagyobb, <b>egységes, központi állami irányítású</b> földi generátoros hálózata<sup class="cite"><a href="#r2">2</a></sup>. A magánrendszerek számáról nincs hivatalos nyilvántartás. Egyikre sincs folyamatos, független hatósági felügyelet.</p>
+    <div class="statline reveal d3">
+      <div class="stat"><b>986</b><span>hivatalos talajgenerátor<sup class="cite"><a href="#r1">1</a></sup></span></div>
+      <div class="stat"><b>H410</b><span>„nagyon mérgező a vízi élővilágra” — gyártói besorolás<sup class="cite"><a href="#r4">4</a></sup></span></div>
+      <div class="stat"><b>~600M Ft</b><span>évi hatóanyag-beszerzés<sup class="cite"><a href="#r5">5</a></sup></span></div>
+      <div class="stat"><b>0</b><span>független, hatóság által elvégzett hatásvizsgálat<sup class="cite"><a href="#r6">6</a></sup></span></div>
+    </div>
+  </div>
+</div>
+
+<section id="cel">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">01 &nbsp;·&nbsp; Mi a célunk</span>
+      <h2>Szabályozást és transzparenciát kérünk</h2>
+    </div>
+    <p class="lead-p">Meg akarjuk állítani Magyarországon a szabályozatlanul terjedő időjárás-manipulációs rendszerek elszaporodását. Az országos, állami JÉGER-hálózat 986 talajgenerátorral üzemel<sup class="cite"><a href="#r1">1</a></sup> — ez Európa legnagyobb, egységes, központi állami irányítású földi generátoros hálózata (Franciaországban ugyan több, összesen 1170 generátor működik, de azt ~30 független, önkéntes helyi egyesület üzemelteti, nem egy központi állami szerv). A szomszédos Ausztria és Németország eközben teljesen repülőgépes módszerre váltott, Svájc pedig 2024-ben, bizonyítottság hiányában leállította saját, repülőgépes programját<sup class="cite"><a href="#r2">2</a></sup><sup class="cite"><a href="#r3">3</a></sup>. Emellett becslések szerint további, magánkézben lévő rendszerek is működnek — ezekre semmilyen engedélyezési vagy bejelentési kötelezettséget nem találtunk.</p>
+    <p>A felhasznált ezüst-jodid oldatot a gyártó saját biztonsági adatlapja „nagyon mérgező a vízi élővilágra, hosszan tartó károsodást okoz” (H410) besorolással látja el<sup class="cite"><a href="#r4">4</a></sup>. Nem bizonyított, hogy a jelenlegi mennyiségű, évtizedes, országos szintű kijuttatás hosszú távon semleges a csapadékképződésre — ezt egyetlen hazai vizsgálat sem tesztelte, annak ellenére sem, hogy léteznek olyan tudományos modellek, melyek az úgynevezett <b>túlmagvasításra</b> hivatkozva negatív hatással számolnak a csapadékképződésre.<sup class="cite"><a href="#r11">11</a></sup><sup class="cite"><a href="#r12">12</a></sup></p>
+    <p>A rendszer működtetése évi kb. 600 millió forintba kerül csak a hatóanyag-beszerzésben<sup class="cite"><a href="#r5">5</a></sup>, a kiépítés 1,8 milliárd forintos, uniós (EMVA) és hazai költségvetési társfinanszírozású támogatásból történt<sup class="cite"><a href="#r1">1</a></sup>. Az egyetlen átfogó környezeti hatástanulmányt maga az üzemeltető (a Nemzeti Agrárgazdasági Kamara) rendelte meg egy magánlaboratóriumtól — nem egy hatóság írta elő, és a tanulmány saját maga javasolja, hogy ne legyen utána folyamatos ellenőrzés<sup class="cite"><a href="#r6">6</a></sup>. 2026 nyarán a kormány maga is elismerte a bizonytalanságot, és — társadalmi nyomásra, nem tudományos indokkal — a vármegyék többségében leállította a rendszert<sup class="cite"><a href="#r7">7</a></sup><sup class="cite"><a href="#r8">8</a></sup>. Ez azonban politikai, bármikor visszavonható döntés, nem jogi garancia: célunk egy tartós, tudományos alapokon nyugvó szabályozás.</p>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<section class="tinted" id="kikvagyunk">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">02 &nbsp;·&nbsp; Kik vagyunk</span>
+      <h2>Aggódó állampolgárok, nem konteósok</h2>
+    </div>
+    <p class="lead-p">Aggódó állampolgárok, meteorológusok és klimatológusok, valamint az egzisztenciájukat féltő gazdálkodók csoportja.</p>
+    <p>Nem áll mögöttünk politikai párt. Nem vitatjuk a klímaváltozást, és nem állítjuk, hogy a jelenleg tapasztalható szárazságért kizárólag az időjárás-manipuláció lenne felelős. Ugyanakkor komoly aggodalommal tölt el minket, hogy olyan időjárás-manipulációs rendszerek működnek országunkban, amelyeknek az egészség- és környezetkárosító hatásáról — beleértve a túlzott felhasználás esetén a csapadékképződés hátráltatását is — semmilyen független hatástanulmány nem érhető el, és érdemi, folyamatos állami kontroll sem létezik.</p>
+
+    <div class="profiles">
+      <div class="profile">
+        <div class="who"><h3>Pártai Lucia</h3><span class="role">meteorológus</span></div>
+        <p>Az ELTE-n szerzett meteorológus diplomát, 1992 óta saját időjárás-előrejelző szolgáltatásának (EWS / Eumet.hu) vezetője. A NAK 2018-as országos rendszere előtt ő üzemeltette azt a kísérleti jégkármérséklő rendszert, amely a rollout prototípusaként szolgált.</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>Sallai Róbert Benedek</h3><span class="role">agrármérnök · polgármester</span></div>
+        <p>Túrkeve polgármestere, korábban az Országgyűlés fenntartható fejlődés bizottságának elnöke.</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>Deák Hajnalka</h3><span class="role">mozgalmi alapító</span></div>
+        <p>A Mezőhegyesi Agrár Zrt. vezérigazgatója, a kezdeményezés egyik alapítója.</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>Hajnal Zsolt</h3><span class="role">környezetmérnök</span></div>
+        <p>Környezetmérnökként szólal fel a kezdeményezés mellett; több nyilvános riportban és beszélgetésben is részt vett (l. lent, 05. pont).</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>Szuda Zoltán</h3><span class="role">környezetmérnök</span></div>
+        <p>Környezetmérnök, korábban az Agrárminisztériumnál (AM) dolgozott Budapesten.</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>Békéscsabai Raktárszövetkezet</h3><span class="role">aggódó gazdálkodói szervezet</span></div>
+        <p>Sokat dolgoztak a téma körüljárásán; a helyzetükről Adamcsik László tollából jelentek meg cikkek.</p>
+      </div>
+      <div class="profile">
+        <div class="who"><h3>+ te is lehetsz</h3><span class="role">gazdálkodó · szakértő · szomszéd</span></div>
+        <p>Ha generátor üzemel a közeled, gazdálkodóként érint a rendszer, vagy szakértőként tudsz hozzászólni — keress minket. A cél egy nyilvánosan ellenőrizhető, sokszereplős dosszié, nem egyetlen hang.</p>
+        <p style="margin-top:.2rem"><b>Addig is tehetsz egy lépést:</b> <a href="https://www.peticiok.com/peticio_a_jegkarmersekl_rendszer_jeger_leallitasaert" target="_blank" rel="noopener">írd alá a JÉGER leállítását kérő petíciót</a>.</p>
+      </div>
+    </div>
+
+    <div class="opennote">
+      <b>Nyitott kérdés a szerkesztőnek:</b> további profilokat (pl. konkrét, névvel vállalt gazdálkodói esetet) érdemes hozzáadni, mielőtt élesedik az oldal — jelenleg négy, teljeskörűen ellenőrzött szereplő szerepel (saját szavakkal/elsődleges forrásból megerősítve), plusz két további, Deák Hajnalka által megnevezett szereplő (Szuda Zoltán, Békéscsabai Raktárszövetkezet), akiknél a saját szavas/elsődleges forrásos megerősítés még hátravan.
+    </div>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<section id="zivatar">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">03 &nbsp;·&nbsp; Tudomány</span>
+      <h2>Hogyan keletkezik a zivatar és a jég?</h2>
+    </div>
+    <p class="lead-p">Mielőtt a beavatkozásról beszélünk, érdemes érteni, mibe avatkozunk bele — a csapadék nem egyszeri esemény, hanem egy folyamatosan újratáplálódó körforgás.</p>
+
+    <div class="method-head"><span class="method-num">1</span><h3>Csapadékképződés</h3></div>
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="Animált táj: a tengerből felszálló pára felhővé áll össze, a felhő a szárazföld fölé sodródik és esni kezd, majd az erdőkből és mezőkről felszálló párával új zivatarok táplálódnak.">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a9d3e6"/>
+              <stop offset="55%" stop-color="#cfe3d8"/>
+              <stop offset="100%" stop-color="#f3e3bd"/>
+            </linearGradient>
+            <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5fa3ab"/>
+              <stop offset="100%" stop-color="#276571"/>
+            </linearGradient>
+            <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffe3a1" stop-opacity=".55"/>
+              <stop offset="100%" stop-color="#ffe3a1" stop-opacity="0"/>
+            </radialGradient>
+            <g id="cloudShape">
+              <circle cx="-40" cy="10" r="26"/>
+              <circle cx="0" cy="-8" r="34"/>
+              <circle cx="42" cy="10" r="26"/>
+              <circle cx="-14" cy="20" r="28"/>
+              <circle cx="18" cy="20" r="28"/>
+            </g>
+            <g id="stormShape">
+              <circle cx="-36" cy="12" r="24"/>
+              <circle cx="0" cy="0" r="32"/>
+              <circle cx="38" cy="12" r="24"/>
+              <circle cx="-12" cy="20" r="26"/>
+              <circle cx="16" cy="20" r="26"/>
+              <circle cx="-4" cy="-32" r="26"/>
+              <circle cx="8" cy="-62" r="22"/>
+              <circle cx="-2" cy="-90" r="18"/>
+              <ellipse cx="8" cy="-112" rx="62" ry="16"/>
+              <ellipse cx="40" cy="-108" rx="36" ry="12"/>
+            </g>
+          </defs>
+
+          <!-- sky -->
+          <rect x="0" y="0" width="1000" height="330" fill="url(#skyGrad)"/>
+          <circle cx="820" cy="75" r="115" fill="url(#sunGlow)"/>
+          <circle cx="820" cy="75" r="30" fill="#ffd873"/>
+
+          <!-- mountains -->
+          <polygon points="330,300 430,175 505,235 585,145 685,225 765,165 865,235 1000,185 1000,300" fill="#93aeb2"/>
+          <polygon points="380,320 475,235 565,285 665,215 785,280 885,230 1000,265 1000,320" fill="#6f9482"/>
+
+          <!-- forest clusters -->
+          <g fill="#3f6b4c">
+            <circle cx="465" cy="255" r="18"/><circle cx="482" cy="242" r="22"/><circle cx="498" cy="255" r="18"/>
+          </g>
+          <g fill="#375d41">
+            <circle cx="655" cy="228" r="18"/><circle cx="672" cy="214" r="22"/><circle cx="688" cy="228" r="18"/>
+          </g>
+          <g fill="#3f6b4c">
+            <circle cx="875" cy="242" r="16"/><circle cx="890" cy="228" r="20"/><circle cx="905" cy="242" r="16"/>
+          </g>
+
+          <!-- fields -->
+          <rect x="385" y="320" width="615" height="140" fill="#b9c98a"/>
+          <rect x="385" y="410" width="615" height="50" fill="#a8bb78"/>
+
+          <!-- village -->
+          <rect x="410" y="325" width="22" height="20" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="406,325 421,308 436,325" fill="#c1652f"/>
+          <rect x="445" y="332" width="20" height="18" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="441,332 455,317 469,332" fill="#a8542a"/>
+          <rect x="475" y="328" width="20" height="19" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="471,328 485,312 499,328" fill="#c1652f"/>
+
+          <!-- sea -->
+          <polygon points="0,295 340,305 385,325 385,460 0,460" fill="url(#seaGrad)"/>
+          <path d="M40,320 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".45"/>
+          <path d="M20,347 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".35"/>
+          <path d="M150,302 q30,-8 60,0 q30,8 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".4"/>
+
+          <!-- sea evaporation -->
+          <circle cx="70" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-90px; animation-delay:0s"/>
+          <circle cx="150" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-4px;--dy:-95px; animation-delay:-.9s"/>
+          <circle cx="230" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-88px; animation-delay:-1.8s"/>
+          <circle cx="300" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-5px;--dy:-92px; animation-delay:-2.5s"/>
+
+          <!-- land evapotranspiration -->
+          <circle cx="480" cy="248" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-70px; animation-delay:-.4s"/>
+          <circle cx="670" cy="220" r="3" fill="#dcead9" class="rising" style="--dx:-4px;--dy:-74px; animation-delay:-1.6s"/>
+          <circle cx="890" cy="234" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-68px; animation-delay:-2.3s"/>
+
+          <!-- cloud A: born over the sea, drifts inland -->
+          <g transform="translate(190,175)">
+            <g class="cloud-drift">
+              <use href="#cloudShape" fill="#f7f5ef" opacity=".95"/>
+              <use href="#cloudShape" class="cloud-mature" fill="#aebac0"/>
+              <g class="cloud-rain">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- cloud B: staggered second wave -->
+          <g transform="translate(150,150)">
+            <g class="cloud-drift cB">
+              <use href="#cloudShape" fill="#f7f5ef" opacity=".95" transform="scale(.8)"/>
+              <use href="#cloudShape" class="cloud-mature cB" fill="#aebac0" transform="scale(.8)"/>
+              <g class="cloud-rain cB" transform="scale(.8)">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- cloud C: new storm, fed by land evapotranspiration above the forest -->
+          <g transform="translate(660,165)">
+            <g class="land-cloud">
+              <use href="#cloudShape" fill="#f7f5ef" opacity=".95"/>
+              <use href="#cloudShape" class="land-mature" fill="#9aa6ab"/>
+              <g class="land-rain">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- occasional real thunderstorm: drifts like the ordinary clouds, just taller and darker, with a small ice-cloudlet companion -->
+          <g transform="translate(140,225)">
+            <g class="storm-cell">
+              <use href="#stormShape" fill="#5c6b70"/>
+              <use href="#stormShape" class="storm-mature" fill="#414d51" transform="translate(4,-6)"/>
+              <g class="storm-rain">
+                <line x1="-34" y1="42" x2="-44" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-16" y1="44" x2="-24" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="2" y1="45" x2="0" y2="94" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="20" y1="44" x2="18" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="42" x2="40" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+              <polyline points="-4,12 10,42 -2,42 8,74 -4,74 6,106" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning"/>
+              <use href="#cloudShape" fill="#f4fafc" class="ice-cloudlet" transform="translate(-6,54) scale(.42)"/>
+            </g>
+          </g>
+
+          <!-- a second storm, born over the land above the forest — not every cumulonimbus starts over the sea -->
+          <g transform="translate(850,240)">
+            <g class="storm-cell-land">
+              <use href="#stormShape" fill="#5c6b70" transform="scale(.85)"/>
+              <use href="#stormShape" class="storm-mature-land" fill="#414d51" transform="translate(3,-5) scale(.85)"/>
+              <g class="storm-rain-land">
+                <line x1="-29" y1="36" x2="-37" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-14" y1="37" x2="-20" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="2" y1="38" x2="0" y2="80" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="17" y1="37" x2="15" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="32" y1="36" x2="34" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+              <polyline points="-3,10 8,36 -2,36 7,63 -3,63 5,90" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning-land"/>
+              <use href="#cloudShape" fill="#f4fafc" class="ice-cloudlet-land" transform="translate(-5,46) scale(.36)"/>
+            </g>
+          </g>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash"/>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash-land"/>
+        </svg>
+      </div>
+      <figcaption>
+        A ciklus sosem áll meg: (1) a tengerből pára száll fel a légkörbe, (2–3) ez felhővé sűrűsödik, ahogy hűl és kondenzálódik, (4) a felhő a szárazföld fölé sodródva esni kezd, (5) a lehullott csapadék egy részét a talaj és a növényzet elpárologtatja, új utánpótlást adva a levegőnek, (6) ebből a szárazföldi párából — jellemzően a domb- és erdős vidékek fölött — újabb zivatarok képződnek. Időnként a feláramlás elég erős ahhoz, hogy valódi, magasba tornyosuló zivatarfelhő (cumulonimbus) alakuljon ki — ez ugyanúgy vonul a táj fölött, mint a többi felhő, csak jóval magasabbra nő, villámlik, és erős esőt szór. Ilyenkor néha egy kicsi, fehéres folt is megjelenik mellette — ez a lentebb bemutatott jégképződés látható jele. A zivatar nem csak a tenger felől érkezhet: legalább ennyire gyakran a szárazföld, jellemzően a domb- és erdős vidékek fölött, a nappali felmelegedés hatására alakul ki helyben.
+      </figcaption>
+    </figure>
+
+    <div class="method-head"><span class="method-num">2</span><h3>Jégfelhők képződése</h3></div>
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="Ugyanaz a táj, de most azt mutatja, amikor a feláramlás olyan erős, hogy a felhő átlépi a fagypontot, és fehér, jégképző zivatarrá — hailstorm-cumulonimbusszá — nő.">
+          <defs>
+            <linearGradient id="skyGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a9d3e6"/>
+              <stop offset="55%" stop-color="#cfe3d8"/>
+              <stop offset="100%" stop-color="#f3e3bd"/>
+            </linearGradient>
+            <linearGradient id="seaGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5fa3ab"/>
+              <stop offset="100%" stop-color="#276571"/>
+            </linearGradient>
+            <radialGradient id="sunGlow2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffe3a1" stop-opacity=".55"/>
+              <stop offset="100%" stop-color="#ffe3a1" stop-opacity="0"/>
+            </radialGradient>
+            <g id="cloudShape2">
+              <circle cx="-40" cy="10" r="26"/>
+              <circle cx="0" cy="-8" r="34"/>
+              <circle cx="42" cy="10" r="26"/>
+              <circle cx="-14" cy="20" r="28"/>
+              <circle cx="18" cy="20" r="28"/>
+            </g>
+            <g id="stormShape2">
+              <circle cx="-36" cy="12" r="24"/>
+              <circle cx="0" cy="0" r="32"/>
+              <circle cx="38" cy="12" r="24"/>
+              <circle cx="-12" cy="20" r="26"/>
+              <circle cx="16" cy="20" r="26"/>
+              <circle cx="-4" cy="-32" r="26"/>
+              <circle cx="8" cy="-62" r="22"/>
+              <circle cx="-2" cy="-90" r="18"/>
+              <ellipse cx="8" cy="-112" rx="62" ry="16"/>
+              <ellipse cx="40" cy="-108" rx="36" ry="12"/>
+            </g>
+          </defs>
+
+          <!-- sky -->
+          <rect x="0" y="0" width="1000" height="330" fill="url(#skyGrad2)"/>
+          <circle cx="820" cy="75" r="115" fill="url(#sunGlow2)"/>
+          <circle cx="820" cy="75" r="30" fill="#ffd873"/>
+
+          <!-- mountains -->
+          <polygon points="330,300 430,175 505,235 585,145 685,225 765,165 865,235 1000,185 1000,300" fill="#93aeb2"/>
+          <polygon points="380,320 475,235 565,285 665,215 785,280 885,230 1000,265 1000,320" fill="#6f9482"/>
+
+          <!-- freezing level: the threshold that separates ordinary clouds from hail-forming ones -->
+          <line x1="40" y1="115" x2="960" y2="115" stroke="#5c6b70" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>
+          <text x="900" y="109" class="lbl" fill="#4a5559" text-anchor="end" opacity=".75">FAGYPONT · 0°C</text>
+
+          <!-- forest clusters -->
+          <g fill="#3f6b4c">
+            <circle cx="465" cy="255" r="18"/><circle cx="482" cy="242" r="22"/><circle cx="498" cy="255" r="18"/>
+          </g>
+          <g fill="#375d41">
+            <circle cx="655" cy="228" r="18"/><circle cx="672" cy="214" r="22"/><circle cx="688" cy="228" r="18"/>
+          </g>
+          <g fill="#3f6b4c">
+            <circle cx="875" cy="242" r="16"/><circle cx="890" cy="228" r="20"/><circle cx="905" cy="242" r="16"/>
+          </g>
+
+          <!-- fields -->
+          <rect x="385" y="320" width="615" height="140" fill="#b9c98a"/>
+          <rect x="385" y="410" width="615" height="50" fill="#a8bb78"/>
+
+          <!-- village -->
+          <rect x="410" y="325" width="22" height="20" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="406,325 421,308 436,325" fill="#c1652f"/>
+          <rect x="445" y="332" width="20" height="18" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="441,332 455,317 469,332" fill="#a8542a"/>
+          <rect x="475" y="328" width="20" height="19" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="471,328 485,312 499,328" fill="#c1652f"/>
+
+          <!-- sea -->
+          <polygon points="0,295 340,305 385,325 385,460 0,460" fill="url(#seaGrad2)"/>
+          <path d="M40,320 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".45"/>
+          <path d="M20,347 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".35"/>
+          <path d="M150,302 q30,-8 60,0 q30,8 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".4"/>
+
+          <!-- sea evaporation -->
+          <circle cx="70" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-90px; animation-delay:0s"/>
+          <circle cx="150" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-4px;--dy:-95px; animation-delay:-.9s"/>
+          <circle cx="230" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-88px; animation-delay:-1.8s"/>
+          <circle cx="300" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-5px;--dy:-92px; animation-delay:-2.5s"/>
+
+          <!-- land evapotranspiration -->
+          <circle cx="480" cy="248" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-70px; animation-delay:-.4s"/>
+          <circle cx="670" cy="220" r="3" fill="#dcead9" class="rising" style="--dx:-4px;--dy:-74px; animation-delay:-1.6s"/>
+          <circle cx="890" cy="234" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-68px; animation-delay:-2.3s"/>
+
+          <!-- cloud A: born over the sea, drifts inland -->
+          <g transform="translate(190,175)">
+            <g class="cloud-drift">
+              <use href="#cloudShape2" fill="#f7f5ef" opacity=".95"/>
+              <use href="#cloudShape2" class="cloud-mature" fill="#aebac0"/>
+              <g class="cloud-rain">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- cloud B: staggered second wave -->
+          <g transform="translate(150,150)">
+            <g class="cloud-drift cB">
+              <use href="#cloudShape2" fill="#f7f5ef" opacity=".95" transform="scale(.8)"/>
+              <use href="#cloudShape2" class="cloud-mature cB" fill="#aebac0" transform="scale(.8)"/>
+              <g class="cloud-rain cB" transform="scale(.8)">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- ordinary land cloud, stays below the freezing level -->
+          <g transform="translate(700,190)">
+            <g class="land-cloud">
+              <use href="#cloudShape2" fill="#f7f5ef" opacity=".95"/>
+              <use href="#cloudShape2" class="land-mature" fill="#9aa6ab"/>
+              <g class="land-rain">
+                <line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- the storm: drifts like the ordinary clouds, taller and darker, its tower punching through the freezing level -->
+          <g transform="translate(100,225)">
+            <g class="storm-cell">
+              <use href="#stormShape2" fill="#5c6b70"/>
+              <use href="#stormShape2" class="storm-mature" fill="#414d51" transform="translate(4,-6)"/>
+              <g class="storm-rain">
+                <line x1="-34" y1="42" x2="-44" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-16" y1="44" x2="-24" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="2" y1="45" x2="0" y2="94" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="20" y1="44" x2="18" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="38" y1="42" x2="40" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+              <polyline points="-4,12 10,42 -2,42 8,74 -4,74 6,106" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning"/>
+
+              <!-- the small ice cloudlet: a companion phenomenon, not the whole storm, appearing where the tower crosses the freezing line -->
+              <use href="#cloudShape2" fill="#f4fafc" class="ice-cloudlet" transform="translate(6,-108) scale(.42)"/>
+              <g class="ice-label">
+                <text x="6" y="-148" class="lbl-lg" text-anchor="middle" fill="#2f3e42">JÉGFELHŐ</text>
+                <text x="6" y="-134" class="lbl" text-anchor="middle" fill="#4a5559">a torony átlépte a fagypontot</text>
+              </g>
+            </g>
+          </g>
+
+          <!-- a second storm, born over the land above the forest — hail doesn't care whether the storm started over sea or land -->
+          <g transform="translate(830,245)">
+            <g class="storm-cell-land">
+              <use href="#stormShape2" fill="#5c6b70" transform="scale(.85)"/>
+              <use href="#stormShape2" class="storm-mature-land" fill="#414d51" transform="translate(3,-5) scale(.85)"/>
+              <g class="storm-rain-land">
+                <line x1="-29" y1="36" x2="-37" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="-14" y1="37" x2="-20" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="2" y1="38" x2="0" y2="80" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="17" y1="37" x2="15" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+                <line x1="32" y1="36" x2="34" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/>
+              </g>
+              <polyline points="-3,10 8,36 -2,36 7,63 -3,63 5,90" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning-land"/>
+              <use href="#cloudShape2" fill="#f4fafc" class="ice-cloudlet-land" transform="translate(5,-93) scale(.36)"/>
+              <g class="ice-label-land">
+                <text x="5" y="-123" class="lbl" text-anchor="middle" fill="#4a5559">itt is: fagypont fölött</text>
+              </g>
+            </g>
+          </g>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash"/>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash-land"/>
+        </svg>
+      </div>
+      <figcaption>
+        Ugyanaz a táj, ugyanaz a körforgás, ugyanaz a vonuló zivatarfelhő — csak most a fagypontra (0°C) figyelünk. A cumulonimbus maga nem jég, hanem sötét, esőt adó felhő, mint bármelyik másik zivatar. Amikor a tornya elég magasra nő ahhoz, hogy áttörje a fagypontot, a benne lévő túlhűlt vízcseppek jégkristályokká fagynak — ennek időnként látható kísérőjelensége egy kicsi, fehéres <b>jégfelhő-folt</b> a torony tetején. Minél tovább marad ott, annál több réteget nőhet a jégszem, mielőtt kihullik. Ez a folt kizárólag a magasba tornyosuló cumulonimbuszban jelenik meg — a szelíd, alacsony esőfelhők fizikailag nem tudnak elég magasra jutni a fagypont fölé, ezért azoknál sosem látjuk. Az sem számít, honnan indult a vihar: a tenger felől érkező és a szárazföld fölött helyben kialakuló zivatar egyaránt termelhet jeget, ha elég erős a feláramlása.
+        <span class="src-note">Forrás: NOAA/NSSL — Hail Basics · NOAA JetStream — Thunderstorm Hazards: Hail<sup class="cite"><a href="#r9">9</a></sup></span>
+      </figcaption>
+    </figure>
+
+    <p>Fontos különbség: egy „sima” zivatarban keletkező jégeső más, mint egy szupercellában — egy hosszan forgó, órákig fennmaradó viharrendszerben — kialakuló, nagyméretű jégverés. Egyik ismert felhőmagvasítási módszertől sem várható el, hogy az utóbbi ellen hatásos legyen.</p>
+  </div>
+</section>
+
+<section class="tinted" id="modszerek">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">04 &nbsp;·&nbsp; Technológia</span>
+      <h2>Hogyan működik a JÉGER — és mi mást csinálnak máshol?</h2>
+    </div>
+    <p class="lead-p">A talajgenerátoros módszer csak az egyik a világon használt eljárás — három, valóban alkalmazott technológia, mindegyik ugyanazt akarja elérni (ezüst-jodidot juttatni a felhő túlhűlt zónájába), csak más-más úton.</p>
+
+    <div class="method-head"><span class="method-num">1</span><h3>Talajgenerátor</h3></div>
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="A talajgenerátoros védekezés ugyanabban a tájban: a jégfelhő megjelenésekor egy talajgenerátor füstje elér a felhőig, és a folt zsugorodva eltűnik.">
+          <defs>
+            <linearGradient id="skyGrad3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a9d3e6"/><stop offset="55%" stop-color="#cfe3d8"/><stop offset="100%" stop-color="#f3e3bd"/></linearGradient>
+            <linearGradient id="seaGrad3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5fa3ab"/><stop offset="100%" stop-color="#276571"/></linearGradient>
+            <radialGradient id="sunGlow3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffe3a1" stop-opacity=".55"/><stop offset="100%" stop-color="#ffe3a1" stop-opacity="0"/></radialGradient>
+            <g id="cloudShape3"><circle cx="-40" cy="10" r="26"/><circle cx="0" cy="-8" r="34"/><circle cx="42" cy="10" r="26"/><circle cx="-14" cy="20" r="28"/><circle cx="18" cy="20" r="28"/></g>
+            <g id="stormShape3"><circle cx="-36" cy="12" r="24"/><circle cx="0" cy="0" r="32"/><circle cx="38" cy="12" r="24"/><circle cx="-12" cy="20" r="26"/><circle cx="16" cy="20" r="26"/><circle cx="-4" cy="-32" r="26"/><circle cx="8" cy="-62" r="22"/><circle cx="-2" cy="-90" r="18"/><ellipse cx="8" cy="-112" rx="62" ry="16"/><ellipse cx="40" cy="-108" rx="36" ry="12"/></g>
+          </defs>
+          <rect x="0" y="0" width="1000" height="330" fill="url(#skyGrad3)"/>
+          <circle cx="820" cy="75" r="115" fill="url(#sunGlow3)"/>
+          <circle cx="820" cy="75" r="30" fill="#ffd873"/>
+          <polygon points="330,300 430,175 505,235 585,145 685,225 765,165 865,235 1000,185 1000,300" fill="#93aeb2"/>
+          <polygon points="380,320 475,235 565,285 665,215 785,280 885,230 1000,265 1000,320" fill="#6f9482"/>
+          <line x1="40" y1="115" x2="960" y2="115" stroke="#5c6b70" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>
+          <text x="900" y="109" class="lbl" fill="#4a5559" text-anchor="end" opacity=".75">FAGYPONT · 0°C</text>
+          <g fill="#3f6b4c"><circle cx="465" cy="255" r="18"/><circle cx="482" cy="242" r="22"/><circle cx="498" cy="255" r="18"/></g>
+          <g fill="#375d41"><circle cx="655" cy="228" r="18"/><circle cx="672" cy="214" r="22"/><circle cx="688" cy="228" r="18"/></g>
+          <g fill="#3f6b4c"><circle cx="875" cy="242" r="16"/><circle cx="890" cy="228" r="20"/><circle cx="905" cy="242" r="16"/></g>
+          <rect x="385" y="320" width="615" height="140" fill="#b9c98a"/>
+          <rect x="385" y="410" width="615" height="50" fill="#a8bb78"/>
+          <rect x="410" y="325" width="22" height="20" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="406,325 421,308 436,325" fill="#c1652f"/>
+          <rect x="445" y="332" width="20" height="18" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="441,332 455,317 469,332" fill="#a8542a"/>
+          <rect x="475" y="328" width="20" height="19" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="471,328 485,312 499,328" fill="#c1652f"/>
+          <polygon points="0,295 340,305 385,325 385,460 0,460" fill="url(#seaGrad3)"/>
+          <path d="M40,320 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".45"/>
+          <path d="M20,347 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".35"/>
+          <path d="M150,302 q30,-8 60,0 q30,8 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".4"/>
+          <circle cx="70" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-90px; animation-delay:0s"/>
+          <circle cx="150" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-4px;--dy:-95px; animation-delay:-.9s"/>
+          <circle cx="230" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-88px; animation-delay:-1.8s"/>
+          <circle cx="300" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-5px;--dy:-92px; animation-delay:-2.5s"/>
+          <circle cx="480" cy="248" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-70px; animation-delay:-.4s"/>
+          <circle cx="670" cy="220" r="3" fill="#dcead9" class="rising" style="--dx:-4px;--dy:-74px; animation-delay:-1.6s"/>
+          <circle cx="890" cy="234" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-68px; animation-delay:-2.3s"/>
+
+          <g transform="translate(190,175)"><g class="cloud-drift"><use href="#cloudShape3" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape3" class="cloud-mature" fill="#aebac0"/><g class="cloud-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(150,150)"><g class="cloud-drift cB"><use href="#cloudShape3" fill="#f7f5ef" opacity=".95" transform="scale(.8)"/><use href="#cloudShape3" class="cloud-mature cB" fill="#aebac0" transform="scale(.8)"/><g class="cloud-rain cB" transform="scale(.8)"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(700,190)"><g class="land-cloud"><use href="#cloudShape3" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape3" class="land-mature" fill="#9aa6ab"/><g class="land-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+
+          <g transform="translate(100,225)">
+            <g class="storm-cell">
+              <use href="#stormShape3" fill="#5c6b70"/>
+              <use href="#stormShape3" class="storm-mature" fill="#414d51" transform="translate(4,-6)"/>
+              <g class="storm-rain"><line x1="-34" y1="42" x2="-44" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-16" y1="44" x2="-24" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="45" x2="0" y2="94" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="20" y1="44" x2="18" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="42" x2="40" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-4,12 10,42 -2,42 8,74 -4,74 6,106" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning"/>
+              <use href="#cloudShape3" fill="#f4fafc" class="ice-cloudlet-v" transform="translate(6,-108) scale(.42)"/>
+              <g class="ice-label-v"><text x="6" y="-148" class="lbl-lg" text-anchor="middle" fill="#2f3e42">JÉGFELHŐ</text></g>
+              <g transform="translate(6,-108)"><g class="impact-burst-v"><circle r="15" fill="#fff6d0"/><circle cx="-16" cy="6" r="7" fill="#fff6d0"/><circle cx="16" cy="6" r="7" fill="#fff6d0"/><circle cx="0" cy="-16" r="7" fill="#fff6d0"/></g></g>
+            </g>
+          </g>
+          <g transform="translate(830,245)">
+            <g class="storm-cell-land">
+              <use href="#stormShape3" fill="#5c6b70" transform="scale(.85)"/>
+              <use href="#stormShape3" class="storm-mature-land" fill="#414d51" transform="translate(3,-5) scale(.85)"/>
+              <g class="storm-rain-land"><line x1="-29" y1="36" x2="-37" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-14" y1="37" x2="-20" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="38" x2="0" y2="80" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="17" y1="37" x2="15" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="32" y1="36" x2="34" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-3,10 8,36 -2,36 7,63 -3,63 5,90" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning-land"/>
+              <use href="#cloudShape3" fill="#f4fafc" class="ice-cloudlet-land" transform="translate(5,-93) scale(.36)"/>
+              <g class="ice-label-land"><text x="5" y="-123" class="lbl" text-anchor="middle" fill="#4a5559">itt is: fagypont fölött</text></g>
+            </g>
+          </g>
+
+          <!-- the one defender: a ground generator, inland past the village, continuously puffing orange silver-iodide vapour -->
+          <g transform="translate(540,320)">
+            <rect x="-8" y="-16" width="16" height="16" rx="2" fill="#7d8a86" stroke="#4a5559" stroke-width="1"/>
+            <rect x="-3" y="-24" width="6" height="10" rx="1" fill="#7d8a86" stroke="#4a5559" stroke-width="1"/>
+            <circle cx="0" cy="-24" r="2.5" fill="#e0873d"/>
+            <circle cx="0" cy="-24" r="3.2" class="gen-mini-smoke" fill="#e0873d" style="--dx:-35px;--dy:-195px; animation-delay:0s"/>
+            <circle cx="0" cy="-24" r="3.2" class="gen-mini-smoke" fill="#e0873d" style="--dx:-35px;--dy:-195px; animation-delay:-1.1s"/>
+            <circle cx="0" cy="-24" r="3.2" class="gen-mini-smoke" fill="#e0873d" style="--dx:-35px;--dy:-195px; animation-delay:-2.3s"/>
+            <text x="0" y="8" class="lbl dim" text-anchor="middle">TALAJGENERÁTOR</text>
+          </g>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash"/>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash-land"/>
+        </svg>
+      </div>
+      <figcaption>
+        <b>Elve:</b> a földön álló generátor folyamatosan éget egy ezüst-jodidos acetonoldatot; a füstként keletkező részecskéket nem a gép, hanem maga a zivatar feláramlása viszi fel a felhőbe — csak akkor hatásos, ha épp a felhő útjában, a feláramlás alatt áll. Amikor eléri a jégfelhőt, az zsugorodva eltűnik.<br>
+        <b>Hol használják:</b> <b>Magyarországon 986 db üzemel a NAK üzemeltetésében</b>, plusz ismeretlen számú, magánkézben lévő civil rendszer — ez a legnagyobb, egységes, központi irányítású földi generátoros hálózat Európában. Franciaországban (ANELFA) összesen több, 1170 generátor működik, de azt ~30 független helyi egyesület üzemelteti, és négyzetkilométerre vetítve a sűrűsége <b>kb. az ötöde</b> a magyarnak (0,0021 db/km² a magyar 0,0106 db/km²-hez képest). Spanyolországban (Madrid tartomány) mindössze 24 db van. A legolcsóbb, de legkevésbé célzott módszer — nem lehet odairányítani, csak ott lehet felállítani, ahol a zivatarok valószínűleg elhaladnak.
+      </figcaption>
+    </figure>
+
+    <div class="method-head"><span class="method-num">2</span><h3>Rakéta</h3></div>
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="A rakétás védekezés ugyanabban a tájban: a jégfelhő megjelenésekor egy kilőtt rakéta eléri a felhőt, és a folt zsugorodva eltűnik.">
+          <defs>
+            <linearGradient id="skyGrad4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a9d3e6"/><stop offset="55%" stop-color="#cfe3d8"/><stop offset="100%" stop-color="#f3e3bd"/></linearGradient>
+            <linearGradient id="seaGrad4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5fa3ab"/><stop offset="100%" stop-color="#276571"/></linearGradient>
+            <radialGradient id="sunGlow4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffe3a1" stop-opacity=".55"/><stop offset="100%" stop-color="#ffe3a1" stop-opacity="0"/></radialGradient>
+            <g id="cloudShape4"><circle cx="-40" cy="10" r="26"/><circle cx="0" cy="-8" r="34"/><circle cx="42" cy="10" r="26"/><circle cx="-14" cy="20" r="28"/><circle cx="18" cy="20" r="28"/></g>
+            <g id="stormShape4"><circle cx="-36" cy="12" r="24"/><circle cx="0" cy="0" r="32"/><circle cx="38" cy="12" r="24"/><circle cx="-12" cy="20" r="26"/><circle cx="16" cy="20" r="26"/><circle cx="-4" cy="-32" r="26"/><circle cx="8" cy="-62" r="22"/><circle cx="-2" cy="-90" r="18"/><ellipse cx="8" cy="-112" rx="62" ry="16"/><ellipse cx="40" cy="-108" rx="36" ry="12"/></g>
+          </defs>
+          <rect x="0" y="0" width="1000" height="330" fill="url(#skyGrad4)"/>
+          <circle cx="820" cy="75" r="115" fill="url(#sunGlow4)"/>
+          <circle cx="820" cy="75" r="30" fill="#ffd873"/>
+          <polygon points="330,300 430,175 505,235 585,145 685,225 765,165 865,235 1000,185 1000,300" fill="#93aeb2"/>
+          <polygon points="380,320 475,235 565,285 665,215 785,280 885,230 1000,265 1000,320" fill="#6f9482"/>
+          <line x1="40" y1="115" x2="960" y2="115" stroke="#5c6b70" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>
+          <text x="900" y="109" class="lbl" fill="#4a5559" text-anchor="end" opacity=".75">FAGYPONT · 0°C</text>
+          <g fill="#3f6b4c"><circle cx="465" cy="255" r="18"/><circle cx="482" cy="242" r="22"/><circle cx="498" cy="255" r="18"/></g>
+          <g fill="#375d41"><circle cx="655" cy="228" r="18"/><circle cx="672" cy="214" r="22"/><circle cx="688" cy="228" r="18"/></g>
+          <g fill="#3f6b4c"><circle cx="875" cy="242" r="16"/><circle cx="890" cy="228" r="20"/><circle cx="905" cy="242" r="16"/></g>
+          <rect x="385" y="320" width="615" height="140" fill="#b9c98a"/>
+          <rect x="385" y="410" width="615" height="50" fill="#a8bb78"/>
+          <rect x="410" y="325" width="22" height="20" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="406,325 421,308 436,325" fill="#c1652f"/>
+          <rect x="445" y="332" width="20" height="18" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="441,332 455,317 469,332" fill="#a8542a"/>
+          <rect x="475" y="328" width="20" height="19" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="471,328 485,312 499,328" fill="#c1652f"/>
+          <polygon points="0,295 340,305 385,325 385,460 0,460" fill="url(#seaGrad4)"/>
+          <path d="M40,320 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".45"/>
+          <path d="M20,347 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".35"/>
+          <path d="M150,302 q30,-8 60,0 q30,8 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".4"/>
+          <circle cx="70" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-90px; animation-delay:0s"/>
+          <circle cx="150" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-4px;--dy:-95px; animation-delay:-.9s"/>
+          <circle cx="230" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-88px; animation-delay:-1.8s"/>
+          <circle cx="300" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-5px;--dy:-92px; animation-delay:-2.5s"/>
+          <circle cx="480" cy="248" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-70px; animation-delay:-.4s"/>
+          <circle cx="670" cy="220" r="3" fill="#dcead9" class="rising" style="--dx:-4px;--dy:-74px; animation-delay:-1.6s"/>
+          <circle cx="890" cy="234" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-68px; animation-delay:-2.3s"/>
+
+          <g transform="translate(190,175)"><g class="cloud-drift"><use href="#cloudShape4" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape4" class="cloud-mature" fill="#aebac0"/><g class="cloud-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(150,150)"><g class="cloud-drift cB"><use href="#cloudShape4" fill="#f7f5ef" opacity=".95" transform="scale(.8)"/><use href="#cloudShape4" class="cloud-mature cB" fill="#aebac0" transform="scale(.8)"/><g class="cloud-rain cB" transform="scale(.8)"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(700,190)"><g class="land-cloud"><use href="#cloudShape4" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape4" class="land-mature" fill="#9aa6ab"/><g class="land-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+
+          <g transform="translate(100,225)">
+            <g class="storm-cell">
+              <use href="#stormShape4" fill="#5c6b70"/>
+              <use href="#stormShape4" class="storm-mature" fill="#414d51" transform="translate(4,-6)"/>
+              <g class="storm-rain"><line x1="-34" y1="42" x2="-44" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-16" y1="44" x2="-24" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="45" x2="0" y2="94" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="20" y1="44" x2="18" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="42" x2="40" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-4,12 10,42 -2,42 8,74 -4,74 6,106" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning"/>
+              <use href="#cloudShape4" fill="#f4fafc" class="ice-cloudlet-v" transform="translate(6,-108) scale(.42)"/>
+              <g class="ice-label-v"><text x="6" y="-148" class="lbl-lg" text-anchor="middle" fill="#2f3e42">JÉGFELHŐ</text></g>
+              <g transform="translate(6,-108)"><g class="impact-burst-v"><circle r="15" fill="#fff6d0"/><circle cx="-16" cy="6" r="7" fill="#fff6d0"/><circle cx="16" cy="6" r="7" fill="#fff6d0"/><circle cx="0" cy="-16" r="7" fill="#fff6d0"/></g></g>
+            </g>
+          </g>
+          <g transform="translate(830,245)">
+            <g class="storm-cell-land">
+              <use href="#stormShape4" fill="#5c6b70" transform="scale(.85)"/>
+              <use href="#stormShape4" class="storm-mature-land" fill="#414d51" transform="translate(3,-5) scale(.85)"/>
+              <g class="storm-rain-land"><line x1="-29" y1="36" x2="-37" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-14" y1="37" x2="-20" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="38" x2="0" y2="80" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="17" y1="37" x2="15" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="32" y1="36" x2="34" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-3,10 8,36 -2,36 7,63 -3,63 5,90" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning-land"/>
+              <use href="#cloudShape4" fill="#f4fafc" class="ice-cloudlet-v-land" transform="translate(5,-93) scale(.36)"/>
+              <use href="#cloudShape4" fill="#f4fafc" class="ice-cloudlet-land" transform="translate(5,-93) scale(.36)"/>
+              <g class="ice-label-land"><text x="5" y="-123" class="lbl" text-anchor="middle" fill="#4a5559">itt is: fagypont fölött</text></g>
+            </g>
+          </g>
+
+          <!-- the one defender: a rocket launch pad, well inland — waits, then aims and fires only when the ice cloudlet appears -->
+          <g transform="translate(580,320)">
+            <rect x="-7" y="-8" width="14" height="6" rx="1" fill="#7d8a86" stroke="#4a5559" stroke-width="1"/>
+            <text x="0" y="18" class="lbl dim" text-anchor="middle">KILÖVŐÁLLÁS</text>
+            <g transform="translate(0,-8)">
+              <rect x="-2" y="-195" width="4" height="187" class="rocket-mini-trail" fill="#c9d3d6" transform="rotate(-35)"/>
+              <g class="rocket-mini"><polygon points="0,-14 -5,-2 5,-2" fill="#c1652f"/><rect x="-5" y="-2" width="10" height="10" fill="#e8ecec"/></g>
+            </g>
+          </g>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash"/>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash-land"/>
+        </svg>
+      </div>
+      <figcaption>
+        <b>Elve:</b> egy földi kilövőállásból indított rakéta másodpercek alatt eléri a felhő magasságát, és ott, közvetlenül a túlhűlt zónában szórja szét az ezüst-jodidot — a leggyorsabb reagálású módszer, mert nem kell megvárni, míg a füst feláramlással jut fel. Amikor eléri a jégfelhőt, az zsugorodva eltűnik.<br>
+        <b>Hol használják:</b> Szerbia országos hálózatának fő eszköze (~1340 kilövőállomás); Oroszország kaukázusi térségében ipari méretekben, 1967 óta; és Svájcban is ezt használták történelmileg, mielőtt a mai repülőgépes módszerre váltottak. Kilövésenként külön hatóanyag-töltetet igényel.
+      </figcaption>
+    </figure>
+
+    <div class="method-head"><span class="method-num">3</span><h3>Repülőgép</h3></div>
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="A repülőgépes védekezés ugyanabban a tájban: a jégfelhő megjelenésekor egy repülőgép elhalad mellette, és a folt zsugorodva eltűnik.">
+          <defs>
+            <linearGradient id="skyGrad5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a9d3e6"/><stop offset="55%" stop-color="#cfe3d8"/><stop offset="100%" stop-color="#f3e3bd"/></linearGradient>
+            <linearGradient id="seaGrad5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5fa3ab"/><stop offset="100%" stop-color="#276571"/></linearGradient>
+            <radialGradient id="sunGlow5" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffe3a1" stop-opacity=".55"/><stop offset="100%" stop-color="#ffe3a1" stop-opacity="0"/></radialGradient>
+            <g id="cloudShape5"><circle cx="-40" cy="10" r="26"/><circle cx="0" cy="-8" r="34"/><circle cx="42" cy="10" r="26"/><circle cx="-14" cy="20" r="28"/><circle cx="18" cy="20" r="28"/></g>
+            <g id="stormShape5"><circle cx="-36" cy="12" r="24"/><circle cx="0" cy="0" r="32"/><circle cx="38" cy="12" r="24"/><circle cx="-12" cy="20" r="26"/><circle cx="16" cy="20" r="26"/><circle cx="-4" cy="-32" r="26"/><circle cx="8" cy="-62" r="22"/><circle cx="-2" cy="-90" r="18"/><ellipse cx="8" cy="-112" rx="62" ry="16"/><ellipse cx="40" cy="-108" rx="36" ry="12"/></g>
+          </defs>
+          <rect x="0" y="0" width="1000" height="330" fill="url(#skyGrad5)"/>
+          <circle cx="820" cy="75" r="115" fill="url(#sunGlow5)"/>
+          <circle cx="820" cy="75" r="30" fill="#ffd873"/>
+          <polygon points="330,300 430,175 505,235 585,145 685,225 765,165 865,235 1000,185 1000,300" fill="#93aeb2"/>
+          <polygon points="380,320 475,235 565,285 665,215 785,280 885,230 1000,265 1000,320" fill="#6f9482"/>
+          <line x1="40" y1="115" x2="960" y2="115" stroke="#5c6b70" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>
+          <text x="900" y="109" class="lbl" fill="#4a5559" text-anchor="end" opacity=".75">FAGYPONT · 0°C</text>
+          <g fill="#3f6b4c"><circle cx="465" cy="255" r="18"/><circle cx="482" cy="242" r="22"/><circle cx="498" cy="255" r="18"/></g>
+          <g fill="#375d41"><circle cx="655" cy="228" r="18"/><circle cx="672" cy="214" r="22"/><circle cx="688" cy="228" r="18"/></g>
+          <g fill="#3f6b4c"><circle cx="875" cy="242" r="16"/><circle cx="890" cy="228" r="20"/><circle cx="905" cy="242" r="16"/></g>
+          <rect x="385" y="320" width="615" height="140" fill="#b9c98a"/>
+          <rect x="385" y="410" width="615" height="50" fill="#a8bb78"/>
+          <rect x="410" y="325" width="22" height="20" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="406,325 421,308 436,325" fill="#c1652f"/>
+          <rect x="445" y="332" width="20" height="18" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="441,332 455,317 469,332" fill="#a8542a"/>
+          <rect x="475" y="328" width="20" height="19" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1"/>
+          <polygon points="471,328 485,312 499,328" fill="#c1652f"/>
+          <polygon points="0,295 340,305 385,325 385,460 0,460" fill="url(#seaGrad5)"/>
+          <path d="M40,320 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".45"/>
+          <path d="M20,347 q30,-9 60,0 q30,9 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".35"/>
+          <path d="M150,302 q30,-8 60,0 q30,8 60,0" stroke="#bfe3e6" stroke-width="2" fill="none" opacity=".4"/>
+          <circle cx="70" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-90px; animation-delay:0s"/>
+          <circle cx="150" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-4px;--dy:-95px; animation-delay:-.9s"/>
+          <circle cx="230" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:6px;--dy:-88px; animation-delay:-1.8s"/>
+          <circle cx="300" cy="292" r="3.5" fill="#d9ecec" class="rising" style="--dx:-5px;--dy:-92px; animation-delay:-2.5s"/>
+          <circle cx="480" cy="248" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-70px; animation-delay:-.4s"/>
+          <circle cx="670" cy="220" r="3" fill="#dcead9" class="rising" style="--dx:-4px;--dy:-74px; animation-delay:-1.6s"/>
+          <circle cx="890" cy="234" r="3" fill="#dcead9" class="rising" style="--dx:4px;--dy:-68px; animation-delay:-2.3s"/>
+
+          <g transform="translate(190,175)"><g class="cloud-drift"><use href="#cloudShape5" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape5" class="cloud-mature" fill="#aebac0"/><g class="cloud-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(150,150)"><g class="cloud-drift cB"><use href="#cloudShape5" fill="#f7f5ef" opacity=".95" transform="scale(.8)"/><use href="#cloudShape5" class="cloud-mature cB" fill="#aebac0" transform="scale(.8)"/><g class="cloud-rain cB" transform="scale(.8)"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+          <g transform="translate(700,190)"><g class="land-cloud"><use href="#cloudShape5" fill="#f7f5ef" opacity=".95"/><use href="#cloudShape5" class="land-mature" fill="#9aa6ab"/><g class="land-rain"><line x1="-30" y1="35" x2="-38" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-8" y1="38" x2="-14" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="16" y1="38" x2="10" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="35" x2="34" y2="72" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g></g></g>
+
+          <g transform="translate(100,225)">
+            <g class="storm-cell">
+              <use href="#stormShape5" fill="#5c6b70"/>
+              <use href="#stormShape5" class="storm-mature" fill="#414d51" transform="translate(4,-6)"/>
+              <g class="storm-rain"><line x1="-34" y1="42" x2="-44" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-16" y1="44" x2="-24" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="45" x2="0" y2="94" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="20" y1="44" x2="18" y2="92" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="38" y1="42" x2="40" y2="86" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-4,12 10,42 -2,42 8,74 -4,74 6,106" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning"/>
+              <use href="#cloudShape5" fill="#f4fafc" class="ice-cloudlet-v" transform="translate(6,-108) scale(.42)"/>
+              <g class="ice-label-v"><text x="6" y="-148" class="lbl-lg" text-anchor="middle" fill="#2f3e42">JÉGFELHŐ</text></g>
+              <g transform="translate(6,-108)"><g class="impact-burst-v"><circle r="15" fill="#fff6d0"/><circle cx="-16" cy="6" r="7" fill="#fff6d0"/><circle cx="16" cy="6" r="7" fill="#fff6d0"/><circle cx="0" cy="-16" r="7" fill="#fff6d0"/></g></g>
+            </g>
+          </g>
+          <g transform="translate(830,245)">
+            <g class="storm-cell-land">
+              <use href="#stormShape5" fill="#5c6b70" transform="scale(.85)"/>
+              <use href="#stormShape5" class="storm-mature-land" fill="#414d51" transform="translate(3,-5) scale(.85)"/>
+              <g class="storm-rain-land"><line x1="-29" y1="36" x2="-37" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="-14" y1="37" x2="-20" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="2" y1="38" x2="0" y2="80" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="17" y1="37" x2="15" y2="78" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/><line x1="32" y1="36" x2="34" y2="73" stroke="#7fa8c9" stroke-width="2.5" stroke-dasharray="4 7"/></g>
+              <polyline points="-3,10 8,36 -2,36 7,63 -3,63 5,90" fill="none" stroke="#fff6d0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" class="storm-lightning-land"/>
+              <use href="#cloudShape5" fill="#f4fafc" class="ice-cloudlet-land" transform="translate(5,-93) scale(.36)"/>
+              <g class="ice-label-land"><text x="5" y="-123" class="lbl" text-anchor="middle" fill="#4a5559">itt is: fagypont fölött</text></g>
+            </g>
+          </g>
+
+          <!-- the one defender: a plane, arriving from the land side (right), flying under the ice cloudlet toward the sea -->
+          <g transform="translate(900,145)">
+            <g class="plane-mini-v">
+              <polygon points="-26,0 -18,-1.5 20,-1 26,0 20,1 -18,1.5" fill="#5c6b70"/>
+              <polygon points="-4,-1 8,-17 18,-14 2,-1" fill="#5c6b70"/>
+              <polygon points="-4,1 8,17 18,14 2,1" fill="#5c6b70"/>
+              <polygon points="16,-1 21,-8 25,-7 18,-1" fill="#5c6b70"/>
+              <polygon points="16,1 21,8 25,7 18,1" fill="#5c6b70"/>
+              <polygon points="20,-1 25,-10 22,-1" fill="#5c6b70"/>
+            </g>
+          </g>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash"/>
+          <rect x="0" y="0" width="1000" height="460" fill="#fff8e0" class="storm-flash-land"/>
+        </svg>
+      </div>
+      <figcaption>
+        <b>Elve:</b> egy speciálisan felszerelt repülőgép közvetlenül a fejlődő zivatarcella szélébe, a feláramlás közelébe repül, és ott, menet közben szórja ki az ezüst-jodidot — a célzás nem a helyszínen, hanem az időzítésen és a pontos berepülési vonalon múlik. Amikor elhalad a jégfelhő mellett, az zsugorodva eltűnik.<br>
+        <b>Hol használják:</b> Ausztria (Stájerország, 1986 óta kizárólag ez) és Németország (Bajorország, Baden-Württemberg) mai fő módszere; Kanadában, Albertában is erre álltak át 1996-ban, biztosítói finanszírozásból. Pilótát, gépet és folyamatos riasztásra készenlétet igényel.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<section id="hangok">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">05 &nbsp;·&nbsp; Amit ők maguk mondanak</span>
+      <h2>Interjúk és beszélgetések a témában</h2>
+    </div>
+    <p class="lead-p">Ezek nem a mi állításaink, hanem közvetlenül meghallgatható, saját szavakkal elmondott beszámolók — a forrás mindenhol megjelölve, hogy bárki ellenőrizhesse.</p>
+
+    <div class="media-grid">
+      <div class="media-card">
+        <div class="who"><h3>Szóban forgó — Szarvasi Televízió</h3><span class="role">helyi tévériport · 2026.07.07</span></div>
+        <p>57 perces adás a JÉGER működéséről, Hajnal Zsolt, Pártai Lucia és Deák Hajnalka részvételével.<sup class="cite"><a href="#r13">13</a></sup></p>
+        <a class="watch" href="https://www.youtube.com/watch?v=--SQhABEU5A" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
+      </div>
+      <div class="media-card">
+        <div class="who"><h3>Beszélgetés Pártai Lucia meteorológussal</h3><span class="role">Agrár Milliók podcast · 2026.08.16</span></div>
+        <p>Pártai Lucia saját szavaival: „valóban nem a jéger okoz aszályt” — az idei aszályt nagytérségi európai időjárási helyzetnek tulajdonítja, nem a rendszernek.<sup class="cite"><a href="#r14">14</a></sup></p>
+        <a class="watch" href="https://www.youtube.com/watch?v=w6o285a7oqQ" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
+      </div>
+      <div class="media-card">
+        <div class="who"><h3>Két mérnök beszélgetése a JÉGER-ről</h3><span class="role">Agrár Milliók podcast · 2026.08.08</span></div>
+        <p>Hajnal Zsolt szakmai szemmel értékeli a kialakult helyzetet és a rendszer működését.<sup class="cite"><a href="#r14">14</a></sup></p>
+        <a class="watch" href="https://www.youtube.com/watch?v=PRwyTOeCVEo" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
+      </div>
+      <div class="media-card">
+        <div class="who"><h3>Mi áll a JÉGER körüli viták hátterében?</h3><span class="role">Agrár Milliók podcast · 2026.07.27</span></div>
+        <p>A mozgalomhoz beérkezett anyagok feldolgozásával induló beszélgetéssorozat első része.<sup class="cite"><a href="#r14">14</a></sup></p>
+        <a class="watch" href="https://www.youtube.com/watch?v=rDX7OZZd8Kw" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
+      </div>
+      <div class="media-card">
+        <div class="who"><h3>Kocsis Áron — „Minden felhőben van jég”</h3><span class="role">Orosházi gazdafórum · 2022.07.06</span></div>
+        <p>A JÉGER üzemeltetési igazgatója egy helyi gazdafórumon úgy fogalmaz, hogy „minden felhőben van jég” — amit később a magasság-változóval árnyal, de a megfogalmazás azt a benyomást kelti, mintha a felhők nagy része nem is a fagypont fölé emelkedő, jégképző típus lenne (l. fent, 03. pont).</p>
+        <a class="watch" href="https://www.youtube.com/watch?v=iva3YN-CTfY&t=2001s" target="_blank" rel="noopener">A 33:21-től, YouTube-on ↗</a>
+      </div>
+      <div class="media-card">
+        <div class="who"><h3>Sarkadi Noémi (PTE) — glaciogenikus magvasítás konvektív felhőknél</h3><span class="role">MTA-rendezvény · 2025.12.04-05</span></div>
+        <p>Peer-reviewed kutatásokra hivatkozva (Geresdi et al. 2017, Xue et al. 2013, <em>Journal of Applied Meteorology and Climatology</em>) mutatja be, hogy jégeső-képző (konvektív) felhőknél a magvasítás hatása gyakran <b>ellentétes a szándékolttal</b>. Szó szerinti idézet: „a hatás éppen ellentétes, és nem, hogy csapadékot keltünk, de csapadékot vesztünk, tehát csökkentheti is a csapadékképződésnek a hatékonyságát.” Az előadás végén az összesített, modellezett hatást nagyságrendileg 5%-osra becsüli.<sup class="cite"><a href="#r16">16</a></sup></p>
+        <a class="watch" href="https://www.youtube.com/watch?v=6M9fPd4Bp3Y&t=2092s" target="_blank" rel="noopener">A 34:52-től, YouTube-on ↗</a>
+      </div>
+    </div>
+
+    <p style="margin-top:1.6rem">További, még feldolgozás alatt álló sajtóanyag: a <a href="https://mezohir.hu/keywords/jeger/" target="_blank" rel="noopener">Mezőhír JÉGER-cikksorozata</a> (10 cikk, 2026 nyara), köztük a NAK saját válasza a csapadékcsökkentés vádjára.<sup class="cite"><a href="#r15">15</a></sup></p>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<section id="jegyzetek">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <span class="eyebrow">Jegyzetek</span>
+      <h2 style="font-size:1.3rem">Forrásjegyzék</h2>
+    </div>
+    <div class="refs">
+      <ol>
+        <li id="r1">Támogatói okirat, Jegeso_TO_20171025.pdf — 1,8 milliárd Ft, 100% intenzitás, 986 db generátor (223 automata + 763 manuális) tételes melléklete.</li>
+        <li id="r2">Hagelabwehr — Wikipédia (de.wikipedia.org/wiki/Hagelabwehr); hagelabwehr.at; wgv.de/hagelabwehr — Ausztria és Németország repülőgépes módszere.</li>
+        <li id="r3">havos.ch; swissinfo.ch — a svájci „Hagelflieger” program 2024-es leállítása bizonyítottság hiányában.</li>
+        <li id="r4">JÉGŐR biztonsági adatlap (MSDS), Agro-Chemie Kft., 2025.06.20, v8 — H410 besorolás.</li>
+        <li id="r5">KSZ-0037-2024 hatóanyag-lehívások, számlák, teljesítésigazolások — 150 000 L × kb. 4064 Ft/L (2025).</li>
+        <li id="r6">nak.hu — „A jégkármérséklő rendszer környezeti hatásainak vizsgálata” (2020, HL-LAB Környezetvédelmi és Talajvizsgáló Laboratórium, megrendelő: NAK) — teljes szöveg ellenőrizve.</li>
+        <li id="r7">telex.hu/gazdasag/2026/07/30 — Bóna Szabolcs agrárminiszter bejelentése a részleges leállításról.</li>
+        <li id="r8">444.hu/2026/08/12 (Kolozsi Ádám) — kritikai elemzés a kormányzati döntésről.</li>
+        <li id="r9">NOAA/NSSL — Hail Basics (nssl.noaa.gov/education/svrwx101/hail); NOAA JetStream — Thunderstorm Hazards: Hail.</li>
+        <li id="r10">Truhetz &amp; Mishra (2023), <em>International Journal of Climatology</em> — Wegener Center, Grazi Egyetem, talajnedvesség-csapadék visszacsatolás a Kárpát-térségben.</li>
+        <li id="r11">Kovačević, N. (2019), „Hail suppression effectiveness for varying solubility of natural aerosols in water”, <em>Meteorology and Atmospheric Physics</em> 131, 585–599. <a href="https://link.springer.com/article/10.1007/s00703-018-0587-4" target="_blank" rel="noopener">link.springer.com/article/10.1007/s00703-018-0587-4</a></li>
+        <li id="r12">Auf der Maur &amp; Germann (2021), „A Re-Evaluation of the Swiss Hail Suppression Experiment Using Permutation Techniques Shows Enhancement of Hail Energies When Seeding”, <em>Atmosphere</em> 12(12):1623. <a href="https://doi.org/10.3390/atmos12121623" target="_blank" rel="noopener">doi.org/10.3390/atmos12121623</a></li>
+        <li id="r13">Szarvasi Televízió — „Szóban forgó: kérdések a JÉGER Országos Jégkármérséklő Rendszer működésével kapcsolatban” (2026.07.07, YouTube). <a href="https://www.youtube.com/watch?v=--SQhABEU5A" target="_blank" rel="noopener">youtube.com/watch?v=--SQhABEU5A</a></li>
+        <li id="r14">VulcanAgro Kft. „Agrár Milliók” YouTube-podcast: „Mi áll a JÉGER körüli viták hátterében?” (2026.07.27), „Két mérnök beszélgetése a JÉGER-ről” (2026.08.08), „Beszélgetés Pártai Lucia meteorológussal” (2026.08.16).</li>
+        <li id="r15">mezohir.hu/keywords/jeger/ — JÉGER-cikksorozat, köztük „A JÉGER nem veszi el az esőt” – válaszolt a NAK (2026.07.13).</li>
+        <li id="r16">Sarkadi Noémi (PTE) előadása, „A meteorológia válasza a környezeti kihívásokra (2. rész)”, MTA, 2025.12.04-05 (YouTube, MTA 1825, 2025.12.10, felirat alapján szó szerint ellenőrizve) — hivatkozott kutatások: Geresdi et al. (2017), <em>Journal of Applied Meteorology and Climatology</em> 56(5), <a href="https://doi.org/10.1175/JAMC-D-16-0187.1" target="_blank" rel="noopener">doi.org/10.1175/JAMC-D-16-0187.1</a>; Xue et al. (2013), <em>Journal of Applied Meteorology and Climatology</em> 52(6), <a href="https://doi.org/10.1175/JAMC-D-12-0149.1" target="_blank" rel="noopener">doi.org/10.1175/JAMC-D-12-0149.1</a>.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Munkapéldány — a végleges honlaphoz a teljes forráskritikai háttér a JÉGER-dossziéban érhető el. Minden itt szereplő szám és idézet ugyanazzal a bizonyítottsági szigorral lett kezelve, mint a dossziéban.
+  </div>
+</footer>
+</body>
+</html>
