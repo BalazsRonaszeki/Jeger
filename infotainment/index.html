@@ -95,11 +95,28 @@ h1,h2,h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; text-wrap:bal
   @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:translateY(0)}}
 }
 
-/* ---------- warning stripe divider ---------- */
-.stripe{
-  height:7px;
-  background: repeating-linear-gradient(-45deg, var(--accent), var(--accent) 10px, var(--ink) 10px, var(--ink) 20px);
-  opacity:.85;
+/* ---------- header banner ---------- */
+.header-banner{width:100%; line-height:0; overflow:hidden; position:relative}
+.header-art{width:100%; aspect-ratio:1824/862; max-height:260px; object-fit:cover; object-position:center 42%; display:block}
+
+/* ---------- theme toggle ---------- */
+.theme-toggle{
+  position:fixed; top:1rem; right:1rem; z-index:30;
+  width:2.6rem; height:2.6rem; border-radius:50%;
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter:blur(6px);
+  border:1px solid var(--line); box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);
+}
+.theme-toggle:hover{border-color:var(--accent); color:var(--accent)}
+.theme-toggle svg{width:1.15rem; height:1.15rem}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{display:none}
+:root[data-theme="light"] .theme-toggle .icon-moon{display:block}
+:root[data-theme="dark"] .theme-toggle .icon-sun{display:block}
+:root:not([data-theme]) .theme-toggle .icon-moon{display:block}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .theme-toggle .icon-moon{display:none}
+  :root:not([data-theme]) .theme-toggle .icon-sun{display:block}
 }
 
 /* ---------- hero ---------- */
@@ -147,21 +164,57 @@ sup.cite{
 sup.cite a{color:inherit; text-decoration:none}
 sup.cite a:hover{text-decoration:underline}
 
+/* ---------- carousel (profiles & videos) ---------- */
+.carousel-hint{
+  font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-faint); margin:1.6rem 0 0;
+}
+.carousel{position:relative; margin-top:.7rem}
+.carousel-track{
+  display:flex; gap:1.1rem; overflow-x:auto; scroll-snap-type:x proximity;
+  padding:.2rem .2rem 1rem; -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+}
+.carousel-track::-webkit-scrollbar{height:8px}
+.carousel-track::-webkit-scrollbar-thumb{background:var(--line); border-radius:99px}
+.car-btn{
+  position:absolute; top:36%; transform:translateY(-50%); z-index:5;
+  width:2.2rem; height:2.2rem; border-radius:50%;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  box-shadow:var(--shadow); cursor:pointer; font-size:1.2rem; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.car-btn:hover{color:var(--accent); border-color:var(--accent)}
+.car-prev{left:-.9rem}
+.car-next{right:-.9rem}
+@media(max-width:760px){.car-btn{display:none}}
+
 /* ---------- profile cards ---------- */
-.profiles{display:grid; gap:1.1rem; margin-top:1.8rem}
-@media(min-width:680px){.profiles{grid-template-columns:1fr 1fr}}
-.profile{
-  background:var(--surface); border:1px solid var(--line); border-radius:10px;
-  padding:1.5rem 1.6rem; box-shadow:var(--shadow);
+.profile-card{
+  flex:0 0 260px; scroll-snap-align:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:1.4rem 1.5rem; box-shadow:var(--shadow);
   display:flex; flex-direction:column; gap:.7rem;
 }
-.profile .who{display:flex; align-items:baseline; justify-content:space-between; gap:.6em; flex-wrap:wrap}
-.profile h3{font-size:1.15rem}
-.profile .role{
+.profile-cta-wrap{margin-top:1.3rem}
+.profile-cta-wrap .profile-card{flex:none; max-width:none}
+.avatar{
+  width:56px; height:56px; border-radius:50%; flex:none; overflow:hidden;
+  background:var(--surface-2); display:flex; align-items:center; justify-content:center;
+}
+.avatar img{width:100%; height:100%; object-fit:cover; display:block}
+.avatar-placeholder{
+  border:1.5px dashed var(--line); background:transparent; color:var(--ink-faint);
+  font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:600; letter-spacing:.02em;
+}
+.avatar-cta{background:var(--accent-soft); color:var(--accent); font-size:1.5rem; font-weight:700}
+.who{display:flex; align-items:baseline; justify-content:space-between; gap:.6em; flex-wrap:wrap}
+.who h3{font-size:1.1rem}
+.role{
   font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase;
   color:var(--silver); white-space:nowrap;
 }
-.profile p{font-size:.98rem; color:var(--ink-soft); margin:0}
+.profile-card p{font-size:.96rem; color:var(--ink-soft); margin:0}
 
 /* ---------- refs ---------- */
 .refs{font-size:.88rem; color:var(--ink-soft)}
@@ -176,27 +229,18 @@ sup.cite a:hover{text-decoration:underline}
 }
 .opennote b{color:var(--ink)}
 
-/* ---------- media cards ---------- */
-.media-grid{display:grid; gap:1.1rem; margin-top:1.8rem}
-.media-card{
-  background:var(--surface); border:1px solid var(--line); border-radius:10px;
-  padding:1.3rem 1.5rem; box-shadow:var(--shadow);
-  display:flex; flex-direction:column; gap:.5rem;
+/* ---------- video cards ---------- */
+.video-card{
+  flex:0 0 320px; scroll-snap-align:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:1.1rem 1.2rem 1.3rem; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:.6rem;
 }
-.media-card .who{display:flex; align-items:baseline; justify-content:space-between; gap:.6em; flex-wrap:wrap}
-.media-card h3{font-size:1.05rem}
-.media-card .role{
-  font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--silver); white-space:nowrap;
-}
-.media-card p{font-size:.94rem; color:var(--ink-soft); margin:0}
-.media-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:var(--accent); text-decoration:none}
-.media-card a.watch:hover{text-decoration:underline}
-.media-card.placeholder{
-  background:transparent; border:1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
-  box-shadow:none;
-}
-.media-card.placeholder .role{color:var(--accent)}
+.video-embed{position:relative; aspect-ratio:16/9; border-radius:8px; overflow:hidden; background:#000}
+.video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+.video-card p{font-size:.9rem; color:var(--ink-soft); margin:0}
+.video-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); text-decoration:none}
+.video-card a.watch:hover{text-decoration:underline}
 
 footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 
@@ -484,10 +528,28 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 /* ---------- scenic (water-cycle) figure ---------- */
 .diagram-card.scenic{padding:0; overflow-x:auto; overflow-y:hidden; border-radius:14px}
 .diagram-card.scenic svg{min-width:520px}
+
+/* ---------- responsive ---------- */
+@media(max-width:600px){
+  body{font-size:16.5px}
+  .hero{padding:2.6rem 0 2rem}
+  section{padding:2.4rem 0}
+  .header-art{max-height:170px}
+  .theme-toggle{top:.7rem; right:.7rem; width:2.3rem; height:2.3rem}
+  .profile-card{flex-basis:78vw}
+  .video-card{flex-basis:86vw}
+  .wrap,.wrap-wide{padding:0 1.1rem}
+}
 </style>
 </head>
 <body>
-<div class="stripe"></div>
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Sötét/világos téma váltása" title="Sötét/világos téma váltása">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 14.5A8.5 8.5 0 0 1 9.5 3.2a.5.5 0 0 0-.6-.7 9.5 9.5 0 1 0 12.6 12.6.5.5 0 0 0-.7-.6Z"/></svg>
+</button>
+<div class="header-banner">
+  <img src="/assets/header-art.jpg" alt="" class="header-art">
+</div>
 <div class="hero">
   <div class="wrap">
     <div class="eyebrow reveal">Munkapéldány — nyilvános honlap-szöveg tervezete</div>
@@ -514,8 +576,6 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   </div>
 </section>
 
-<div class="stripe"></div>
-
 <section class="tinted" id="kikvagyunk">
   <div class="wrap">
     <div class="section-head">
@@ -525,32 +585,47 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     <p class="lead-p">Aggódó állampolgárok, meteorológusok és klimatológusok, valamint az egzisztenciájukat féltő gazdálkodók csoportja.</p>
     <p>Nem áll mögöttünk politikai párt. Nem vitatjuk a klímaváltozást, és nem állítjuk, hogy a jelenleg tapasztalható szárazságért kizárólag az időjárás-manipuláció lenne felelős. Ugyanakkor komoly aggodalommal tölt el minket, hogy olyan időjárás-manipulációs rendszerek működnek országunkban, amelyeknek az egészség- és környezetkárosító hatásáról — beleértve a túlzott felhasználás esetén a csapadékképződés hátráltatását is — semmilyen független hatástanulmány nem érhető el, és érdemi, folyamatos állami kontroll sem létezik.</p>
 
-    <div class="profiles">
-      <div class="profile">
-        <div class="who"><h3>Pártai Lucia</h3><span class="role">meteorológus</span></div>
-        <p>Az ELTE-n szerzett meteorológus diplomát, 1992 óta saját időjárás-előrejelző szolgáltatásának (EWS / Eumet.hu) vezetője. A NAK 2018-as országos rendszere előtt ő üzemeltette azt a kísérleti jégkármérséklő rendszert, amely a rollout prototípusaként szolgált.</p>
+    <div class="carousel-hint">Görgesd jobbra a további szakértőkért →</div>
+    <div class="carousel">
+      <button class="car-btn car-prev" type="button" aria-label="Előző szakértő">‹</button>
+      <div class="carousel-track" id="profilesTrack">
+        <div class="profile-card">
+          <div class="avatar"><img src="assets/partai-lucia.jpg" alt="Pártai Lucia portréja" loading="lazy"></div>
+          <div class="who"><h3>Pártai Lucia</h3><span class="role">meteorológus</span></div>
+          <p>Az ELTE-n szerzett meteorológus diplomát, 1992 óta saját időjárás-előrejelző szolgáltatásának (EWS / Eumet.hu) vezetője. A NAK 2018-as országos rendszere előtt ő üzemeltette azt a kísérleti jégkármérséklő rendszert, amely a rollout prototípusaként szolgált.</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-placeholder" aria-hidden="true"><span>SRB</span></div>
+          <div class="who"><h3>Sallai Róbert Benedek</h3><span class="role">agrármérnök · polgármester</span></div>
+          <p>Túrkeve polgármestere, korábban az Országgyűlés fenntartható fejlődés bizottságának elnöke.</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar"><img src="assets/deak-hajnalka.jpg" alt="Deák Hajnalka portréja" loading="lazy"></div>
+          <div class="who"><h3>Deák Hajnalka</h3><span class="role">mozgalmi alapító</span></div>
+          <p>A Mezőhegyesi Agrár Zrt. vezérigazgatója, a kezdeményezés egyik alapítója.</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-placeholder" aria-hidden="true"><span>HZ</span></div>
+          <div class="who"><h3>Hajnal Zsolt</h3><span class="role">környezetmérnök</span></div>
+          <p>Környezetmérnökként szólal fel a kezdeményezés mellett; több nyilvános riportban és beszélgetésben is részt vett (l. lent, 05. pont).</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-placeholder" aria-hidden="true"><span>SZ</span></div>
+          <div class="who"><h3>Szuda Zoltán</h3><span class="role">környezetmérnök</span></div>
+          <p>Környezetmérnök, korábban az Agrárminisztériumnál (AM) dolgozott Budapesten.</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-placeholder" aria-hidden="true"><span>BR</span></div>
+          <div class="who"><h3>Békéscsabai Raktárszövetkezet</h3><span class="role">aggódó gazdálkodói szervezet</span></div>
+          <p>Sokat dolgoztak a téma körüljárásán; a helyzetükről Adamcsik László tollából jelentek meg cikkek.</p>
+        </div>
       </div>
-      <div class="profile">
-        <div class="who"><h3>Sallai Róbert Benedek</h3><span class="role">agrármérnök · polgármester</span></div>
-        <p>Túrkeve polgármestere, korábban az Országgyűlés fenntartható fejlődés bizottságának elnöke.</p>
-      </div>
-      <div class="profile">
-        <div class="who"><h3>Deák Hajnalka</h3><span class="role">mozgalmi alapító</span></div>
-        <p>A Mezőhegyesi Agrár Zrt. vezérigazgatója, a kezdeményezés egyik alapítója.</p>
-      </div>
-      <div class="profile">
-        <div class="who"><h3>Hajnal Zsolt</h3><span class="role">környezetmérnök</span></div>
-        <p>Környezetmérnökként szólal fel a kezdeményezés mellett; több nyilvános riportban és beszélgetésben is részt vett (l. lent, 05. pont).</p>
-      </div>
-      <div class="profile">
-        <div class="who"><h3>Szuda Zoltán</h3><span class="role">környezetmérnök</span></div>
-        <p>Környezetmérnök, korábban az Agrárminisztériumnál (AM) dolgozott Budapesten.</p>
-      </div>
-      <div class="profile">
-        <div class="who"><h3>Békéscsabai Raktárszövetkezet</h3><span class="role">aggódó gazdálkodói szervezet</span></div>
-        <p>Sokat dolgoztak a téma körüljárásán; a helyzetükről Adamcsik László tollából jelentek meg cikkek.</p>
-      </div>
-      <div class="profile">
+      <button class="car-btn car-next" type="button" aria-label="Következő szakértő">›</button>
+    </div>
+
+    <div class="profile-cta-wrap">
+      <div class="profile-card">
+        <div class="avatar avatar-cta" aria-hidden="true">+</div>
         <div class="who"><h3>+ te is lehetsz</h3><span class="role">gazdálkodó · szakértő · szomszéd</span></div>
         <p>Ha generátor üzemel a közeled, gazdálkodóként érint a rendszer, vagy szakértőként tudsz hozzászólni — keress minket. A cél egy nyilvánosan ellenőrizhető, sokszereplős dosszié, nem egyetlen hang.</p>
         <p style="margin-top:.2rem"><b>Addig is tehetsz egy lépést:</b> <a href="https://www.peticiok.com/peticio_a_jegkarmersekl_rendszer_jeger_leallitasaert" target="_blank" rel="noopener">írd alá a JÉGER leállítását kérő petíciót</a>.</p>
@@ -562,8 +637,6 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     </div>
   </div>
 </section>
-
-<div class="stripe"></div>
 
 <section id="zivatar">
   <div class="wrap">
@@ -1207,8 +1280,6 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   </div>
 </section>
 
-<div class="stripe"></div>
-
 <section id="hangok">
   <div class="wrap">
     <div class="section-head">
@@ -1217,44 +1288,53 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     </div>
     <p class="lead-p">Ezek nem a mi állításaink, hanem közvetlenül meghallgatható, saját szavakkal elmondott beszámolók — a forrás mindenhol megjelölve, hogy bárki ellenőrizhesse.</p>
 
-    <div class="media-grid">
-      <div class="media-card">
-        <div class="who"><h3>Szóban forgó — Szarvasi Televízió</h3><span class="role">helyi tévériport · 2026.07.07</span></div>
-        <p>57 perces adás a JÉGER működéséről, Hajnal Zsolt, Pártai Lucia és Deák Hajnalka részvételével.<sup class="cite"><a href="#r13">13</a></sup></p>
-        <a class="watch" href="https://www.youtube.com/watch?v=--SQhABEU5A" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
+    <div class="carousel-hint">Görgesd jobbra a további videókért →</div>
+    <div class="carousel">
+      <button class="car-btn car-prev" type="button" aria-label="Előző videó">‹</button>
+      <div class="carousel-track" id="videosTrack">
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/--SQhABEU5A" title="Szóban forgó — Szarvasi Televízió" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Szóban forgó — Szarvasi Televízió</h3><span class="role">helyi tévériport · 2026.07.07</span></div>
+          <p>57 perces adás a JÉGER működéséről, Hajnal Zsolt, Pártai Lucia és Deák Hajnalka részvételével.<sup class="cite"><a href="#r13">13</a></sup></p>
+          <a class="watch" href="https://www.youtube.com/watch?v=--SQhABEU5A" target="_blank" rel="noopener">Megnyitom YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/w6o285a7oqQ" title="Beszélgetés Pártai Lucia meteorológussal" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Beszélgetés Pártai Lucia meteorológussal</h3><span class="role">Agrár Milliók podcast · 2026.08.16</span></div>
+          <p>Pártai Lucia saját szavaival: „valóban nem a jéger okoz aszályt” — az idei aszályt nagytérségi európai időjárási helyzetnek tulajdonítja, nem a rendszernek.<sup class="cite"><a href="#r14">14</a></sup></p>
+          <a class="watch" href="https://www.youtube.com/watch?v=w6o285a7oqQ" target="_blank" rel="noopener">Megnyitom YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/PRwyTOeCVEo" title="Két mérnök beszélgetése a JÉGER-ről" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Két mérnök beszélgetése a JÉGER-ről</h3><span class="role">Agrár Milliók podcast · 2026.08.08</span></div>
+          <p>Hajnal Zsolt szakmai szemmel értékeli a kialakult helyzetet és a rendszer működését.<sup class="cite"><a href="#r14">14</a></sup></p>
+          <a class="watch" href="https://www.youtube.com/watch?v=PRwyTOeCVEo" target="_blank" rel="noopener">Megnyitom YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/rDX7OZZd8Kw" title="Mi áll a JÉGER körüli viták hátterében?" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Mi áll a JÉGER körüli viták hátterében?</h3><span class="role">Agrár Milliók podcast · 2026.07.27</span></div>
+          <p>A mozgalomhoz beérkezett anyagok feldolgozásával induló beszélgetéssorozat első része.<sup class="cite"><a href="#r14">14</a></sup></p>
+          <a class="watch" href="https://www.youtube.com/watch?v=rDX7OZZd8Kw" target="_blank" rel="noopener">Megnyitom YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/iva3YN-CTfY?start=2001" title="Kocsis Áron — Minden felhőben van jég" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Kocsis Áron — „Minden felhőben van jég”</h3><span class="role">Orosházi gazdafórum · 2022.07.06</span></div>
+          <p>A JÉGER üzemeltetési igazgatója egy helyi gazdafórumon úgy fogalmaz, hogy „minden felhőben van jég” — amit később a magasság-változóval árnyal, de a megfogalmazás azt a benyomást kelti, mintha a felhők nagy része nem is a fagypont fölé emelkedő, jégképző típus lenne (l. fent, 03. pont).</p>
+          <a class="watch" href="https://www.youtube.com/watch?v=iva3YN-CTfY&t=2001s" target="_blank" rel="noopener">A 33:21-től, YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/6M9fPd4Bp3Y?start=2092" title="Sarkadi Noémi — glaciogenikus magvasítás konvektív felhőknél" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+          <div class="who"><h3>Sarkadi Noémi (PTE) — glaciogenikus magvasítás konvektív felhőknél</h3><span class="role">MTA-rendezvény · 2025.12.04-05</span></div>
+          <p>Peer-reviewed kutatásokra hivatkozva (Geresdi et al. 2017, Xue et al. 2013, <em>Journal of Applied Meteorology and Climatology</em>) mutatja be, hogy jégeső-képző (konvektív) felhőknél a magvasítás hatása gyakran <b>ellentétes a szándékolttal</b>. Szó szerinti idézet: „a hatás éppen ellentétes, és nem, hogy csapadékot keltünk, de csapadékot vesztünk, tehát csökkentheti is a csapadékképződésnek a hatékonyságát.” Az előadás végén az összesített, modellezett hatást nagyságrendileg 5%-osra becsüli.<sup class="cite"><a href="#r16">16</a></sup></p>
+          <a class="watch" href="https://www.youtube.com/watch?v=6M9fPd4Bp3Y&t=2092s" target="_blank" rel="noopener">A 34:52-től, YouTube-on ↗</a>
+        </div>
       </div>
-      <div class="media-card">
-        <div class="who"><h3>Beszélgetés Pártai Lucia meteorológussal</h3><span class="role">Agrár Milliók podcast · 2026.08.16</span></div>
-        <p>Pártai Lucia saját szavaival: „valóban nem a jéger okoz aszályt” — az idei aszályt nagytérségi európai időjárási helyzetnek tulajdonítja, nem a rendszernek.<sup class="cite"><a href="#r14">14</a></sup></p>
-        <a class="watch" href="https://www.youtube.com/watch?v=w6o285a7oqQ" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
-      </div>
-      <div class="media-card">
-        <div class="who"><h3>Két mérnök beszélgetése a JÉGER-ről</h3><span class="role">Agrár Milliók podcast · 2026.08.08</span></div>
-        <p>Hajnal Zsolt szakmai szemmel értékeli a kialakult helyzetet és a rendszer működését.<sup class="cite"><a href="#r14">14</a></sup></p>
-        <a class="watch" href="https://www.youtube.com/watch?v=PRwyTOeCVEo" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
-      </div>
-      <div class="media-card">
-        <div class="who"><h3>Mi áll a JÉGER körüli viták hátterében?</h3><span class="role">Agrár Milliók podcast · 2026.07.27</span></div>
-        <p>A mozgalomhoz beérkezett anyagok feldolgozásával induló beszélgetéssorozat első része.<sup class="cite"><a href="#r14">14</a></sup></p>
-        <a class="watch" href="https://www.youtube.com/watch?v=rDX7OZZd8Kw" target="_blank" rel="noopener">Megnézem a YouTube-on ↗</a>
-      </div>
-      <div class="media-card">
-        <div class="who"><h3>Kocsis Áron — „Minden felhőben van jég”</h3><span class="role">Orosházi gazdafórum · 2022.07.06</span></div>
-        <p>A JÉGER üzemeltetési igazgatója egy helyi gazdafórumon úgy fogalmaz, hogy „minden felhőben van jég” — amit később a magasság-változóval árnyal, de a megfogalmazás azt a benyomást kelti, mintha a felhők nagy része nem is a fagypont fölé emelkedő, jégképző típus lenne (l. fent, 03. pont).</p>
-        <a class="watch" href="https://www.youtube.com/watch?v=iva3YN-CTfY&t=2001s" target="_blank" rel="noopener">A 33:21-től, YouTube-on ↗</a>
-      </div>
-      <div class="media-card">
-        <div class="who"><h3>Sarkadi Noémi (PTE) — glaciogenikus magvasítás konvektív felhőknél</h3><span class="role">MTA-rendezvény · 2025.12.04-05</span></div>
-        <p>Peer-reviewed kutatásokra hivatkozva (Geresdi et al. 2017, Xue et al. 2013, <em>Journal of Applied Meteorology and Climatology</em>) mutatja be, hogy jégeső-képző (konvektív) felhőknél a magvasítás hatása gyakran <b>ellentétes a szándékolttal</b>. Szó szerinti idézet: „a hatás éppen ellentétes, és nem, hogy csapadékot keltünk, de csapadékot vesztünk, tehát csökkentheti is a csapadékképződésnek a hatékonyságát.” Az előadás végén az összesített, modellezett hatást nagyságrendileg 5%-osra becsüli.<sup class="cite"><a href="#r16">16</a></sup></p>
-        <a class="watch" href="https://www.youtube.com/watch?v=6M9fPd4Bp3Y&t=2092s" target="_blank" rel="noopener">A 34:52-től, YouTube-on ↗</a>
-      </div>
+      <button class="car-btn car-next" type="button" aria-label="Következő videó">›</button>
     </div>
 
     <p style="margin-top:1.6rem">További, még feldolgozás alatt álló sajtóanyag: a <a href="https://mezohir.hu/keywords/jeger/" target="_blank" rel="noopener">Mezőhír JÉGER-cikksorozata</a> (10 cikk, 2026 nyara), köztük a NAK saját válasza a csapadékcsökkentés vádjára.<sup class="cite"><a href="#r15">15</a></sup></p>
   </div>
 </section>
-
-<div class="stripe"></div>
 
 <section id="jegyzetek">
   <div class="wrap-wide">
@@ -1290,5 +1370,32 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     Munkapéldány — a végleges honlaphoz a teljes forráskritikai háttér a JÉGER-dossziéban érhető el. Minden itt szereplő szám és idézet ugyanazzal a bizonyítottsági szigorral lett kezelve, mint a dossziéban.
   </div>
 </footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var stored = null;
+  try { stored = localStorage.getItem('infotainment_theme'); } catch(e){}
+  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  btn.addEventListener('click', function(){
+    var current = root.getAttribute('data-theme');
+    var isDark = current ? current === 'dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('infotainment_theme', next); } catch(e){}
+  });
+})();
+(function(){
+  document.querySelectorAll('.carousel').forEach(function(car){
+    var track = car.querySelector('.carousel-track');
+    var prev = car.querySelector('.car-prev');
+    var next = car.querySelector('.car-next');
+    function amount(){ return Math.min(track.clientWidth * 0.85, 640); }
+    if (prev) prev.addEventListener('click', function(){ track.scrollBy({left: -amount(), behavior:'smooth'}); });
+    if (next) next.addEventListener('click', function(){ track.scrollBy({left: amount(), behavior:'smooth'}); });
+  });
+})();
+</script>
 </body>
 </html>
