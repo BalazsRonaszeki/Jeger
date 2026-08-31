@@ -258,6 +258,21 @@ sup.cite a:hover{text-decoration:underline}
 .press-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); text-decoration:none}
 .press-card a.watch:hover{text-decoration:underline}
 
+/* ---------- FAQ ---------- */
+.faq-list{display:grid; gap:.9rem; margin-top:1.6rem}
+.faq-item{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:1rem 1.3rem; box-shadow:var(--shadow);
+}
+.faq-item summary{
+  font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1.02rem;
+  cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+"; font-family:'IBM Plex Mono',monospace; color:var(--accent); font-size:1.2rem; flex:none}
+.faq-item[open] summary::after{content:"–"}
+.faq-item p{margin-top:.8rem; font-size:.96rem; color:var(--ink-soft)}
+
 footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 
 /* ---------- diagrams ---------- */
@@ -577,6 +592,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <div class="stat"><b>~1000–2000</b><span>becsült magánkézben lévő rendszer — nincs rájuk nyilvántartás<sup class="cite"><a href="#r17">17</a></sup></span></div>
       <div class="stat"><b>H410</b><span>„nagyon mérgező a vízi élővilágra” — gyártói besorolás<sup class="cite"><a href="#r4">4</a></sup></span></div>
       <div class="stat"><b>~600M Ft</b><span>évi hatóanyag-beszerzés<sup class="cite"><a href="#r5">5</a></sup></span></div>
+      <div class="stat"><b>~2 mrd Ft</b><span>a kormány éves felső költségkorlátja a teljes rendszerre<sup class="cite"><a href="#r18">18</a></sup></span></div>
       <div class="stat"><b>0</b><span>független, hatóság által elvégzett hatásvizsgálat<sup class="cite"><a href="#r6">6</a></sup></span></div>
     </div>
   </div>
@@ -590,7 +606,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     </div>
     <p class="lead-p">Meg akarjuk állítani Magyarországon a szabályozatlanul terjedő időjárás-manipulációs rendszerek elszaporodását. Az országos, állami JÉGER-hálózat 986 talajgenerátorral üzemel<sup class="cite"><a href="#r1">1</a></sup> — ez Európa legnagyobb, egységes, központi állami irányítású földi generátoros hálózata (Franciaországban ugyan több, összesen 1170 generátor működik, de azt ~30 független, önkéntes helyi egyesület üzemelteti, nem egy központi állami szerv). A szomszédos Ausztria és Németország eközben teljesen repülőgépes módszerre váltott, Svájc pedig 2024-ben, bizonyítottság hiányában leállította saját, repülőgépes programját<sup class="cite"><a href="#r2">2</a></sup><sup class="cite"><a href="#r3">3</a></sup>. Emellett becslések szerint további, magánkézben lévő rendszerek is működnek — ezekre semmilyen engedélyezési vagy bejelentési kötelezettséget nem találtunk.</p>
     <p>A felhasznált ezüst-jodid oldatot a gyártó saját biztonsági adatlapja „nagyon mérgező a vízi élővilágra, hosszan tartó károsodást okoz” (H410) besorolással látja el<sup class="cite"><a href="#r4">4</a></sup>. Nem bizonyított, hogy a jelenlegi mennyiségű, évtizedes, országos szintű kijuttatás hosszú távon semleges a csapadékképződésre — ezt egyetlen hazai vizsgálat sem tesztelte, annak ellenére sem, hogy léteznek olyan tudományos modellek, melyek az úgynevezett <b>túlmagvasításra</b> hivatkozva negatív hatással számolnak a csapadékképződésre.<sup class="cite"><a href="#r11">11</a></sup><sup class="cite"><a href="#r12">12</a></sup></p>
-    <p>A rendszer működtetése évi kb. 600 millió forintba kerül csak a hatóanyag-beszerzésben<sup class="cite"><a href="#r5">5</a></sup>, a kiépítés 1,8 milliárd forintos, uniós (EMVA) és hazai költségvetési társfinanszírozású támogatásból történt<sup class="cite"><a href="#r1">1</a></sup>. Az egyetlen átfogó környezeti hatástanulmányt maga az üzemeltető (a Nemzeti Agrárgazdasági Kamara) rendelte meg egy magánlaboratóriumtól — nem egy hatóság írta elő, és a tanulmány saját maga javasolja, hogy ne legyen utána folyamatos ellenőrzés<sup class="cite"><a href="#r6">6</a></sup>. 2026 nyarán a kormány maga is elismerte a bizonytalanságot, és — társadalmi nyomásra, nem tudományos indokkal — a vármegyék többségében leállította a hivatalos rendszert<sup class="cite"><a href="#r7">7</a></sup><sup class="cite"><a href="#r8">8</a></sup>. <b>Fontos: ez a döntés kizárólag a NAK-üzemeltetésű, 986 generátoros hálózatra vonatkozik</b> — a becslések szerint további 1000–2000, magánkézben lévő rendszerre (napelemparkok, ipari létesítmények) sem a leállítás, sem a szigorúbb bekapcsolási küszöb, sem semmilyen egyéb felügyelet vagy nyilvántartási kötelezettség nem terjed ki<sup class="cite"><a href="#r17">17</a></sup>. Ez azonban politikai, bármikor visszavonható döntés, nem jogi garancia: célunk egy tartós, tudományos alapokon nyugvó szabályozás — ami a magánkézben lévő rendszerekre is kiterjed.</p>
+    <p>A rendszer működtetése évi kb. 600 millió forintba kerül csak a hatóanyag-beszerzésben<sup class="cite"><a href="#r5">5</a></sup> — a kormány ennek és a többi üzemeltetési tételnek (meteorológiai szolgáltatás, személyzet, karbantartás) fedezésére évi legfeljebb 2 milliárd forintos külön forrást biztosít<sup class="cite"><a href="#r18">18</a></sup>. A kiépítés 1,8 milliárd forintos, uniós (EMVA) és hazai költségvetési társfinanszírozású támogatásból történt<sup class="cite"><a href="#r1">1</a></sup>, a jelenlegi üzemeltetés viszont — a mögöttes szerződések szerint — már tisztán hazai költségvetésből megy. Az egyetlen átfogó környezeti hatástanulmányt maga az üzemeltető (a Nemzeti Agrárgazdasági Kamara) rendelte meg egy magánlaboratóriumtól — nem egy hatóság írta elő, és a tanulmány saját maga javasolja, hogy ne legyen utána folyamatos ellenőrzés<sup class="cite"><a href="#r6">6</a></sup>. 2026 nyarán a kormány maga is elismerte a bizonytalanságot, és — társadalmi nyomásra, nem tudományos indokkal — a vármegyék többségében leállította a hivatalos rendszert<sup class="cite"><a href="#r7">7</a></sup><sup class="cite"><a href="#r8">8</a></sup>. <b>Fontos: ez a döntés kizárólag a NAK-üzemeltetésű, 986 generátoros hálózatra vonatkozik</b> — a becslések szerint további 1000–2000, magánkézben lévő rendszerre (napelemparkok, ipari létesítmények) sem a leállítás, sem a szigorúbb bekapcsolási küszöb, sem semmilyen egyéb felügyelet vagy nyilvántartási kötelezettség nem terjed ki<sup class="cite"><a href="#r17">17</a></sup>. Ez azonban politikai, bármikor visszavonható döntés, nem jogi garancia: célunk egy tartós, tudományos alapokon nyugvó szabályozás — ami a magánkézben lévő rendszerekre is kiterjed.</p>
   </div>
 </section>
 
@@ -621,6 +637,11 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
           <div class="avatar avatar-placeholder" aria-hidden="true"><span>HZ</span></div>
           <div class="who"><h3>Hajnal Zsolt</h3><span class="role">környezetmérnök</span></div>
           <p>Környezetmérnökként szólal fel a kezdeményezés mellett; több nyilvános riportban és beszélgetésben is részt vett (l. lent, 05. pont).</p>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-placeholder" aria-hidden="true"><span>VL</span></div>
+          <div class="who"><h3>Vázsonyi László</h3><span class="role">műsorvezető · Agrár Milliók podcast</span></div>
+          <p>A VulcanAgro Kft. „Agrár Milliók” podcastjának műsorvezetője — több, lent (05. pont) is szereplő beszélgetést vezetett a JÉGER-ről. 2026 nyarán önállóan is elindított egy petíciót, amely a rendszert a szárazság okozójaként nevezte meg; kezdeményezésünk ezt az összefüggést nem tekinti bizonyítottnak (l. GYIK, lent).</p>
         </div>
         <div class="profile-card">
           <div class="avatar avatar-placeholder" aria-hidden="true"><span>SZ</span></div>
@@ -1326,7 +1347,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
         <div class="video-card">
           <div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/rDX7OZZd8Kw" title="Mi áll a JÉGER körüli viták hátterében?" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
           <div class="who"><h3>Mi áll a JÉGER körüli viták hátterében?</h3><span class="role">Agrár Milliók podcast · 2026.07.27</span></div>
-          <p>Hogyan jutottunk el a személyes érintettségtől — egy Baja belvárosában, lakóövezetben, éjszaka is üzemelő generátor felfedezésétől — a rendszer szisztematikus, saját kezű utánajárásáig.<sup class="cite"><a href="#r14">14</a></sup></p>
+          <p>Hogyan jutottunk el a személyes érintettségtől — egy Baja belvárosában, lakóövezetben, éjszaka is üzemelő generátor felfedezésétől — a rendszer szisztematikus, saját kezű utánajárásáig.<sup class="cite"><a href="#r14">14</a></sup><sup class="cite"><a href="#r20">20</a></sup></p>
           <a class="watch" href="https://www.youtube.com/watch?v=rDX7OZZd8Kw" target="_blank" rel="noopener">Megnyitom YouTube-on ↗</a>
         </div>
         <div class="video-card">
@@ -1340,6 +1361,12 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
           <div class="who"><h3>Sarkadi Noémi (PTE) — glaciogenikus magvasítás konvektív felhőknél</h3><span class="role">MTA-rendezvény · 2025.12.04-05</span></div>
           <p>Peer-reviewed kutatásokra hivatkozva (Geresdi et al. 2017, Xue et al. 2013, <em>Journal of Applied Meteorology and Climatology</em>) mutatja be, hogy jégeső-képző (konvektív) felhőknél a magvasítás hatása gyakran <b>ellentétes a szándékolttal</b>.<sup class="cite"><a href="#r16">16</a></sup></p>
           <a class="watch" href="https://www.youtube.com/watch?v=6M9fPd4Bp3Y&t=2092s" target="_blank" rel="noopener">A 34:52-től, YouTube-on ↗</a>
+        </div>
+        <div class="video-card">
+          <div class="video-embed"><iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fbonaszabolcstisza%2Fvideos%2F2082558319036436%2F&show_text=false" title="Bóna Szabolcs — a döntés hivatalos indoklása" loading="lazy" style="border:none;overflow:hidden" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>
+          <div class="who"><h3>Bóna Szabolcs — a döntés hivatalos indoklása</h3><span class="role">agrárminiszter · Facebook · 2026.07.30</span></div>
+          <p>Ismerteti az 5000 gazdálkodós felmérést (66,1% a szüneteltetés mellett) és a fenntartás mellett maradt 4 vármegye szigorított, 80%-os jégeső-valószínűségi küszöbét — és leszögezi: a döntés nem tudományos állásfoglalás a szárazság-összefüggésről.<sup class="cite"><a href="#r19">19</a></sup></p>
+          <a class="watch" href="https://www.facebook.com/bonaszabolcstisza/videos/2082558319036436/" target="_blank" rel="noopener">Megnyitom Facebookon ↗</a>
         </div>
       </div>
       <button class="car-btn car-next" type="button" aria-label="Következő videó">›</button>
@@ -1416,6 +1443,80 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   </div>
 </section>
 
+<section id="kozerdeku">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">06 &nbsp;·&nbsp; Amit a helyszínen találtunk</span>
+      <h2>Közérdekű adatigénylések: ki üzemelteti valójában a generátorokat?</h2>
+    </div>
+    <p class="lead-p">2026 nyarán tíz településnek küldtünk közérdekű adatigénylést a helyi jégkármérséklő berendezésekről. A válaszok egy fontos, eddig kevéssé ismert képet rajzolnak ki: a JÉGER <b>nem egységes, kizárólag NAK-tulajdonú rendszer</b> — gyakran ugyanazon a településen belül keverednek a NAK-, a Hegyközség-, az önkormányzati és a magánkézben lévő berendezések, és ezekre nagyon eltérő mértékben terjed ki bármilyen felügyelet.</p>
+
+    <div class="carousel-hint">Görgesd jobbra a további válaszokért →</div>
+    <div class="carousel">
+      <button class="car-btn car-prev" type="button" aria-label="Előző adatigénylés">‹</button>
+      <div class="carousel-track" id="foiTrack">
+        <div class="press-card">
+          <span class="outlet">Kiskőrös · önkormányzati válasz, 2026.07.27</span>
+          <h3>5 generátor, 3 tulajdonos egy településen</h3>
+          <p>Az önkormányzat válasza szerint a helyben üzemelő 5 db ezüst-jodid alapú talajgenerátorból 3-at az önkormányzat, 1-et a NAK, 1-et a helyi Hegyközség tart tulajdonában és üzemeltet.<sup class="cite"><a href="#r21">21</a></sup></p>
+        </div>
+        <div class="press-card">
+          <span class="outlet">Soltvadkert · jegyzői válasz, 2026.07.30</span>
+          <h3>A 4 hivatalos berendezés mellett egy ötödik, magánkézben</h3>
+          <p>A jegyző írásban megerősíti: a 4 JÉGER-rendszerű berendezésen (3 Hegyközség, 1 NAK) felül egy magánszemély is üzemeltet egy, a JÉGER-hálózathoz nem kapcsolódó, más működési elvű berendezést a településen.<sup class="cite"><a href="#r22">22</a></sup></p>
+        </div>
+        <div class="press-card">
+          <span class="outlet">Visonta (Mátra-vidék) · hegyközségi válasz, 2026.08.24</span>
+          <h3>Egy 2014 óta önállóan üzemelő, teljesen NAK-független rendszer</h3>
+          <p>A Visontai Hegyközség 2014-ben saját generátort vásárolt, amit egy harmadik, eddig ismeretlen szolgáltató, a „MeteoCoOrd” riaszt és lát el hatóanyaggal — a berendezésre soha nem készült környezeti vagy egészségügyi hatásvizsgálat.<sup class="cite"><a href="#r23">23</a></sup></p>
+        </div>
+        <div class="press-card">
+          <span class="outlet">Kisszállás · önkormányzati válasz, 2026.08.03</span>
+          <h3>Az egyetlen dokumentált felfüggesztés</h3>
+          <p>„A felfüggesztést megelőzően egy darab jégkármérséklő rendszer működött” — az alpolgármester válasza az egyetlen konkrét bizonyíték ebben a körben arra, hogy valahol ténylegesen leállítottak egy berendezést; az ok és a pontos dátum egyelőre nem ismert.<sup class="cite"><a href="#r24">24</a></sup></p>
+        </div>
+        <div class="press-card">
+          <span class="outlet">Fülöpjakkab · polgármesteri válasz, 2026.07.23</span>
+          <h3>„3 harangláb” — egy kitérő válasz</h3>
+          <p>A polgármester írásos válaszában 3 db „jégkármérséklő eszközként” 3 haranglábat jelentett be, amiket népi megfigyelés szerint harangzúgással indítanak jégfelhő közeledtekor — jó illusztrációja annak, mennyire nehéz érdemi választ kapni egy-egy településtől.<sup class="cite"><a href="#r25">25</a></sup></p>
+        </div>
+      </div>
+      <button class="car-btn car-next" type="button" aria-label="Következő adatigénylés">›</button>
+    </div>
+  </div>
+</section>
+
+<section class="tinted" id="gyik">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">07 &nbsp;·&nbsp; Gyakori kérdések</span>
+      <h2>GYIK</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Honnan vannak az adataitok?</summary>
+        <p>Elsődlegesen hivatalos forrásokból: közbeszerzési dokumentumokból és szerződésekből (EKR, kozbeszerzes.hu), a NAK és önkormányzatok közérdekű adatigénylésekre adott válaszaiból, cégnyilvántartási adatokból, valamint a szereplők saját, nyilvánosan elérhető nyilatkozataiból (interjúk, podcastok — l. fent, 05. és 06. pont). Minden állítást egy belső, 0–3-as bizonyítottsági skálán tartunk nyilván (0 = ellenőrizetlen, nem közölhető; 3 = elsődleges, hivatalos forrás), és csak a 2–3-as fokozatú tényeket tesszük közzé ezen az oldalon.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Azt állítjátok, hogy a JÉGER okozza a szárazságot?</summary>
+        <p>Nem. Ez egy másik, korábbi petícióban felmerült állítás, amit sem a kormány, sem a NAK, sem a tudományos konszenzus nem támaszt alá — de független, nem-NAK-os, peer-reviewed forrás sem cáfolja egyértelműen. A mi álláspontunk: <b>nincs bizonyíték sem arra, hogy a rendszer okozza a szárazságot, sem arra, hogy biztosan nem befolyásolja a csapadékképződést</b> — és pontosan ez a bizonytalanság az, amit egy független, tudományos vizsgálattal kell tisztázni, mielőtt a rendszer bármilyen formában folytatódik.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Kik vagytok, van politikai kötődésetek?</summary>
+        <p>Aggódó gazdálkodók, mérnökök és szomszédok laza csoportja (l. fent, 02. pont) — nem áll mögöttünk politikai párt, és nem vitatjuk a klímaváltozás tényét. Néhány médiapartnerünknek (pl. a fent, 05. pontban szereplő podcast-műsorvezetőnek) saját, tőlünk független korábbi megnyilvánulásai is voltak a témában — ezeket mindig jelezzük, de nem szűrjük ki emiatt a hozzájuk köthető, önmagában ellenőrizhető információt.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Miért jelszóval védett ez az oldal?</summary>
+        <p>Ez egy munkapéldány — a végleges, nyilvános szöveg még szerkesztés alatt áll. A teljes, nyers forráskritikai háttéranyagot egy külön, folyamatosan bővülő dossziéban gyűjtjük.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Van infóm vagy helyi tapasztalatom — hogyan tudom megosztani?</summary>
+        <p>Örömmel fogadjuk (l. fent, 02. pont, „+ te is lehetsz”). Különösen hasznos, ha helyben ellenőrizhető, konkrét adat (pl. egy önkormányzati válasz, saját megfigyelés dátummal/hellyel) — ezeket ugyanazzal a szigorral vizsgáljuk meg, mielőtt bármit közzéteszünk.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
 <section id="jegyzetek">
   <div class="wrap-wide">
     <div class="section-head">
@@ -1441,6 +1542,14 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
         <li id="r15">mezohir.hu/keywords/jeger/ — JÉGER-cikksorozat, köztük „A JÉGER nem veszi el az esőt” – válaszolt a NAK (2026.07.13).</li>
         <li id="r16">Sarkadi Noémi (PTE) előadása, „A meteorológia válasza a környezeti kihívásokra (2. rész)”, MTA, 2025.12.04-05 (YouTube, MTA 1825, 2025.12.10, felirat alapján szó szerint ellenőrizve) — hivatkozott kutatások: Geresdi et al. (2017), <em>Journal of Applied Meteorology and Climatology</em> 56(5), <a href="https://doi.org/10.1175/JAMC-D-16-0187.1" target="_blank" rel="noopener">doi.org/10.1175/JAMC-D-16-0187.1</a>; Xue et al. (2013), <em>Journal of Applied Meteorology and Climatology</em> 52(6), <a href="https://doi.org/10.1175/JAMC-D-12-0149.1" target="_blank" rel="noopener">doi.org/10.1175/JAMC-D-12-0149.1</a>.</li>
         <li id="r17">YouTube — „Két mérnök beszélgetése”, Békéscsaba (yt: PRwyTOeCVEo, 2026.08.08) — a mozgalom szervezőinek saját becslése a magánkézben lévő rendszerek számáról (a hivatalos 986 db kb. 1,5–2×-ese); NAK- vagy minisztériumi hivatalos megerősítés egyelőre nincs.</li>
+        <li id="r18">Agrárszektor.hu (2025.01.29.) — „a Kormány évi legfeljebb 2 milliárd forint külön forrást biztosít” a JÉGER-rendszer működtetésére; a nagyságrendet a NAK saját sajtóközleményei is megerősítik. <a href="https://www.agrarszektor.hu/agrarpenzek/20250129/itt-az-igazsag-a-jegkarmerseklo-rendszerrol-nem-akarmi-derult-ki-2025-ben-53242" target="_blank" rel="noopener">agrarszektor.hu</a></li>
+        <li id="r19">Bóna Szabolcs agrárminiszter, Facebook-videó (2026.07.30) — a részleges leállítás és a szigorított küszöb hivatalos indoklása. <a href="https://www.facebook.com/bonaszabolcstisza/videos/2082558319036436/" target="_blank" rel="noopener">facebook.com/bonaszabolcstisza</a></li>
+        <li id="r20">VulcanAgro Kft., Facebook-videó (2026.08., a „Mi áll a JÉGER körüli viták hátterében?” c. Agrár Milliók-epizód Facebookra is kikerült változata, l. balra, r14) — Deák Hajnalka beszámolója saját tapasztalatairól: lakóövezetben üzemelő generátor Baján, korábbi helyi rendszerek bevonása a hálózatba, hiányzó rendszeres minőségbiztosítás a hatóanyagra. A Facebook beágyazás nem elérhető (a kiadó letiltotta), a videó a poszt saját szövege szerint is a YouTube-csatornájukon nézhető meg teljes hosszban. <a href="https://www.facebook.com/vulcanagro/videos/2165361317368798/" target="_blank" rel="noopener">facebook.com/vulcanagro</a></li>
+        <li id="r21">Kiskőrös város önkormányzata, közérdekű adatigénylésre adott válasz (2026.07.27, Domonyi László polgármester aláírásával) — a kezdeményezés birtokában.</li>
+        <li id="r22">Soltvadkert város jegyzője, közérdekű adatigénylésre adott válasz (2026.07.30, dr. Viszkók Zoltán aláírásával) — a kezdeményezés birtokában.</li>
+        <li id="r23">Visontai Hegyközség, közérdekű adatigénylésre adott válasz (2026.08.24, Spisák László elnök aláírásával), a 2014-es beszerzési szerződéssel és éves hatóanyag-felhasználási adatokkal együtt — a kezdeményezés birtokában.</li>
+        <li id="r24">Kisszállás község önkormányzata, közérdekű adatigénylésre adott válasz (2026.08.03, Rambala Zoltán alpolgármester aláírásával) — a kezdeményezés birtokában.</li>
+        <li id="r25">Fülöpjakkab község önkormányzata, közérdekű adatigénylésre adott válasz (2026.07.23, Bodor Sándor polgármester aláírásával) — a kezdeményezés birtokában.</li>
       </ol>
     </div>
   </div>
