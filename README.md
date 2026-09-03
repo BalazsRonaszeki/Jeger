@@ -18,14 +18,13 @@ Kötelező environment változók a Vercel projekt beállításaiban (Project �
 | `SUPABASE_KEY` | Supabase `service_role` kulcs |
 | `ADMIN_PASSWORD` | admin export jelszó |
 | `MAX_SUBMISSIONS_PER_MINUTE` | opcionális, default 6 |
-| `INFOTAINMENT_PASSWORD` | a `/infotainment` oldal Basic Auth jelszava |
-| `INFOTAINMENT_USER` | opcionális, default `jeger` — a `/infotainment` oldal Basic Auth felhasználóneve |
+| `INFOTAINMENT_PASSWORD` | a `/infotainment` és a `/kerdoiv` oldal közös jelszava |
 
 Supabase oldalon szükséges: `signatures` tábla (lásd `backend/supabase_schema.sql`) és egy publikus `signatures` storage bucket.
 
-## `/infotainment` oldal
+## `/infotainment` és `/kerdoiv` oldal
 
-Jelszóval védett, nem indexelt háttéroldal (`infotainment/index.html`), Edge Middleware-es Basic Auth-hal (`middleware.js`) — csak akkor él, ha az `INFOTAINMENT_PASSWORD` env változó be van állítva a Vercel projektben. Kereső-kizárás: `robots.txt` + `<meta name="robots" content="noindex,nofollow">` az oldalon.
+Jelszóval védett, nem indexelt háttéroldalak (`infotainment/index.html`, `kerdoiv/index.html`), Edge Middleware-es jelszavas kapuval (`middleware.js`) — mindkettő ugyanazt az `INFOTAINMENT_PASSWORD` Vercel env változót használja, külön-külön (útvonalanként elkülönített) auth-cookie-val. Kereső-kizárás: `robots.txt` + `<meta name="robots" content="noindex,nofollow">` az oldalakon.
 
 ## Lokális fejlesztés (opcionális)
 
