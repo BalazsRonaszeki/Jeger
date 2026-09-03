@@ -1,8 +1,7 @@
 export const config = {
-  matcher: ['/infotainment', '/infotainment/:path*'],
+  matcher: ['/infotainment', '/infotainment/:path*', '/kerdoiv', '/kerdoiv/:path*'],
 };
 
-const COOKIE_NAME = 'infotainment_auth';
 const MAX_AGE = 60 * 60 * 24 * 30; // 30 nap
 
 function loginPage({ error } = {}) {
@@ -52,6 +51,8 @@ export default async function middleware(request) {
   }
 
   const url = new URL(request.url);
+  const base = '/' + url.pathname.split('/')[1]; // '/infotainment' vagy '/kerdoiv'
+  const cookieName = base.slice(1) + '_auth';
 
   if (request.method === 'POST') {
     const form = await request.formData();
@@ -62,7 +63,7 @@ export default async function middleware(request) {
       });
       res.headers.append(
         'Set-Cookie',
-        `${COOKIE_NAME}=${pass}; Path=/infotainment; Max-Age=${MAX_AGE}; HttpOnly; Secure; SameSite=Lax`
+        `${cookieName}=${pass}; Path=${base}; Max-Age=${MAX_AGE}; HttpOnly; Secure; SameSite=Lax`
       );
       return res;
     }
@@ -72,7 +73,7 @@ export default async function middleware(request) {
   const cookieHeader = request.headers.get('cookie') || '';
   const authed = cookieHeader
     .split(';')
-    .some((c) => c.trim() === `${COOKIE_NAME}=${pass}`);
+    .some((c) => c.trim() === `${cookieName}=${pass}`);
 
   if (!authed) {
     return unauthorized();
