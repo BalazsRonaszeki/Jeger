@@ -175,7 +175,7 @@ form{display:flex; flex-direction:column; gap:0}
 .choice input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
 
 /* likert scale */
-.likert-track{display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem}
+.likert-track{display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem}
 .likert-opt{position:relative}
 .likert-opt input{position:absolute; inset:0; opacity:0; cursor:pointer; margin:0}
 .likert-opt span{
@@ -249,10 +249,10 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   <div class="wrap">
     <div class="eyebrow reveal">Munkapéldány — közvélemény-kérdőív</div>
     <h1 class="reveal d1">Mit gondol a jégeső-elhárításról?</h1>
-    <p class="lede reveal d2">Rövid, hét kérdéses felmérés a JÉGER és egyéb jégkármérséklési, időjárás-befolyásolási rendszerek lehetséges kockázatairól és üzemeltetésük átláthatóságáról — gazdálkodóknak és magánszemélyeknek egyaránt.</p>
+    <p class="lede reveal d2">Rövid felmérés a JÉGER és egyéb jégkármérséklési, időjárás-befolyásolási rendszerek lehetséges kockázatairól, szükségességéről és üzemeltetésük átláthatóságáról — gazdálkodóknak és magánszemélyeknek egyaránt.</p>
     <div class="meta-row">
-      <span><b>7</b> kérdés</span>
-      <span>≈ <b>2</b> perc</span>
+      <span><b>9</b> kérdés</span>
+      <span>≈ <b>3</b> perc</span>
       <span>Anonim, kivéve a megadott elérhetőség</span>
     </div>
   </div>
@@ -314,14 +314,13 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <div class="q">
         <div class="q-num">3</div>
         <div class="q-body">
-          <p class="q-label">A JÉGER és egyéb időjárás-befolyásoló rendszerek potenciális veszélyt jelentenek az ökoszisztémára és a mezőgazdaságra.</p>
+          <p class="q-label">Fontosnak tartom, hogy egy hatékony, jól ellenőrzött jégelhárító rendszer működjön.</p>
           <p class="q-hint">Mennyire ért egyet az állítással?</p>
           <div class="likert-track">
-            <label class="likert-opt"><input type="radio" name="q3" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q3" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q3" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q3" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q3" value="5"><span><span class="likert-dot"></span><span class="likert-num">5</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_effective" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_effective" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_effective" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_effective" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
           </div>
           <div class="likert-labels"><span>Egyáltalán nem értek egyet</span><span>Teljesen egyetértek</span></div>
         </div>
@@ -330,14 +329,13 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <div class="q">
         <div class="q-num">4</div>
         <div class="q-body">
-          <p class="q-label">A JÉGER és egyéb időjárás-befolyásoló rendszereket az elvárható átláthatósággal és ellenőrzéssel (monitoringgal) üzemeltetik.</p>
+          <p class="q-label">A JÉGER és egyéb időjárás-befolyásoló rendszerek potenciális veszélyt jelentenek az ökoszisztémára és a mezőgazdaságra.</p>
           <p class="q-hint">Mennyire ért egyet az állítással?</p>
           <div class="likert-track">
-            <label class="likert-opt"><input type="radio" name="q4" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q4" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q4" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q4" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q4" value="5"><span><span class="likert-dot"></span><span class="likert-num">5</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_danger" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_danger" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_danger" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_danger" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
           </div>
           <div class="likert-labels"><span>Egyáltalán nem értek egyet</span><span>Teljesen egyetértek</span></div>
         </div>
@@ -346,25 +344,54 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <div class="q">
         <div class="q-num">5</div>
         <div class="q-body">
-          <p class="q-label">Mennyire tart a JÉGER és egyéb időjárás-befolyásoló, -manipulációs rendszerek egészségre gyakorolt hatásától?</p>
+          <p class="q-label">A JÉGER és egyéb időjárás-befolyásoló rendszereket az elvárható átláthatósággal és ellenőrzéssel (monitoringgal) üzemeltetik.</p>
+          <p class="q-hint">Mennyire ért egyet az állítással?</p>
           <div class="likert-track">
-            <label class="likert-opt"><input type="radio" name="q5" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q5" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q5" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q5" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
-            <label class="likert-opt"><input type="radio" name="q5" value="5"><span><span class="likert-dot"></span><span class="likert-num">5</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_transparency" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_transparency" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_transparency" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_transparency" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
           </div>
-          <div class="likert-labels"><span>Egyáltalán nem</span><span>Nagyon</span></div>
+          <div class="likert-labels"><span>Egyáltalán nem értek egyet</span><span>Teljesen egyetértek</span></div>
         </div>
       </div>
 
       <div class="q">
         <div class="q-num">6</div>
         <div class="q-body">
+          <p class="q-label">Legyen azonnali bejelentési kötelezettség minden jégelhárító rendszerre.</p>
+          <p class="q-hint">Mennyire ért egyet az állítással?</p>
+          <div class="likert-track">
+            <label class="likert-opt"><input type="radio" name="q_reporting" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_reporting" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_reporting" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_reporting" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
+          </div>
+          <div class="likert-labels"><span>Egyáltalán nem értek egyet</span><span>Teljesen egyetértek</span></div>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-num">7</div>
+        <div class="q-body">
+          <p class="q-label">Mennyire tart a JÉGER és egyéb időjárás-befolyásoló, -manipulációs rendszerek egészségre gyakorolt hatásától?</p>
+          <div class="likert-track">
+            <label class="likert-opt"><input type="radio" name="q_health" value="1"><span><span class="likert-dot"></span><span class="likert-num">1</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_health" value="2"><span><span class="likert-dot"></span><span class="likert-num">2</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_health" value="3"><span><span class="likert-dot"></span><span class="likert-num">3</span></span></label>
+            <label class="likert-opt"><input type="radio" name="q_health" value="4"><span><span class="likert-dot"></span><span class="likert-num">4</span></span></label>
+          </div>
+          <div class="likert-labels"><span>Egyáltalán nem</span><span>Nagyon</span></div>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-num">8</div>
+        <div class="q-body">
           <p class="q-label">Szeretne-e értesülni a témával kapcsolatos fejleményekről?</p>
           <div class="choices">
-            <label class="choice"><input type="radio" name="q7" value="igen"><span>Igen</span></label>
-            <label class="choice"><input type="radio" name="q7" value="nem"><span>Nem</span></label>
+            <label class="choice"><input type="radio" name="q_updates" value="igen"><span>Igen</span></label>
+            <label class="choice"><input type="radio" name="q_updates" value="nem"><span>Nem</span></label>
           </div>
 
           <div class="sub" id="q7-sub">
@@ -413,7 +440,7 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     });
   }
   wire(Array.from(document.querySelectorAll('input[name="q1"]')), document.getElementById('q6-sub'), 'gazdalkodo');
-  wire(Array.from(document.querySelectorAll('input[name="q7"]')), document.getElementById('q7-sub'), 'igen');
+  wire(Array.from(document.querySelectorAll('input[name="q_updates"]')), document.getElementById('q7-sub'), 'igen');
 })();
 </script>
 </body>
