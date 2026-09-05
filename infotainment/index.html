@@ -241,6 +241,34 @@ sup.cite a:hover{text-decoration:underline}
 .video-card p{font-size:.9rem; color:var(--ink-soft); margin:0}
 .video-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); text-decoration:none}
 .video-card a.watch:hover{text-decoration:underline}
+/* poszterkép nélküli videókártya (pl. Facebook-beágyazás, ahonnan nem tölthető le előnézet) */
+.video-embed.video-poster.no-thumb{background:linear-gradient(140deg,#26332f,#111819)}
+.video-embed.video-poster.no-thumb .nt-label{
+  position:absolute; left:0; right:0; bottom:.65rem; text-align:center;
+  font-family:'IBM Plex Mono',monospace; font-size:.66rem; letter-spacing:.09em;
+  text-transform:uppercase; color:rgba(255,255,255,.6); padding:0 .8rem; pointer-events:none;
+}
+
+/* ---------- survey banner ---------- */
+.survey-wrap{padding-top:3.2rem}
+.survey-banner{
+  display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap; justify-content:space-between;
+  background:var(--accent-soft); border:1px solid var(--accent); border-left-width:4px;
+  border-radius:10px; padding:1.05rem 1.25rem; text-decoration:none; color:inherit;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.survey-banner:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+.survey-banner .sb-text{flex:1 1 20rem; min-width:0}
+.survey-banner .sb-eyebrow{
+  display:block; margin-bottom:.3rem; font-family:'IBM Plex Mono',monospace;
+  font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:600;
+}
+.survey-banner h2{font-size:1.05rem; font-weight:700; line-height:1.35; margin:0}
+.survey-banner .sb-cta{
+  flex:0 0 auto; font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600;
+  color:var(--accent-ink); background:var(--accent); padding:.62em 1.2em; border-radius:8px; white-space:nowrap;
+}
+@media (max-width:560px){.survey-banner .sb-cta{width:100%; text-align:center}}
 
 /* ---------- press cards ---------- */
 .press-card{
@@ -645,6 +673,16 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <div class="stat"><b>0</b><span>független, hatóság által elvégzett hatásvizsgálat<sup class="cite"><a href="#r6">6</a></sup></span></div>
     </div>
   </div>
+</div>
+
+<div class="wrap survey-wrap">
+  <a class="survey-banner" href="/kerdoiv" target="_blank" rel="noopener">
+    <span class="sb-text">
+      <span class="sb-eyebrow">Kérdőív &nbsp;·&nbsp; néhány perc</span>
+      <h2>Vegyél részt anonim közvélemény-kutatásunkban az időjárás-manipulációs rendszerekről!</h2>
+    </span>
+    <span class="sb-cta">Kitöltöm ↗</span>
+  </a>
 </div>
 
 <section id="cel">
@@ -1385,6 +1423,15 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <button class="car-btn car-prev" type="button" aria-label="Előző videó">‹</button>
       <div class="carousel-track" id="videosTrack">
         <div class="video-card">
+          <div class="video-embed video-poster no-thumb" data-embed-src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F954566290265290%2F&show_text=false&autoplay=true" data-embed-title="Kérdésünk a miniszterhez a kiskőrösi gazdafórumon" role="button" tabindex="0" aria-label="Videó lejátszása: Kérdésünk a miniszterhez a kiskőrösi gazdafórumon">
+            <span class="play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="nt-label">Facebook-videó</span>
+          </div>
+          <div class="who"><h3>Kérdésünk a miniszterhez a kiskőrösi gazdafórumon</h3><span class="role">Hajnal Zsolt · Facebook · 2026.09.04</span></div>
+          <p>Bóna Szabolcs miniszter urat kérdezzük a JÉGER- és egyéb időjárás-manipulációs rendszerekkel kapcsolatos tervekről a kiskőrösi gazdafórumon, 2026. szeptember 4-én.<sup class="cite"><a href="#r28">28</a></sup></p>
+          <a class="watch" href="https://www.facebook.com/reel/954566290265290/" target="_blank" rel="noopener">Megnyitom Facebookon ↗</a>
+        </div>
+        <div class="video-card">
           <div class="video-embed video-poster" data-embed-src="https://www.youtube-nocookie.com/embed/--SQhABEU5A?autoplay=1" data-embed-title="Szóban forgó — Szarvasi Televízió" role="button" tabindex="0" aria-label="Videó lejátszása: Szóban forgó — Szarvasi Televízió">
             <img src="https://img.youtube.com/vi/--SQhABEU5A/hqdefault.jpg" alt="" loading="lazy">
             <span class="play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
@@ -1661,6 +1708,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
         <li id="r25">Fülöpjakkab község önkormányzata, közérdekű adatigénylésre adott válasz (2026.07.23, Bodor Sándor polgármester aláírásával) — a kezdeményezés birtokában.</li>
         <li id="r26">agrárszektor.hu, „Alapvetés” podcast, YouTube (yt: -NhNhIj6tuA, 2026.08.06.) — Bóna Szabolcs agrárminiszter interjúja a JÉGER-döntésről és a 2027-es kilátásokról. <a href="https://www.youtube.com/watch?v=-NhNhIj6tuA" target="_blank" rel="noopener">youtube.com/watch?v=-NhNhIj6tuA</a></li>
         <li id="r27">TISZA Párt, Facebook-videó (2025.08.11.) — kecskeméti gazdalátogatás, Bűdi Zsolt Attila (Bájzöldért Zrt.) és a vendéglátó (feltehetően Magyar Péter, ma miniszterelnök) beszélgetése. <a href="https://www.facebook.com/watch/?v=1793578838243809" target="_blank" rel="noopener">facebook.com/watch/?v=1793578838243809</a></li>
+        <li id="r28">Hajnal Zsolt, Facebook-videó (2026.09.04.) — a kiskőrösi gazdafórumon a kezdeményezés képviselője kérdezi Bóna Szabolcs agrárminisztert a JÉGER és az egyéb időjárás-manipulációs rendszerek további terveiről. <a href="https://www.facebook.com/reel/954566290265290/" target="_blank" rel="noopener">facebook.com/reel/954566290265290</a></li>
       </ol>
     </div>
   </div>
@@ -1669,6 +1717,11 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 <footer>
   <div class="wrap">
     Munkapéldány — a végleges honlaphoz a teljes forráskritikai háttér a JÉGER-dossziéban érhető el. Minden itt szereplő szám és idézet ugyanazzal a bizonyítottsági szigorral lett kezelve, mint a dossziéban.
+    <p style="margin-top:1rem">
+      <a href="/adatkezeles.html">Adatkezelési tájékoztató</a>
+      &nbsp;·&nbsp;
+      <a href="#" data-cookie-settings>Süti-beállítások</a>
+    </p>
   </div>
 </footer>
 
@@ -1750,5 +1803,6 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   });
 })();
 </script>
+<script src="/cookie-consent.js" defer></script>
 </body>
 </html>
