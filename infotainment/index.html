@@ -241,13 +241,6 @@ sup.cite a:hover{text-decoration:underline}
 .video-card p{font-size:.9rem; color:var(--ink-soft); margin:0}
 .video-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); text-decoration:none}
 .video-card a.watch:hover{text-decoration:underline}
-/* poszterkép nélküli videókártya (pl. Facebook-beágyazás, ahonnan nem tölthető le előnézet) */
-.video-embed.video-poster.no-thumb{background:linear-gradient(140deg,#26332f,#111819)}
-.video-embed.video-poster.no-thumb .nt-label{
-  position:absolute; left:0; right:0; bottom:.65rem; text-align:center;
-  font-family:'IBM Plex Mono',monospace; font-size:.66rem; letter-spacing:.09em;
-  text-transform:uppercase; color:rgba(255,255,255,.6); padding:0 .8rem; pointer-events:none;
-}
 
 /* ---------- survey banner ---------- */
 .survey-wrap{padding-top:3.2rem}
@@ -321,6 +314,10 @@ sup.cite a:hover{text-decoration:underline}
 .video-modal-box{
   position:relative; width:min(920px, 100%); aspect-ratio:16/9; background:#000; border-radius:10px; overflow:hidden;
   box-shadow:0 20px 60px -10px rgba(0,0,0,.6);
+}
+/* álló (telefonnal rögzített) videó: a magassághoz igazodik, hogy a teljes kép látszódjon */
+.video-modal-box.portrait{
+  width:auto; height:100%; max-width:100%; aspect-ratio:9/16;
 }
 .video-modal-box iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
 .video-modal-close{
@@ -1423,9 +1420,9 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       <button class="car-btn car-prev" type="button" aria-label="Előző videó">‹</button>
       <div class="carousel-track" id="videosTrack">
         <div class="video-card">
-          <div class="video-embed video-poster no-thumb" data-embed-src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F954566290265290%2F&show_text=false&autoplay=true" data-embed-title="Kérdésünk a miniszterhez a kiskőrösi gazdafórumon" role="button" tabindex="0" aria-label="Videó lejátszása: Kérdésünk a miniszterhez a kiskőrösi gazdafórumon">
+          <div class="video-embed video-poster" data-embed-src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F954566290265290%2F&show_text=false&autoplay=true" data-embed-title="Kérdésünk a miniszterhez a kiskőrösi gazdafórumon" data-embed-ratio="9/16" role="button" tabindex="0" aria-label="Videó lejátszása: Kérdésünk a miniszterhez a kiskőrösi gazdafórumon">
+            <img src="/assets/video-thumbs/kiskoros-gazdaforum.jpg" alt="" loading="lazy">
             <span class="play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="nt-label">Facebook-videó</span>
           </div>
           <div class="who"><h3>Kérdésünk a miniszterhez a kiskőrösi gazdafórumon</h3><span class="role">Hajnal Zsolt · Facebook · 2026.09.04</span></div>
           <p>Bóna Szabolcs miniszter urat kérdezzük a JÉGER- és egyéb időjárás-manipulációs rendszerekkel kapcsolatos tervekről a kiskőrösi gazdafórumon, 2026. szeptember 4-én.<sup class="cite"><a href="#r28">28</a></sup></p>
@@ -1761,10 +1758,13 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   var modal = document.getElementById('videoModal');
   var frame = document.getElementById('videoModalFrame');
   var closeBtn = document.getElementById('videoModalClose');
-  if (!modal || !frame || !closeBtn) return;
-  function openModal(src, title){
+  var box = modal ? modal.querySelector('.video-modal-box') : null;
+  if (!modal || !frame || !closeBtn || !box) return;
+  function openModal(src, title, ratio){
     frame.src = src;
     frame.title = title || '';
+    // Az allo (9/16) videokat a magassaghoz igazitjuk, hogy a teljes kep latszodjon.
+    box.classList.toggle('portrait', ratio === '9/16');
     modal.hidden = false;
   }
   function closeModal(){
@@ -1773,12 +1773,12 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   }
   document.querySelectorAll('.video-poster').forEach(function(poster){
     poster.addEventListener('click', function(){
-      openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '');
+      openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '', poster.dataset.embedRatio);
     });
     poster.addEventListener('keydown', function(e){
       if (e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
-        openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '');
+        openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '', poster.dataset.embedRatio);
       }
     });
   });
