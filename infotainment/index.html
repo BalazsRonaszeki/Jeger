@@ -146,17 +146,13 @@ h1,h2,h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; text-wrap:bal
 }
 .stat b.stat-head{font-size:1.3rem; line-height:1.25}
 .stat span{font-size:.82rem; color:var(--ink-faint)}
-/* Kiemelt csempe: mindig teljes sort foglal, ezert a csempek kozepen allva
-   mindig a sor kozepere kerul — asztali 2 oszlopnal es mobil 1 oszlopnal is. */
+/* Kiemelt csempe: a statline utolso eleme, teljes sort foglal, igy a masik
+   negy csempe alatt osszefuggo savkent zarja a hero-t. A kiemelest egy fokkal
+   sotetebb hattertonus adja (a kerdoiv-banner accent szinetol megkulonboztetve);
+   a szamot hagyjuk accent szinben. */
 .hero .statline .stat.featured{
-  grid-column:1/-1; background:var(--accent-soft);
-  border:1px solid var(--accent); border-left-width:4px;
-  border-radius:10px; padding:1rem 1.2rem;
-}
-.hero .statline .stat.featured .stat-flag{
-  display:block; margin-bottom:.35rem; font-family:'IBM Plex Mono',monospace;
-  font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--accent); font-weight:600;
+  grid-column:1/-1; background:var(--surface-2);
+  border-radius:10px; padding:1.1rem 1.25rem;
 }
 .hero .statline .stat.featured b{font-size:2.8rem; line-height:1; color:var(--accent)}
 .hero .statline .stat.featured span{font-size:.92rem; color:var(--ink-soft)}
@@ -679,12 +675,9 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     <div class="statline reveal d3">
       <div class="stat"><b>986</b><span>hivatalos talajgenerátor<sup class="cite"><a href="#r1">1</a></sup></span></div>
       <div class="stat"><b>~1000–2000</b><span>becsült magánkézben lévő rendszer — nincs rájuk nyilvántartás<sup class="cite"><a href="#r17">17</a></sup></span></div>
-      <div class="stat featured">
-        <span class="stat-flag">A fő kérdésünk</span>
-        <b>0</b><span>független, hatóság által elvégzett hatásvizsgálat<sup class="cite"><a href="#r6">6</a></sup></span>
-      </div>
       <div class="stat"><b class="stat-head">Mérgező hatóanyag</b><span>A talajgenerátorokban használt ezüst-jodid H410-es besorolású, tehát nagyon mérgező a vízi élővilágra<sup class="cite"><a href="#r4">4</a></sup></span></div>
       <div class="stat"><b>~2 mrd Ft</b><span>a kormány éves felső költségkorlátja a teljes rendszerre<sup class="cite"><a href="#r18">18</a></sup></span></div>
+      <div class="stat featured"><b>0</b><span>független, hatóság által elvégzett hatásvizsgálat<sup class="cite"><a href="#r6">6</a></sup></span></div>
     </div>
   </div>
 </div>
