@@ -17,7 +17,6 @@ function loginPage({ error } = {}) {
   @media(prefers-color-scheme:dark){body{background:#12181a;color:#e9ede5}}
   form{background:#fff;border:1px solid #ccd6c8;border-radius:12px;padding:2rem 2.2rem;max-width:340px;width:100%;box-shadow:0 10px 28px -14px rgba(20,30,25,.22);display:flex;flex-direction:column;gap:1rem}
   @media(prefers-color-scheme:dark){form{background:#1a2224;border-color:#2c3a37}}
-  .eyebrow{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#b3560a;font-weight:600;font-family:ui-monospace,monospace}
   h1{font-size:1.25rem;margin:0;line-height:1.3}
   input{padding:.7em .9em;border-radius:8px;border:1px solid #ccd6c8;background:transparent;color:inherit;font-size:1rem;font-family:inherit}
   button{padding:.7em 1em;border-radius:8px;border:none;background:#b3560a;color:#fff;font-weight:600;font-size:1rem;cursor:pointer;font-family:inherit}
@@ -25,7 +24,6 @@ function loginPage({ error } = {}) {
 </style>
 </head><body>
 <form method="POST">
-  <div class="eyebrow">Munkapéldány &middot; nem publikus</div>
   <h1>Ez az oldal jelszóval védett</h1>
   <input type="password" name="password" placeholder="Jelszó" autocomplete="off" autofocus>
   <button type="submit">Belépés</button>
