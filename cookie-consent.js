@@ -16,7 +16,7 @@
   'use strict';
 
   // --- BEÁLLÍTÁSOK ------------------------------------------------------------
-  var GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';   // ← ide jön a valódi GA4 mérőazonosító
+  var GA_MEASUREMENT_ID = 'G-7MM2ZJ4K1Z';
   var PRIVACY_URL       = '/adatkezeles.html';
   var STORAGE_KEY       = 'stopjeger_cookie_consent';
   var POLICY_VERSION    = 1;
@@ -71,7 +71,14 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_MEASUREMENT_ID);
     document.head.appendChild(s);
     gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
+    // A hirdetési/profilalkotási jelzések kikapcsolása a mérőkódban is meg van
+    // erősítve, nem csak a GA4 property beállításaiban — az adatkezelési
+    // tájékoztató 2.4 pontja ezt állítja, tehát itt is érvényesíteni kell.
+    gtag('config', GA_MEASUREMENT_ID, {
+      anonymize_ip: true,
+      allow_google_signals: false,
+      allow_ad_personalization_signals: false
+    });
   }
 
   function applyConsent(analytics) {

@@ -72,8 +72,13 @@
 | **Törlési határidő** | A Google Analytics szolgáltatásban beállított megőrzési idő, legfeljebb 14 hónap |
 | **Biztonsági intézkedések** | IP-anonimizálás bekapcsolva; hirdetési és profilalkotási funkciók (Google Signals, hirdetési személyre szabás) kikapcsolva |
 
-> **Állapot:** a `cookie-consent.js`-ben a GA4 mérőazonosító jelenleg `G-XXXXXXXXXX` placeholder,
-> vagyis a webanalitika **még nem éles**. Ez a pont a bekapcsolás pillanatától alkalmazandó.
+> **Állapot (2026. szeptember 8-tól éles):** a GA4 mérőazonosító `G-7MM2ZJ4K1Z`. A mérőkód
+> kizárólag a süti-sávon adott kifejezett hozzájárulás után töltődik be; a Consent Mode v2
+> alapértelmezése minden tárolási célra `denied`. A `gtag('config', …)` hívás explicit módon
+> kikapcsolja a Google Signals és a hirdetési személyre szabás jelzéseit is.
+>
+> **Ellenőrizendő a GA4 property beállításaiban:** az adatmegőrzési idő 14 hónapra állítva
+> (a tájékoztató ezt állítja), a Google Signals kikapcsolva, hirdetési funkciók kikapcsolva.
 
 ---
 

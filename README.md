@@ -70,7 +70,7 @@ A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 leve
 
 - [ ] Kettős opt-in: megerősítő levél kiküldése és a `confirm_token` beváltása (`confirmed_at`)
 - [ ] Hírlevél-kiküldés Brevóval, `List-Unsubscribe` fejléccel és leiratkozó hivatkozással
-- [ ] GA4 mérőazonosító beállítása a `cookie-consent.js`-ben (jelenleg `G-XXXXXXXXXX` placeholder)
+- [x] GA4 mérőazonosító beállítva (`G-7MM2ZJ4K1Z`), betöltés csak hozzájárulás után
 - [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
 
 ## Lokális fejlesztés
