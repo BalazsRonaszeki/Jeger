@@ -123,7 +123,10 @@ hírlevél-küldésbe.
 **Technikai intézkedések**
 
 - Minden kommunikáció TLS/HTTPS titkosított csatornán zajlik; HTTP → HTTPS átirányítás kényszerítve.
-- Az adatbázis nyugalmi állapotban titkosított (Supabase, eu-west-1).
+- Az adatbázis nyugalmi állapotban titkosított (Supabase, eu-west-1), AES-256 titkosítással.
+- **Helyreállíthatóság (GDPR 32. cikk (1) c)):** a Supabase Pro csomag napi automatikus mentést
+  készít, 7 napos visszatekintéssel. A naplók megőrzési ideje 7 nap, ami adatvédelmi incidens
+  esetén a 72 órás bejelentési határidőn belüli kivizsgálást lehetővé teszi.
 - Mindkét táblán **sorszintű hozzáférés-védelem (RLS) van bekapcsolva, nulla policy-val**: sem a
   publishable, sem az authenticated kulcs nem olvashat és nem írhat. Az adatokhoz kizárólag a
   szerveroldali secret key fér hozzá, amely környezeti változóban él, a forráskódban nem szerepel.
