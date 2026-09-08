@@ -11,3 +11,9 @@ env/
 .vercel/
 *.log
 .claude/
+
+# Belso kutatasi anyag - NEM kerulhet a publikus repoba
+Dokumentumok/
+
+# A gyokerbe masolt portrek; a hasznalt valtozatuk az assets/profiles/ alatt van
+/*.jpg

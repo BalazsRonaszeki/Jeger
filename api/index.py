@@ -1,52 +1,69 @@
 import os
+import secrets
 import time
-import uuid
 from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from dotenv import load_dotenv
-from pathlib import Path
 
 load_dotenv()
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-UPLOAD_DIR = os.getenv('UPLOAD_DIR', '/tmp/uploads')
 MAX_PER_MIN = int(os.getenv('MAX_SUBMISSIONS_PER_MINUTE', '6'))
+ADMIN_MAX_ATTEMPTS = int(os.getenv('ADMIN_MAX_ATTEMPTS', '5'))
+ADMIN_LOCKOUT_SECONDS = int(os.getenv('ADMIN_LOCKOUT_SECONDS', '900'))
 
-Path(UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
+ALLOWED_ORIGINS = [
+    o.strip() for o in os.getenv(
+        'ALLOWED_ORIGINS',
+        'https://stopjeger.hu,https://www.stopjeger.hu'
+    ).split(',') if o.strip()
+]
 
-app = FastAPI(title='Jeger alairasgyujto API')
+app = FastAPI(title='stopjeger.hu API')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_methods=['GET', 'POST'],
+    allow_headers=['*'],
 )
 
-# Simple in-memory rate limiter (note: not persistent across serverless invocations/instances)
+# Egyszerű, memóriában tartott rate limiter. Serverless környezetben
+# instance-onként külön él — lassító fékező, nem szigorú korlát.
 rate_store = {}
+admin_failures = {}
+
 
 def ip_from_request(request: Request):
     xff = request.headers.get('x-forwarded-for')
     if xff:
         return xff.split(',')[0].strip()
-    return request.client.host
+    return request.client.host if request.client else 'unknown'
+
 
 def check_rate(ip: str):
     now = time.time()
-    window = 60
-    calls = rate_store.get(ip, [])
-    # keep only last minute
-    calls = [t for t in calls if now - t < window]
+    calls = [t for t in rate_store.get(ip, []) if now - t < 60]
     if len(calls) >= MAX_PER_MIN:
         return False
     calls.append(now)
     rate_store[ip] = calls
     return True
+
+
+def admin_allowed(ip: str):
+    now = time.time()
+    fails = [t for t in admin_failures.get(ip, []) if now - t < ADMIN_LOCKOUT_SECONDS]
+    admin_failures[ip] = fails
+    return len(fails) < ADMIN_MAX_ATTEMPTS
+
+
+def admin_record_failure(ip: str):
+    admin_failures.setdefault(ip, []).append(time.time())
+
 
 try:
     from supabase import create_client
@@ -57,122 +74,155 @@ except Exception:
     supabase_client = None
 
 
-@app.post('/api/submit')
-async def submit(request: Request,
-                 name: str = Form(...),
-                 settlement: str = Form(...),
-                 street_address: str = Form(...),
-                 email: str = Form(...),
-                 is_farmer: str = Form(''),
-                 hectares: str = Form(None),
+def scale(value):
+    """Likert-érték 1..4 között, minden más None."""
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        return None
+    return n if 1 <= n <= 4 else None
+
+
+def choice(value, allowed):
+    return value if value in allowed else None
+
+
+@app.post('/api/survey')
+async def survey(request: Request,
+                 q1: str = Form(None),
+                 q6: str = Form(None),
+                 q2: str = Form(None),
+                 q_effective: str = Form(None),
+                 q_danger: str = Form(None),
+                 q_transparency: str = Form(None),
+                 q_reporting: str = Form(None),
+                 q_health: str = Form(None),
+                 q_updates: str = Form(None),
+                 email: str = Form(None),
                  consent: str = Form(None),
-                 updates_optin: str = Form(None),
                  hp_field: str = Form(None)):
+
+    if hp_field:
+        raise HTTPException(status_code=400, detail='Érvénytelen beküldés')
+
     ip = ip_from_request(request)
     if not check_rate(ip):
-        raise HTTPException(status_code=429, detail='Túl sok kérést küldött; próbálja később')
+        raise HTTPException(status_code=429, detail='Túl sok kérést küldött, kérjük próbálja később')
 
-    # Honeypot check
-    if hp_field:
-        raise HTTPException(status_code=400, detail='Invalid submission')
+    if not supabase_client:
+        raise HTTPException(status_code=503, detail='A szolgáltatás jelenleg nem érhető el')
 
-    if consent != 'yes':
-        raise HTTPException(status_code=400, detail='Az adatkezelési tájékoztató elfogadása kötelező')
-
-    record_id = str(uuid.uuid4())
-
-    # Persist record: try Supabase table 'signatures', fall back to local CSV
-    record = {
-        'id': record_id,
-        'name': name,
-        'settlement': settlement,
-        'street_address': street_address,
-        'email': email,
-        'is_farmer': is_farmer,
-        'hectares': hectares,
-        'consent': True,
-        'updates_optin': updates_optin == 'yes',
-        'ip': ip,
-        'created_at': int(time.time())
+    # --- 1. Anonim válaszsor. Se e-mail, se IP, se pontos időbélyeg. ---
+    answers = {
+        'respondent_type': choice(q1, ('gazdalkodo', 'maganszemely')),
+        'hail_damage': choice(q6, ('igen', 'nem')),
+        'county': (q2 or '').strip() or None,
+        'effective': scale(q_effective),
+        'danger': scale(q_danger),
+        'transparency': scale(q_transparency),
+        'reporting': scale(q_reporting),
+        'health': scale(q_health),
     }
 
-    if supabase_client:
-        try:
-            supabase_client.table('signatures').insert(record).execute()
-        except Exception:
-            # ignore and fall back
-            pass
-    else:
-        # append to local CSV for export
-        import csv
-        csvfile = Path(UPLOAD_DIR) / 'submissions.csv'
-        write_header = not csvfile.exists()
-        with open(csvfile, 'a', newline='', encoding='utf-8') as fh:
-            writer = csv.DictWriter(fh, fieldnames=list(record.keys()))
-            if write_header:
-                writer.writeheader()
-            writer.writerow(record)
+    if not any(v is not None for v in answers.values()):
+        raise HTTPException(status_code=400, detail='Kérjük, válaszoljon legalább egy kérdésre')
 
-    return JSONResponse({'ok': True})
+    try:
+        supabase_client.table('survey_responses').insert(answers).execute()
+    except Exception:
+        raise HTTPException(status_code=500, detail='A mentés nem sikerült, kérjük próbálja újra')
+
+    # --- 2. Hírlevél-feliratkozás. Külön tábla, közös azonosító nélkül. ---
+    subscribed = False
+    wants_updates = q_updates == 'igen'
+    address = (email or '').strip().lower()
+
+    if wants_updates and address:
+        if consent not in ('on', 'yes'):
+            raise HTTPException(
+                status_code=400,
+                detail='A hírlevélhez a hozzájárulás elfogadása szükséges'
+            )
+        try:
+            supabase_client.table('subscribers').insert({
+                'email': address,
+                'source': 'kerdoiv',
+                'consent': True,
+            }).execute()
+            subscribed = True
+        except Exception as exc:
+            detail = str(exc)
+            # Már feliratkozott cím: a válasz mentve, ez nem hiba a kitöltő felé.
+            if 'subscribers_email_key' in detail or 'duplicate key' in detail or '23505' in detail:
+                subscribed = True
+            else:
+                return JSONResponse({
+                    'ok': True,
+                    'subscribed': False,
+                    'warning': 'A válaszokat rögzítettük, de a feliratkozás nem sikerült.',
+                })
+
+    return JSONResponse({'ok': True, 'subscribed': subscribed})
 
 
 @app.get('/api/count')
 async def count():
-    if supabase_client:
-        try:
-            res = supabase_client.table('signatures').select('id', count='exact').limit(1).execute()
-            return JSONResponse({'count': res.count or 0})
-        except Exception:
-            return JSONResponse({'count': None})
-
-    # Fallback ohne Supabase: lokale CSV zeilenweise zählen (minus Header)
-    csvfile = Path(UPLOAD_DIR) / 'submissions.csv'
-    if not csvfile.exists():
-        return JSONResponse({'count': 0})
-    with open(csvfile, 'r', encoding='utf-8') as fh:
-        zeilen = sum(1 for _ in fh)
-    return JSONResponse({'count': max(0, zeilen - 1)})
+    if not supabase_client:
+        return JSONResponse({'count': None})
+    try:
+        res = supabase_client.table('survey_responses') \
+            .select('id', count='exact').limit(1).execute()
+        return JSONResponse({'count': res.count or 0})
+    except Exception:
+        return JSONResponse({'count': None})
 
 
 @app.get('/api/admin/export')
-async def admin_export(request: Request, password: str = None):
-    # simple admin protection via query param or header
+async def admin_export(request: Request, dataset: str = 'survey'):
     admin_pw = os.getenv('ADMIN_PASSWORD')
     if not admin_pw:
         raise HTTPException(status_code=403, detail='Admin password not configured')
-    # allow password via query param or X-Admin-Password header
-    hdr = request.headers.get('x-admin-password')
-    if password != admin_pw and hdr != admin_pw:
+
+    ip = ip_from_request(request)
+    if not admin_allowed(ip):
+        raise HTTPException(status_code=429, detail='Túl sok sikertelen próbálkozás')
+
+    # A jelszó kizárólag fejlécben fogadható el. Query paraméterként bekerülne a
+    # Vercel access logjába, a böngésző előzményeibe és a Referer fejlécbe.
+    hdr = request.headers.get('x-admin-password') or ''
+    if not secrets.compare_digest(hdr.encode('utf-8'), admin_pw.encode('utf-8')):
+        admin_record_failure(ip)
         raise HTTPException(status_code=401, detail='Unauthorized')
 
-    # If Supabase configured, export from table
-    if supabase_client:
-        try:
-            res = supabase_client.table('signatures').select('*').execute()
-            data = res.data or []
-            # stream CSV
-            def iter_rows():
-                import csv, io
-                buf = io.StringIO()
-                if not data:
-                    yield ''
-                    return
-                writer = csv.DictWriter(buf, fieldnames=list(data[0].keys()))
-                writer.writeheader()
-                yield buf.getvalue()
-                buf.seek(0); buf.truncate(0)
-                for row in data:
-                    writer.writerow(row)
-                    yield buf.getvalue()
-                    buf.seek(0); buf.truncate(0)
+    table = {'survey': 'survey_responses', 'subscribers': 'subscribers'}.get(dataset)
+    if not table:
+        raise HTTPException(status_code=400, detail="dataset: 'survey' vagy 'subscribers'")
 
-            return StreamingResponse(iter_rows(), media_type='text/csv')
-        except Exception:
-            raise HTTPException(status_code=500, detail='Export hiba')
+    if not supabase_client:
+        raise HTTPException(status_code=503, detail='Adatbázis nem elérhető')
 
-    # fallback: local CSV
-    csvfile = Path(UPLOAD_DIR) / 'submissions.csv'
-    if not csvfile.exists():
-        raise HTTPException(status_code=404, detail='Nincs adat')
+    try:
+        data = supabase_client.table(table).select('*').execute().data or []
+    except Exception:
+        raise HTTPException(status_code=500, detail='Export hiba')
 
-    return StreamingResponse(csvfile.open('r', encoding='utf-8'), media_type='text/csv')
+    def iter_rows():
+        import csv, io
+        buf = io.StringIO()
+        if not data:
+            yield ''
+            return
+        writer = csv.DictWriter(buf, fieldnames=list(data[0].keys()))
+        writer.writeheader()
+        yield buf.getvalue()
+        buf.seek(0); buf.truncate(0)
+        for row in data:
+            writer.writerow(row)
+            yield buf.getvalue()
+            buf.seek(0); buf.truncate(0)
+
+    return StreamingResponse(
+        iter_rows(),
+        media_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="' + table + '.csv"'}
+    )

@@ -1,38 +1,83 @@
-# JÉGER aláírásgyűjtés
+# stopjeger.hu
 
-Aláírásgyűjtő oldal Vercelre deployolva: [jeger-peticio.com](https://jeger-peticio.com)
+Közvélemény-kutatás és háttéranyag a JÉGER (Országos Jégkármérséklő Rendszer) és egyéb
+időjárás-befolyásoló rendszerek szabályozásáról. Élő oldal: [stopjeger.hu](https://stopjeger.hu)
 
-- Frontend: statikus magyar nyelvű HTML űrlap a repo gyökerében (`index.html`, `app.js`, `styles.css`)
-- Backend: FastAPI app Vercel Python serverless függvényként az `api/index.py`-ban, Supabase-be ír (tábla + storage bucket)
-- `backend/`: csak dokumentáció és a Supabase séma (`supabase_schema.sql`, `privacy.md`), nem fut runtime-ban
+Adatkezelő: **Agro-Biotech Kft.** (adószám: 32031973-2-07)
+
+- **Frontend:** statikus HTML a repo gyökerében
+  - `index.html` — a főoldal (háttéranyag: tudomány, technológia, felügyelet, interjúk, forrásjegyzék)
+  - `kerdoiv/index.html` — a közvélemény-kutatás űrlapja
+  - `adatkezeles.html` — adatkezelési tájékoztató
+  - `cookie-consent.js` — süti-hozzájárulás, GA4 csak hozzájárulás után tölt be
+- **Backend:** FastAPI app Vercel Python serverless függvényként az `api/index.py`-ban, Supabase-be ír
+- **`backend/`:** csak dokumentáció és séma, nem fut runtime-ban
+  - `supabase_schema.sql` — a `survey_responses` és `subscribers` táblák
+  - `adatkezelesi_nyilvantartas.md` — GDPR 30. cikk szerinti belső nyilvántartás (nem publikus)
+
+## Adatmodell
+
+Két, egymással **össze nem kapcsolható** tábla:
+
+| Tábla | Tartalom |
+|---|---|
+| `survey_responses` | A kérdőív válaszai. Se e-mail, se IP, se pontos időbélyeg — csak beküldési dátum. |
+| `subscribers` | A hírlevélre feliratkozók e-mail címe, hozzájárulás ténye, megerősítő token. |
+
+A szétválasztás nem stílus kérdése: a kérdőív azt ígéri a kitöltőnek, hogy a válaszokat névtelenül
+dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbélyeg ezt az ígéretet megtörné.
+
+## API
+
+| Végpont | Leírás |
+|---|---|
+| `POST /api/survey` | Kérdőív beküldése. A válaszokat és az esetleges feliratkozást külön sorba írja. |
+| `GET /api/count` | A beérkezett válaszok száma. |
+| `GET /api/admin/export?dataset=survey\|subscribers` | CSV-export. Jelszó **csak** `X-Admin-Password` fejlécben. |
+
+```bash
+curl -H "X-Admin-Password: <jelszo>" \
+  "https://stopjeger.hu/api/admin/export?dataset=survey" -o valaszok.csv
+```
 
 ## Deploy
 
-A GitHub repóra pusholt commit automatikusan deployol Vercelen (a projekt már össze van kötve).
+A GitHub repóra pusholt commit automatikusan deployol Vercelen.
 
-Kötelező environment változók a Vercel projekt beállításaiban (Project → Settings → Environment Variables):
+Environment változók (Vercel → Project → Settings → Environment Variables):
 
 | Név | Érték |
 |---|---|
-| `SUPABASE_URL` | Supabase projekt URL |
-| `SUPABASE_KEY` | Supabase `service_role` kulcs |
-| `ADMIN_PASSWORD` | admin export jelszó |
+| `SUPABASE_URL` | `https://<projekt-ref>.supabase.co` |
+| `SUPABASE_KEY` | Supabase **secret key** (`sb_secret_…`) — soha ne a publishable |
+| `ADMIN_PASSWORD` | admin export jelszó, hosszú és véletlen |
+| `ALLOWED_ORIGINS` | opcionális, default `https://stopjeger.hu,https://www.stopjeger.hu` |
 | `MAX_SUBMISSIONS_PER_MINUTE` | opcionális, default 6 |
-| `INFOTAINMENT_PASSWORD` | a `/infotainment` és a `/kerdoiv` oldal közös jelszava |
+| `ADMIN_MAX_ATTEMPTS` | opcionális, default 5 |
+| `ADMIN_LOCKOUT_SECONDS` | opcionális, default 900 |
 
-Supabase oldalon szükséges: `signatures` tábla (lásd `backend/supabase_schema.sql`) és egy publikus `signatures` storage bucket.
+## DNS (WebSupport)
 
-## `/infotainment` és `/kerdoiv` oldal
+A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 levelezés
+(MX, SPF, DKIM, DMARC) ugyanabban a zónában él.
 
-Jelszóval védett, nem indexelt háttéroldalak (`infotainment/index.html`, `kerdoiv/index.html`), Edge Middleware-es jelszavas kapuval (`middleware.js`) — mindkettő ugyanazt az `INFOTAINMENT_PASSWORD` Vercel env változót használja, külön-külön (útvonalanként elkülönített) auth-cookie-val. Kereső-kizárás: `robots.txt` + `<meta name="robots" content="noindex,nofollow">` az oldalakon.
+| Név | Típus | Érték |
+|---|---|---|
+| `stopjeger.hu` | A | `216.198.79.1` |
+| `www` | CNAME | `1131f777d922ce36.vercel-dns-017.com.` |
 
-## Lokális fejlesztés (opcionális)
+## Nyitott feladatok
+
+- [ ] Kettős opt-in: megerősítő levél kiküldése és a `confirm_token` beváltása (`confirmed_at`)
+- [ ] Hírlevél-kiküldés Brevóval, `List-Unsubscribe` fejléccel és leiratkozó hivatkozással
+- [ ] GA4 mérőazonosító beállítása a `cookie-consent.js`-ben (jelenleg `G-XXXXXXXXXX` placeholder)
+- [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
+
+## Lokális fejlesztés
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r api/requirements.txt
-uvicorn api.index:app --reload --host 0.0.0.0 --port 8000
+vercel dev
 ```
-
-A frontendhez ekkor a repo gyökerét kell kiszolgálni (pl. `python -m http.server`), vagy egyszerűen `vercel dev`-et használni, ami az `api/` és a statikus fájlokat is egyben szolgálja ki.

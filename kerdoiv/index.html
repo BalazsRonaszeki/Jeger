@@ -3,9 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow, noarchive">
 <title>JÉGER-kérdőív — mit gondol a jégeső-elhárításról?</title>
 <meta name="description" content="Rövid közvélemény-kérdőív a JÉGER és egyéb jégkármérséklési, időjárás-befolyásolási rendszerekről.">
+<link rel="canonical" href="https://stopjeger.hu/kerdoiv">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stopjeger.hu/kerdoiv">
+<meta property="og:title" content="JÉGER-kérdőív — mit gondol a jégeső-elhárításról?">
+<meta property="og:description" content="Rövid, anonim közvélemény-kutatás a jégeső-elhárítási és időjárás-befolyásoló rendszerekről. Kitöltése kb. 3 perc.">
+<meta property="og:image" content="https://stopjeger.hu/assets/header-art.jpg">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -227,6 +232,32 @@ select:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
   border-top:1px solid var(--line);
 }
 
+.submit-row{display:flex; flex-wrap:wrap; align-items:center; gap:1rem; margin-top:1.6rem}
+.btn-submit{
+  font-family:'Bricolage Grotesque', system-ui, sans-serif;
+  font-size:1rem; font-weight:600; letter-spacing:-.01em;
+  padding:.85em 2em; border:none; border-radius:9px;
+  background:var(--accent); color:var(--accent-ink);
+  cursor:pointer; box-shadow:var(--shadow);
+  transition:transform .12s ease, filter .12s ease;
+}
+.btn-submit:hover:not(:disabled){filter:brightness(1.08)}
+.btn-submit:active:not(:disabled){transform:translateY(1px)}
+.btn-submit:focus-visible{outline:2px solid var(--ink); outline-offset:3px}
+.btn-submit:disabled{opacity:.55; cursor:progress}
+
+.form-status{font-size:.88rem; color:var(--accent); margin:0}
+.form-status:empty{display:none}
+
+.thanks{
+  display:none; padding:2.4rem 2rem; text-align:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.thanks.is-visible{display:block}
+.thanks h2{font-size:1.5rem; margin-bottom:.6rem}
+.thanks p{color:var(--ink-soft); margin:.5rem auto 0; max-width:34rem}
+
 footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 
 @media(max-width:560px){
@@ -260,7 +291,7 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 
 <section>
   <div class="wrap">
-    <form>
+    <form id="surveyForm" novalidate>
 
       <div class="q">
         <div class="q-num">1</div>
@@ -397,14 +428,29 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
             </div>
             <label class="consent">
               <input type="checkbox" name="consent">
-              <span>Hozzájárulok, hogy a megadott e-mail címemet a JÉGER és egyéb időjárás-befolyásoló rendszerekkel kapcsolatos tájékoztatás céljából felhasználják. Az adatokat kizárólag erre a célra kezeljük, és bármikor leiratkozhat.</span>
+              <span>Hozzájárulok, hogy a megadott e-mail címemet a JÉGER és egyéb időjárás-befolyásoló rendszerekkel kapcsolatos tájékoztatás céljából felhasználják. Az adatokat kizárólag erre a célra kezeljük, és bármikor leiratkozhat — a hírlevél alján lévő leiratkozó hivatkozással, vagy egy <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre küldött levéllel.</span>
             </label>
           </div>
         </div>
       </div>
 
+      <!-- Honeypot: rejtett mező, embert nem zavar, botot kiszűr -->
+      <input type="text" name="hp_field" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
       <p class="q-note">A válaszokat anonim módon, összesítve dolgozzuk fel. Elérhetőséget csak akkor adj meg, ha szeretnél értesülni a mozgalmunkat érintő fejleményekről — bármikor leiratkozhatsz.</p>
+
+      <div class="submit-row">
+        <button type="submit" class="btn-submit" id="submitBtn">Válaszaim beküldése</button>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </div>
     </form>
+
+    <div class="thanks" id="thanks" tabindex="-1">
+      <p class="eyebrow">Köszönjük</p>
+      <h2>Megkaptuk a válaszaidat</h2>
+      <p id="thanksNote">A kutatás eredményeit összesítve tesszük közzé.</p>
+      <p style="margin-top:1.4rem"><a href="/">&larr; Vissza a főoldalra</a></p>
+    </div>
   </div>
 </section>
 
@@ -437,6 +483,78 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   }
   wire(Array.from(document.querySelectorAll('input[name="q1"]')), document.getElementById('q6-sub'), 'gazdalkodo');
   wire(Array.from(document.querySelectorAll('input[name="q_updates"]')), document.getElementById('q7-sub'), 'igen');
+})();
+
+// Beküldés
+(function(){
+  var form   = document.getElementById('surveyForm');
+  var btn    = document.getElementById('submitBtn');
+  var status = document.getElementById('formStatus');
+  var thanks = document.getElementById('thanks');
+  var note   = document.getElementById('thanksNote');
+
+  function fail(message, focusEl){
+    status.textContent = message;
+    if (focusEl) focusEl.focus();
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    status.textContent = '';
+
+    var data = new FormData(form);
+
+    // Legalább egy érdemi válasz kell — üres űrlapot ne küldjünk be.
+    var answered = ['q1','q2','q6','q_effective','q_danger','q_transparency','q_reporting','q_health']
+      .some(function(k){ return (data.get(k) || '').trim() !== ''; });
+    if (!answered) {
+      return fail('Kérjük, válaszolj legalább egy kérdésre a beküldés előtt.');
+    }
+
+    // Ha kér tájékoztatást, ahhoz e-mail és hozzájárulás is kell.
+    if (data.get('q_updates') === 'igen') {
+      var email = (data.get('email') || '').trim();
+      var emailField = document.getElementById('q7-email');
+      if (!email) {
+        return fail('Add meg az e-mail címedet, vagy válaszd a „Nem” lehetőséget a 8. kérdésnél.', emailField);
+      }
+      if (!emailField.checkValidity()) {
+        return fail('Az e-mail cím formátuma nem megfelelő.', emailField);
+      }
+      if (!data.get('consent')) {
+        return fail('A hírlevélhez a hozzájárulás elfogadása szükséges.');
+      }
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Küldés…';
+
+    try {
+      var res  = await fetch('/api/survey', { method: 'POST', body: data });
+      var json = await res.json().catch(function(){ return {}; });
+
+      if (!res.ok) {
+        btn.disabled = false;
+        btn.textContent = 'Válaszaim beküldése';
+        return fail(json.detail || 'Hiba történt a beküldés során. Kérjük, próbáld újra.');
+      }
+
+      if (json.warning) {
+        note.textContent = json.warning + ' Ha kérted a tájékoztatást, írj az info@stopjeger.hu címre.';
+      } else if (json.subscribed) {
+        note.textContent = 'A kutatás eredményeit összesítve tesszük közzé. A megadott címre a fejleményekről is küldünk tájékoztatást — leiratkozni bármikor lehet.';
+      }
+
+      form.style.display = 'none';
+      thanks.classList.add('is-visible');
+      thanks.focus();
+      thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Válaszaim beküldése';
+      fail('Kapcsolati hiba. Ellenőrizd az internetkapcsolatod, és próbáld újra.');
+    }
+  });
 })();
 </script>
 <script src="/cookie-consent.js" defer></script>

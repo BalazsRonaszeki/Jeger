@@ -1,125 +1,341 @@
 <!doctype html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Adatkezelési tájékoztató — JÉGER petíció</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="icon" href="favicon.png" type="image/png" sizes="32x32" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adatkezelési tájékoztató — stopjeger.hu</title>
+<meta name="description" content="A stopjeger.hu közvélemény-kutatás és hírlevél adatkezelési tájékoztatója. Adatkezelő: Agro-Biotech Kft.">
+<link rel="canonical" href="https://stopjeger.hu/adatkezeles.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1ea; --surface:#ffffff; --surface-2:#e4e9df;
+  --ink:#1b2420; --ink-soft:#48544c; --ink-faint:#7c887e;
+  --line:#ccd6c8; --line-strong:#b9c5b2;
+  --accent:#b3560a; --accent-ink:#ffffff; --accent-soft:#f3e2d2;
+  --silver:#4c6b78;
+  --shadow: 0 1px 2px rgba(20,30,25,.05), 0 10px 28px -14px rgba(20,30,25,.22);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+    --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83;
+    --line:#2c3a37; --line-strong:#3a4a46;
+    --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+    --silver:#8bb0bd;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+  --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83;
+  --line:#2c3a37; --line-strong:#3a4a46;
+  --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+  --silver:#8bb0bd;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-size:17px; line-height:1.62;
+}
+::selection{background:var(--accent); color:var(--accent-ink)}
+a{color:var(--silver)}
+a:hover{color:var(--accent)}
+
+h1,h2{font-family:'Bricolage Grotesque', system-ui, sans-serif; text-wrap:balance; letter-spacing:-.01em}
+h1{font-size:clamp(1.8rem, 4vw, 2.5rem); margin:0 0 .4rem}
+h2{font-size:1.18rem; margin:2.6rem 0 .7rem; padding-top:1.4rem; border-top:1px solid var(--line)}
+h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:1rem; margin:1.6rem 0 .4rem}
+
+.eyebrow{
+  font-family:'IBM Plex Mono', ui-monospace, monospace;
+  font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); font-weight:600; margin:0 0 .5rem;
+}
+.header-banner{width:100%; line-height:0; overflow:hidden}
+.header-art{width:100%; aspect-ratio:1824/862; max-height:180px; object-fit:cover; object-position:center 42%; display:block}
+
+.wrap{max-width:44rem; margin:0 auto; padding:0 1.4rem}
+main{padding:2.8rem 0 1rem}
+
+.updated{
+  font-family:'IBM Plex Mono', monospace; font-size:.78rem;
+  color:var(--ink-faint); margin:0 0 2rem;
+}
+.lede{font-size:1.05rem; color:var(--ink-soft)}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:1.1rem 1.3rem; margin:1.2rem 0; box-shadow:var(--shadow);
+}
+.card p:first-child{margin-top:0}
+.card p:last-child{margin-bottom:0}
+
+.callout{
+  background:var(--accent-soft); border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0; padding:1rem 1.2rem; margin:1.4rem 0;
+}
+.callout p{margin:0}
+
+ul,ol{padding-left:1.3rem}
+li{margin:.4rem 0}
+code{font-family:'IBM Plex Mono', monospace; font-size:.88em; background:var(--surface-2); padding:.1em .35em; border-radius:4px}
+
+table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.94rem}
+th,td{text-align:left; padding:.6rem .7rem; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:.82rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint)}
+.table-scroll{overflow-x:auto}
+
+footer{
+  margin-top:3.5rem; padding:1.6rem 0 4rem;
+  border-top:1px solid var(--line); color:var(--ink-faint); font-size:.84rem;
+}
+</style>
 </head>
 <body>
-  <div class="header-banner">
-    <img src="assets/header-art.jpg" alt="" class="header-art" />
+
+<div class="header-banner">
+  <img src="/assets/header-art.jpg" alt="" class="header-art">
+</div>
+
+<main>
+<div class="wrap">
+
+  <p class="eyebrow">Jogi tájékoztató</p>
+  <h1>Adatkezelési tájékoztató</h1>
+  <p class="updated">Hatályos: 2026. szeptember 8. &nbsp;·&nbsp; 2.0 verzió</p>
+
+  <p class="lede">
+    Jelen tájékoztató a <b>stopjeger.hu</b> oldalon folytatott közvélemény-kutatás, a hírlevél és a
+    kapcsolatfelvétel keretében történő adatkezelésről nyújt tájékoztatást, az Európai Parlament és a
+    Tanács (EU) 2016/679 rendelete (GDPR), valamint az információs önrendelkezési jogról és az
+    információszabadságról szóló 2011. évi CXII. törvény (Infotv.) alapján.
+  </p>
+
+  <div class="callout">
+    <p>
+      <b>A kérdőív válaszai névtelenek.</b> A kérdésekre adott válaszokhoz nem tároljuk sem a nevét, sem az
+      e-mail címét, sem az IP-címét. Ha megadja az e-mail címét a hírlevélhez, az egy külön adatbázisba
+      kerül, amelyet semmilyen azonosító nem köt össze a válaszaival — a kettő utólag sem
+      összekapcsolható.
+    </p>
   </div>
-  <main class="container legal">
-    <h1>Adatkezelési tájékoztató</h1>
-    <p class="updated">Hatályos: 2026. július 7.</p>
 
+  <h2>1. Az adatkezelő</h2>
+  <div class="card">
     <p>
-      Jelen tájékoztató a JÉGER üzemeltetésének átvételéért indított aláírásgyűjtő kezdeményezés
-      (a továbbiakban: Kezdeményezés) keretében történő adatkezelésről nyújt tájékoztatást, az
-      Európai Parlament és a Tanács (EU) 2016/679 rendelete (GDPR) és az információs önrendelkezési
-      jogról és az információszabadságról szóló 2011. évi CXII. törvény (Infotv.) alapján.
+      <b>Agro-Biotech Kft.</b><br>
+      Székhely: 8000 Székesfehérvár, Zobori út 66/5.<br>
+      Adószám: 32031973-2-07<br>
+      Kapcsolattartási e-mail: <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a>
     </p>
+  </div>
+  <p>
+    Az Adatkezelő adatvédelmi tisztviselő kijelölésére nem kötelezett, mert tevékenysége nem minősül a
+    GDPR 37. cikk (1) bekezdése szerinti esetnek. Adatvédelmi kérdésekben a fenti e-mail-címen lehet
+    hozzá fordulni.
+  </p>
 
-    <h2>1. Az adatkezelő</h2>
+  <h2>2. Milyen adatokat kezelünk, és miért</h2>
+
+  <h3>2.1. Kérdőívválaszok (névtelen)</h3>
+  <p>
+    A kérdőív kitöltésekor kizárólag magukat a válaszokat rögzítjük: a kitöltő minőségét (gazdálkodó
+    vagy magánszemély), a megyét, a jégkár érintettségét, valamint a véleményskálákon adott értékeket.
+    Ezek mellé a beküldés <b>dátumát</b> tároljuk — szándékosan nem pontos időbélyeget, mert az percre
+    pontos időadat összevethető lenne a hírlevél-feliratkozások időpontjával, és ezzel a névtelenség
+    sérülne.
+  </p>
+  <p>
+    <b>Nem</b> tárolunk a válaszok mellé IP-címet, nevet, e-mail címet vagy bármely más azonosítót. Így
+    a válaszok önmagukban nem minősülnek személyes adatnak, és nem hozhatók kapcsolatba természetes
+    személlyel. Célja a jégeső-elhárítási és időjárás-befolyásoló rendszerekkel kapcsolatos társadalmi
+    vélemények összesített, statisztikai feldolgozása és nyilvános közzététele.
+  </p>
+
+  <h3>2.2. Hírlevél-feliratkozás</h3>
+  <p>
+    Ha a kérdőívben a tájékoztatást kéri, és megadja az e-mail címét, azt a hozzájárulás tényével és
+    időpontjával együtt egy külön adatbázisban tároljuk. Célja: tájékoztatás a kezdeményezés
+    fejleményeiről. Jogalapja a <b>GDPR 6. cikk (1) a)</b> pontja szerinti, önkéntes és kifejezett
+    hozzájárulás, amelyet a kérdőív külön jelölőnégyzetén ad meg.
+  </p>
+
+  <h3>2.3. Kapcsolatfelvétel</h3>
+  <p>
+    Az <code>info@stopjeger.hu</code> címre írt levelek esetén a levélben megadott adatokat (név,
+    e-mail cím, az üzenet tartalma) a megkeresés megválaszolása céljából kezeljük. Jogalapja a
+    <b>GDPR 6. cikk (1) f)</b> pontja szerinti jogos érdek: a hozzánk intézett megkeresések
+    megválaszolása. Az érdekmérlegelést elvégeztük; az adatkezelés az érintett érdekeit
+    aránytalanul nem korlátozza.
+  </p>
+
+  <h3>2.4. Webanalitika</h3>
+  <p>
+    A látogatottság mérésére Google Analytics 4 szolgáltatást használunk, <b>kizárólag akkor, ha ehhez
+    a látogató a süti-sávon kifejezetten hozzájárult</b> (GDPR 6. cikk (1) a), valamint az elektronikus
+    hírközlésről szóló 2003. évi C. törvény 155. § (4) bekezdése). Hozzájárulás hiányában a szolgáltatás
+    egyáltalán nem töltődik be. Az IP-cím anonimizálva kerül feldolgozásra; hirdetési és profilalkotási
+    funkciókat nem használunk.
+  </p>
+
+  <h2>3. Meddig kezeljük az adatokat</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Adatkör</th><th>Megőrzési idő</th></tr>
+    <tr>
+      <td>Kérdőívválaszok</td>
+      <td>A kutatás lezárásáig, majd összesített (statisztikai) formában korlátlan ideig. Mivel névtelenek, egyedi törlésük nem értelmezhető.</td>
+    </tr>
+    <tr>
+      <td>Hírlevél e-mail cím</td>
+      <td>A hozzájárulás visszavonásáig, illetve a leiratkozásig; azt követően haladéktalanul töröljük.</td>
+    </tr>
+    <tr>
+      <td>Kapcsolatfelvételi levelezés</td>
+      <td>Az ügy lezárását követő 1 év.</td>
+    </tr>
+    <tr>
+      <td>Webanalitikai adatok</td>
+      <td>A Google Analytics szolgáltatásban beállított megőrzési idő, legfeljebb 14 hónap.</td>
+    </tr>
+  </table>
+  </div>
+
+  <h2>4. Leiratkozás és a hozzájárulás visszavonása</h2>
+  <div class="callout">
     <p>
-      Adatkezelő: <strong>Rónaszéki Gábor</strong><br />
-      Kapcsolattartási e-mail: <strong>info@jeger-peticio.com</strong><br />
-      Postai elérhetőség: <strong>9126 Gyarmat, Fő út 2.</strong>
+      A hírlevélről <b>bármikor, indokolás nélkül leiratkozhat</b>. Ehhez elég egy levelet küldenie az
+      <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre — a leiratkozási kérelmet
+      haladéktalanul teljesítjük, és az e-mail címét töröljük. Ugyanígy leiratkozhat minden
+      hírlevelünk alján elhelyezett leiratkozó hivatkozásra kattintva is.
     </p>
+  </div>
+  <p>
+    A hozzájárulás visszavonása nem érinti a visszavonás előtti adatkezelés jogszerűségét. A
+    süti-hozzájárulás az oldal láblécében található <b>„Süti-beállítások”</b> hivatkozással bármikor
+    ugyanolyan egyszerűen módosítható, ahogy megadta.
+  </p>
 
-    <h2>2. A kezelt adatok köre és forrása</h2>
-    <ul>
-      <li>Az online űrlapon vagy a papíron kitöltött és beküldött aláírásgyűjtő íven megadott: név, lakcím, e-mail cím.</li>
-      <li>Opcionálisan megadott: gazdálkodói minőség (igen/nem), gazdálkodás mérete (hektár).</li>
-      <li>Automatikusan rögzített: a beküldés időpontja, valamint az online beküldés IP-címe (kizárólag
-        visszaélés-megelőzés és a túlzott, automatizált beküldések kiszűrése céljából).</li>
-      <li>A hozzájárulás ténye (az adatkezelési tájékoztató elfogadásának ténye), valamint — ha ezt külön
-        bejelölte — a további tájékoztatás kérésének ténye.</li>
-    </ul>
+  <h2>5. Adatfeldolgozók és címzettek</h2>
+  <p>Az Adatkezelő az alábbi adatfeldolgozókat veszi igénybe:</p>
+  <ul>
+    <li>
+      <b>Supabase, Inc.</b> — adatbázis- és háttértárhely-szolgáltatás. Az adatok tárolási helye az
+      Európai Unió (<code>eu-west-1</code>, Írország), így azok az Európai Gazdasági Térségen belül
+      maradnak.
+    </li>
+    <li>
+      <b>Vercel Inc.</b> (Amerikai Egyesült Államok) — a weboldal tárhelye és kiszolgálása. A
+      beküldött adatok a beérkezéskor átmenetileg a Vercel infrastruktúráján haladnak át, mielőtt az
+      Európai Unióban tárolt adatbázisba kerülnek. A továbbítás garanciáját a Vercel adatfeldolgozási
+      szerződésében (DPA) foglalt, az Európai Bizottság által jóváhagyott általános szerződési
+      feltételek (SCC) biztosítják.
+    </li>
+    <li>
+      <b>Microsoft Ireland Operations Limited</b> — az <code>info@stopjeger.hu</code> címre érkező és
+      onnan kimenő levelezés kiszolgálása (Exchange Online). Tárolási hely: Európai Unió.
+    </li>
+    <li>
+      <b>Sendinblue SAS (Brevo)</b> — a hírlevelek kiküldése. Székhely és adatközpont: Franciaország,
+      Európai Unió. Harmadik országba történő továbbítás nem történik.
+    </li>
+    <li>
+      <b>Google Ireland Limited</b> — webanalitika (Google Analytics 4), <b>kizárólag hozzájárulás
+      esetén</b>. A szolgáltatás keretében sor kerülhet adattovábbításra az Amerikai Egyesült
+      Államokba; ennek garanciáit az általános szerződési feltételek (SCC) és az EU–USA adatvédelmi
+      keretrendszer (Data Privacy Framework) szerinti tanúsítás biztosítja.
+    </li>
+  </ul>
+  <p>
+    Az adatokhoz kizárólag az Adatkezelő erre feljogosított munkatársai férnek hozzá, jelszóval védett
+    felületen keresztül. Harmadik fél részére — a jelen tájékoztatóban foglaltakon túl — az adatokat
+    nem adjuk át és nem értékesítjük.
+  </p>
 
-    <h2>3. Az adatkezelés célja</h2>
-    <ul>
-      <li>Az aláírás hitelességének biztosítása és az aláírók azonosíthatósága.</li>
-      <li>Amennyiben ehhez az érintett külön hozzájárult: kapcsolattartás, tájékoztatás a Kezdeményezés
-        fejleményeiről.</li>
-      <li>A gazdálkodói adatok esetén: statisztikai összesítés a Kezdeményezés érintettségének
-        alátámasztására (a mezőgazdasági ágazatot érintő hatás bemutatása).</li>
-      <li>Az IP-cím kezelése: visszaélések (pl. tömeges, automatizált vagy hamis beküldések) kiszűrése.</li>
-    </ul>
+  <h2>6. Sütik és beágyazott tartalmak</h2>
+  <ul>
+    <li>
+      <b>Működéshez szükséges tárolás</b> (hozzájárulás nélkül is): a választott világos/sötét
+      megjelenítési mód és a süti-hozzájárulásról hozott döntés ténye. Ezek a látogató más
+      weboldalakon való beazonosítására nem alkalmasak.
+    </li>
+    <li>
+      <b>Webanalitikai sütik</b> (kizárólag hozzájárulás esetén): a Google Analytics 4 <code>_ga</code>
+      és <code>_ga_*</code> sütijei. Hozzájárulás hiányában a szolgáltatás nem töltődik be, és
+      semmilyen adat nem kerül továbbításra.
+    </li>
+    <li>
+      <b>Beágyazott videók:</b> a videók előnézeti képeit saját kiszolgálónkról töltjük be, így az
+      oldal megtekintése önmagában semmilyen adatot nem továbbít a YouTube felé. A lejátszás a
+      <code>youtube-nocookie.com</code> tartományon keresztül, <b>kizárólag a látogató
+      kattintására</b> indul; ettől a pillanattól a videó megtekintésére a Google (YouTube)
+      adatkezelési feltételei vonatkoznak, és a látogató IP-címe a Google felé továbbításra kerül.
+    </li>
+  </ul>
 
-    <h2>4. Az adatkezelés jogalapja</h2>
-    <p>
-      Az adatkezelés jogalapja a GDPR 6. cikk (1) bekezdés a) pontja szerinti, az érintett által
-      önkéntesen, az űrlap elküldése előtt kifejezetten megadott hozzájárulás. A hozzájárulás bármikor,
-      indokolás nélkül visszavonható, a visszavonás a visszavonás előtti adatkezelés jogszerűségét nem
-      érinti.
-    </p>
+  <h2>7. Adatbiztonság</h2>
+  <p>
+    A weboldal minden kommunikációja titkosított (HTTPS) csatornán zajlik. Az adatbázisban
+    sorszintű hozzáférés-védelem (RLS) van érvényben: a böngészőből futó kód semmilyen adatot nem
+    olvashat, az adatokhoz kizárólag a szerveroldali alkalmazás fér hozzá. Az összesített adatok
+    letöltése jelszóval védett, és csak az arra feljogosított személyek számára elérhető. Hirdetési
+    célú vagy profilalkotást végző nyomkövető szolgáltatást a weboldal nem használ.
+  </p>
 
-    <h2>5. Az adatkezelés időtartama</h2>
-    <p>
-      A megadott adatokat a Kezdeményezés lezárultáig kezeljük, azt követően valamennyi adatot törlünk —
-      kivéve, ha jogszabály ettől eltérő megőrzési kötelezettséget ír elő. Ha a hozzájárulás visszavonásra
-      kerül, vagy törlési kérelem érkezik, az adatokat már a Kezdeményezés lezárulta előtt is töröljük.
-    </p>
+  <h2>8. Az érintett jogai</h2>
+  <p>Az érintett az 1. pontban megadott elérhetőségen jogosult:</p>
+  <ul>
+    <li>tájékoztatást kérni a rá vonatkozó adatkezelésről és hozzáférni a kezelt adatokhoz (GDPR 15. cikk),</li>
+    <li>kérni a pontatlan adatok helyesbítését (16. cikk),</li>
+    <li>kérni a rá vonatkozó adatok törlését (17. cikk),</li>
+    <li>kérni az adatkezelés korlátozását (18. cikk),</li>
+    <li>tiltakozni az adatkezelés ellen (21. cikk),</li>
+    <li>kérni az általa átadott adatok géppel olvasható formában történő kiadását (adathordozhatóság, 20. cikk),</li>
+    <li>a hozzájárulást bármikor, indokolás nélkül visszavonni.</li>
+  </ul>
+  <p>
+    Felhívjuk a figyelmet, hogy a <b>kérdőívválaszok esetében</b> ezek a jogok a gyakorlatban nem
+    gyakorolhatók: mivel a válaszokhoz semmilyen azonosítót nem tárolunk, nem tudjuk megállapítani,
+    hogy melyik válasz kitől származik (GDPR 11. cikk). Ez a névtelenség ára és egyben a garanciája.
+  </p>
+  <p>
+    Az Adatkezelő a kérelmeket legkésőbb a beérkezéstől számított egy hónapon belül teljesíti.
+    Jogorvoslati lehetőséggel a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH) élhet
+    (1055 Budapest, Falk Miksa utca 9–11.; <a href="https://naih.hu" target="_blank" rel="noopener">naih.hu</a>),
+    vagy a lakóhelye szerint illetékes törvényszékhez fordulhat.
+  </p>
 
-    <h2>6. Adatfeldolgozók, címzettek</h2>
-    <p>
-      Az adatok tárolásához adatfeldolgozóként a Supabase-t (Supabase, Inc.) vesszük igénybe
-      (adatbázis- és háttértárhely-szolgáltatás). Az adatok tárolásának helye az Európai Unió
-      (eu-west-1, Írország), így az adatok az Európai Gazdasági Térségen belül maradnak.
-    </p>
-    <p>
-      A weboldal üzemeltetéséhez (tárhely, kiszolgálás) a Vercel Inc. (székhely: Amerikai Egyesült
-      Államok) szolgáltatását vesszük igénybe. A beküldött adatok a beérkezéskor átmenetileg a Vercel
-      szerverinfrastruktúráján keresztül haladnak át, mielőtt az Európai Unióban tárolt adatbázisba
-      kerülnek; ez a továbbítás a Vercel Adatfeldolgozási Szerződésében (DPA) foglalt, az Európai
-      Bizottság által jóváhagyott általános szerződési feltételek (SCC) szerinti garanciákkal történik.
-    </p>
-    <p>
-      Az adatokhoz kizárólag a Kezdeményezés szervezői férnek hozzá, jelszóval védett felületen
-      keresztül. Harmadik fél részére, a jelen tájékoztatóban foglaltakon túl, az adatokat nem adjuk át,
-      nem értékesítjük.
-    </p>
+  <h2>9. Kiskorúak adatai</h2>
+  <p>Tudatosan nem gyűjtünk adatot 16. életévét be nem töltött személyektől.</p>
 
-    <h2>7. Adatbiztonság</h2>
-    <p>
-      A weboldal minden kommunikációja titkosított (HTTPS) csatornán zajlik. Az összesített adatokhoz
-      való hozzáférés jelszóval védett. Nyomkövető (analitikai vagy hirdetési célú) sütiket a weboldal
-      nem használ.
-    </p>
+  <h2>10. Kapcsolat</h2>
+  <p>
+    Adatvédelmi kérdésekkel, leiratkozási szándékkal és a fenti jogok gyakorlásával kapcsolatos
+    kérelmekkel forduljon hozzánk az <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címen.
+  </p>
 
-    <h2>8. Az érintett jogai</h2>
-    <p>Az érintett a fenti elérhetőségeken keresztül jogosult:</p>
-    <ul>
-      <li>tájékoztatást kérni a rá vonatkozó adatkezelésről és hozzáférni a kezelt adatokhoz (GDPR 15. cikk),</li>
-      <li>kérni a pontatlan adatok helyesbítését (16. cikk),</li>
-      <li>kérni a rá vonatkozó adatok törlését (17. cikk),</li>
-      <li>kérni az adatkezelés korlátozását (18. cikk),</li>
-      <li>tiltakozni az adatkezelés ellen (21. cikk),</li>
-      <li>kérni az általa átadott adatok gépileg olvasható formában történő kiadását (adathordozhatóság, 20. cikk),</li>
-      <li>a hozzájárulást bármikor, indoklás nélkül visszavonni.</li>
-    </ul>
-    <p>
-      Jogorvoslati lehetőséggel a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH) élhet
-      (cím: 1055 Budapest, Falk Miksa utca 9–11.; honlap: <a href="https://naih.hu" target="_blank" rel="noopener">naih.hu</a>),
-      vagy a lakóhelye szerint illetékes törvényszékhez fordulhat.
-    </p>
+  <p style="margin-top:2.5rem"><a href="/">&larr; Vissza a főoldalra</a></p>
 
-    <h2>9. Kiskorúak adatai</h2>
-    <p>A Kezdeményezés keretében tudatosan nem gyűjtünk 16. életévét be nem töltött személyektől adatot.</p>
+</div>
+</main>
 
-    <h2>10. Kapcsolat</h2>
-    <p>
-      Adatvédelmi kérdésekkel, valamint a fenti jogok gyakorlásával kapcsolatos kérelmekkel kérjük,
-      forduljon hozzánk az 1. pontban megadott elérhetőségen.
-    </p>
+<footer>
+  <div class="wrap">
+    Agro-Biotech Kft. &nbsp;·&nbsp; <a href="/">stopjeger.hu</a>
+    &nbsp;·&nbsp; <a href="#" data-cookie-settings>Süti-beállítások</a>
+  </div>
+</footer>
 
-    <p><a href="index.html">&larr; Vissza a főoldalra</a></p>
-  </main>
 <script src="/cookie-consent.js" defer></script>
 </body>
 </html>

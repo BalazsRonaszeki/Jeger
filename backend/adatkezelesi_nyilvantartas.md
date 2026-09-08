@@ -5,7 +5,7 @@
 > **Belső dokumentum — nem publikus.** Ezt a nyilvántartást nem kell közzétenni, de a NAIH
 > felhívására be kell mutatni. A GDPR 30. cikk (5) bekezdése szerinti, 250 fő alatti
 > mentesség **erre az adatkezelésre nem alkalmazható**, mert az adatkezelés nem alkalmi
-> jellegű (folyamatos, rendszeres aláírásgyűjtés és kapcsolattartás).
+> jellegű (folyamatos, rendszeres hírlevél-küldés és kapcsolattartás).
 
 | | |
 |---|---|
@@ -13,54 +13,38 @@
 | **Székhely** | 8000 Székesfehérvár, Zobori út 66/5. |
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
-| **Adatvédelmi tisztviselő** | Nem kijelölt — l. a 6. pont indokolását |
-| **A nyilvántartás verziója** | 1.0 |
-| **Hatályos** | 2026. szeptember 9. |
-| **Következő felülvizsgálat** | 2027. szeptember 9., illetve minden új adatfeldolgozó bevonásakor |
+| **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5. pont indokolását |
+| **A nyilvántartás verziója** | 2.0 |
+| **Hatályos** | 2026. szeptember 8. |
+| **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
 ---
 
-## 1. Aláírásgyűjtés (online és papíralapú)
+## 1. Hírlevél — tájékoztatás a kezdeményezés fejleményeiről
 
 | Szempont | Tartalom |
 |---|---|
-| **Az adatkezelés célja** | Az aláírás hitelességének biztosítása és az aláírók azonosíthatósága; a kezdeményezés támogatottságának igazolása a címzett szervek felé |
-| **Jogalap** | GDPR 6. cikk (1) a) — az érintett hozzájárulása (az űrlap elküldése előtti kifejezett jelölőnégyzet) |
-| **Érintettek kategóriái** | A kezdeményezést aláíró természetes személyek (nagykorú magyar lakosok, elsősorban gazdálkodók) |
-| **Személyes adatok kategóriái** | Név; lakcím; e-mail-cím; opcionálisan gazdálkodói minőség (igen/nem) és a gazdálkodás mérete (hektár); a beküldés időpontja; a beküldés IP-címe; a hozzájárulás ténye |
-| **Címzettek kategóriái** | Az Adatkezelő erre feljogosított munkatársai. Adatfeldolgozók: Supabase, Inc. (adatbázis, tárhely); Vercel Inc. (webkiszolgálás) |
-| **Harmadik országba továbbítás** | Vercel Inc. (USA) — a beküldés pillanatában átmeneti áthaladás. Garancia: az Európai Bizottság által jóváhagyott általános szerződési feltételek (SCC) a Vercel DPA-jában. Tárolás kizárólag az EU-ban (Supabase, eu-west-1, Írország). |
-| **Törlési határidő** | A kezdeményezés lezárultát követően haladéktalanul; hozzájárulás visszavonása vagy törlési kérelem esetén azonnal |
-| **Biztonsági intézkedések** | L. a 7. pontot |
-
-> **Megjegyzés a különleges adatokról:** egy jégeső-elhárítási rendszer szabályozását célzó
-> petíció aláírása önmagában nem minősül a GDPR 9. cikke szerinti politikai véleményre utaló
-> különleges adatnak, mert a kezdeményezés szakpolitikai és környezetvédelmi jellegű, nem
-> pártpolitikai. Az űrlapon adott hozzájárulás ugyanakkor kifejezett (explicit), így a 9. cikk
-> (2) a) pontjának is megfelel arra az esetre, ha egy hatóság mégis így minősítené.
-
----
-
-## 2. Tájékoztatás a kezdeményezés fejleményeiről (hírlevél)
-
-| Szempont | Tartalom |
-|---|---|
-| **Az adatkezelés célja** | A kezdeményezés fejleményeiről szóló tájékoztató levelek küldése azoknak, akik ezt külön kérték |
-| **Jogalap** | GDPR 6. cikk (1) a) — külön, az aláírástól elkülönített hozzájárulás (önálló jelölőnégyzet) |
-| **Érintettek kategóriái** | Azok az aláírók, akik a tájékoztatást külön bejelölték |
-| **Személyes adatok kategóriái** | Név; e-mail-cím; a feliratkozás időpontja; a megerősítés ténye és időpontja; kézbesítési és leiratkozási állapot |
-| **Címzettek kategóriái** | Adatfeldolgozó: a levélküldő szolgáltató (tervezetten Brevo / Sendinblue SAS, Franciaország) |
-| **Harmadik országba továbbítás** | Nincs — a szolgáltató EU-s adatközpontot használ |
+| **Az adatkezelés célja** | A kezdeményezés fejleményeiről szóló tájékoztató levelek küldése azoknak, akik ezt kérték |
+| **Jogalap** | GDPR 6. cikk (1) a) — az érintett hozzájárulása (a kérdőív végén, önálló jelölőnégyzettel, az e-mail-cím megadásával együtt) |
+| **Érintettek kategóriái** | Azok a kérdőívkitöltők, akik a tájékoztatást kérték és e-mail-címet adtak meg |
+| **Személyes adatok kategóriái** | E-mail-cím; a feliratkozás forrása; a hozzájárulás ténye és időpontja; a megerősítés ténye és időpontja; leiratkozás ténye és időpontja |
+| **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (levélküldés) |
+| **Harmadik országba továbbítás** | Vercel Inc. (USA) — a beküldés pillanatában átmeneti áthaladás. Garancia: SCC a Vercel DPA-jában. Tárolás kizárólag az EU-ban (Supabase, eu-west-1, Írország). A levélküldő EU-s adatközpontot használ. |
 | **Törlési határidő** | A hozzájárulás visszavonásáig / leiratkozásig; azt követően haladéktalanul |
-| **Biztonsági intézkedések** | L. a 7. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe) |
+| **Biztonsági intézkedések** | L. a 6. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe), valamint az `info@stopjeger.hu` címre írt levéllel is kérhető |
 
-> **Nyitott pont:** a kettős opt-in (double opt-in) megerősítő folyamat a jelen nyilvántartás
-> kiállításakor még fejlesztés alatt áll. Élesítésekor ezt a sort frissíteni kell a
-> megerősítő token megőrzési idejével.
+> **Nyitott pont — kettős opt-in.** Az adatbázisséma tartalmazza a megerősítő tokent
+> (`subscribers.confirm_token`, 48 órás lejárattal), de a megerősítő levél kiküldése a jelen
+> nyilvántartás kiállításakor **még nincs bekötve**, ezért minden sor `confirmed_at IS NULL`
+> állapotban áll. **Az első hírlevél kiküldése előtt** a megerősítő folyamatot élesíteni kell, és
+> ezt a sort a token tényleges megőrzési idejével frissíteni.
+>
+> A hozzájárulás a kérdőív jelölőnégyzetén megadva önmagában is érvényes (GDPR 7. cikk); a kettős
+> opt-in a bizonyíthatóságot és a kézbesíthetőséget javítja, nem a jogszerűség feltétele.
 
 ---
 
-## 3. Kapcsolatfelvétel
+## 2. Kapcsolatfelvétel
 
 | Szempont | Tartalom |
 |---|---|
@@ -71,11 +55,11 @@
 | **Címzettek kategóriái** | Adatfeldolgozó: Microsoft Ireland Operations Limited (Exchange Online levelezés) |
 | **Harmadik országba továbbítás** | Nincs — a postafiók tárolási helye az EU |
 | **Törlési határidő** | Az ügy lezárását követő 1 év, ezt követően törlés |
-| **Biztonsági intézkedések** | L. a 7. pontot; többtényezős hitelesítés a postafiókhoz |
+| **Biztonsági intézkedések** | L. a 6. pontot; többtényezős hitelesítés a postafiókhoz |
 
 ---
 
-## 4. Webanalitika
+## 3. Webanalitika
 
 | Szempont | Tartalom |
 |---|---|
@@ -88,57 +72,62 @@
 | **Törlési határidő** | A Google Analytics szolgáltatásban beállított megőrzési idő, legfeljebb 14 hónap |
 | **Biztonsági intézkedések** | IP-anonimizálás bekapcsolva; hirdetési és profilalkotási funkciók (Google Signals, hirdetési személyre szabás) kikapcsolva |
 
----
-
-## 5. Jelszóval védett háttéroldalak hozzáférése
-
-| Szempont | Tartalom |
-|---|---|
-| **Az adatkezelés célja** | A nem publikus munkapéldány-oldalak hozzáférésének korlátozása |
-| **Jogalap** | GDPR 6. cikk (1) f) — jogos érdek a nem véglegesített tartalmak védelméhez |
-| **Érintettek kategóriái** | A jelszót ismerő, belépő személyek |
-| **Személyes adatok kategóriái** | Munkamenet-süti (a sikeres belépés ténye). Névhez köthető azonosítót nem tárolunk |
-| **Címzettek kategóriái** | Adatfeldolgozó: Vercel Inc. (Edge Middleware) |
-| **Harmadik országba továbbítás** | USA — SCC a Vercel DPA-ja szerint |
-| **Törlési határidő** | A munkamenet-süti élettartama: 30 nap |
-| **Biztonsági intézkedések** | L. a 7. pontot |
+> **Állapot:** a `cookie-consent.js`-ben a GA4 mérőazonosító jelenleg `G-XXXXXXXXXX` placeholder,
+> vagyis a webanalitika **még nem éles**. Ez a pont a bekapcsolás pillanatától alkalmazandó.
 
 ---
 
-## 6. Nem tartozik a nyilvántartás hatálya alá
+## 4. Nem tartozik a nyilvántartás hatálya alá
 
-- **Az anonim kérdőív.** A `/kerdoiv` oldalon kitöltött kérdőív nem gyűjt nevet, e-mail-címet
-  vagy egyéb azonosítót, és a válaszok nem köthetők vissza természetes személyhez, ezért nem
-  minősül személyes adat kezelésének (GDPR 4. cikk 1. pont).
-  **Feltétel:** ez csak addig igaz, amíg a kérdőív valóban nem rögzít IP-címet, böngésző-ujjlenyomatot
-  vagy bármely más, közvetve azonosításra alkalmas adatot. A beküldés megvalósításakor ezt
-  ellenőrizni kell, és ha mégis rögzül ilyen adat, önálló pontot kell felvenni ide.
+### 4.1. Az anonim kérdőív
 
-**Adatvédelmi tisztviselő (DPO) kijelölése:** nem kötelező. Az Adatkezelő nem közhatalmi szerv;
-fő tevékenysége nem az érintettek rendszeres és szisztematikus, nagymértékű megfigyelése; és
-nem végez nagy számban különleges adatok kezelését (GDPR 37. cikk (1) a)–c) pont).
-**Felülvizsgálandó**, ha az aláírói adatbázis mérete nagyságrendet nő, vagy ha a NAIH a petíciós
-aláírást politikai véleményre utaló különleges adatnak minősítené.
+A `/kerdoiv` oldalon kitöltött kérdőív nem gyűjt nevet, e-mail-címet vagy egyéb azonosítót, és a
+válaszok nem köthetők vissza természetes személyhez, ezért nem minősül személyes adat kezelésének
+(GDPR 4. cikk 1. pont).
 
-**Adatvédelmi hatásvizsgálat (DPIA):** jelenleg nem szükséges, mert az adatkezelés nem jár
-valószínűsíthetően magas kockázattal (nincs automatizált döntéshozatal, profilalkotás,
-szisztematikus megfigyelés vagy nyilvános terület nagymértékű megfigyelése). Újra kell értékelni,
-ha profilalkotás vagy szegmentálás kerül a hírlevél-küldésbe.
+**A feltétel teljesülése ellenőrizve (2026. szeptember 8., a beküldés élesítésekor):**
+
+- A `survey_responses` tábla **nem tartalmaz** IP-cím, e-mail, név vagy munkamenet-azonosító oszlopot.
+- Az API (`api/index.py`, `POST /api/survey`) a válaszsorba kizárólag a kérdésekre adott értékeket írja.
+- A tábla **nem tárol pontos időbélyeget**, csak beküldési dátumot (`submitted_on date`). Ez tudatos
+  döntés: egy másodperc pontosságú `created_at` a `subscribers.created_at` értékével összevetve
+  visszafejtené, melyik válasz melyik feliratkozóhoz tartozik.
+- A két tábla között **nincs közös azonosító**, idegen kulcs vagy sorszám-megfeleltetés.
+
+**Újra kell értékelni**, ha a kérdőív bármely új mezővel bővül, ha a válaszokhoz időbélyeg vagy
+IP-cím kerül, vagy ha a két tábla között bármilyen összekötés létesül.
+
+### 4.2. Adatvédelmi tisztviselő (DPO)
+
+Kijelölése nem kötelező. Az Adatkezelő nem közhatalmi szerv; fő tevékenysége nem az érintettek
+rendszeres és szisztematikus, nagymértékű megfigyelése; és nem végez nagy számban különleges adatok
+kezelését (GDPR 37. cikk (1) a)–c) pont). **Felülvizsgálandó**, ha a feliratkozói adatbázis mérete
+nagyságrendet nő.
+
+### 4.3. Adatvédelmi hatásvizsgálat (DPIA)
+
+Jelenleg nem szükséges, mert az adatkezelés nem jár valószínűsíthetően magas kockázattal (nincs
+automatizált döntéshozatal, profilalkotás, szisztematikus megfigyelés vagy nyilvános terület
+nagymértékű megfigyelése). Újra kell értékelni, ha profilalkotás vagy szegmentálás kerül a
+hírlevél-küldésbe.
 
 ---
 
-## 7. Az adatbiztonsági intézkedések általános leírása (GDPR 32. cikk)
+## 5. Az adatbiztonsági intézkedések általános leírása (GDPR 32. cikk)
 
 **Technikai intézkedések**
 
 - Minden kommunikáció TLS/HTTPS titkosított csatornán zajlik; HTTP → HTTPS átirányítás kényszerítve.
-- Az adatbázis nyugalmi állapotban titkosított (Supabase, EU-s régió).
-- Az adatbázis közvetlen elérése kizárólag szerveroldali szolgáltatói kulccsal lehetséges; a kulcs
-  környezeti változóban tárolt, a forráskódban nem szerepel.
-- Az adminisztratív export jelszóval védett.
+- Az adatbázis nyugalmi állapotban titkosított (Supabase, eu-west-1).
+- Mindkét táblán **sorszintű hozzáférés-védelem (RLS) van bekapcsolva, nulla policy-val**: sem a
+  publishable, sem az authenticated kulcs nem olvashat és nem írhat. Az adatokhoz kizárólag a
+  szerveroldali secret key fér hozzá, amely környezeti változóban él, a forráskódban nem szerepel.
+- Az adminisztratív export jelszóval védett; a jelszó **kizárólag `X-Admin-Password` fejlécben**
+  fogadható el (query paraméterben nem, mert az bekerülne a kiszolgálói naplókba), az összehasonlítás
+  konstans idejű, és IP-nkénti próbálkozás-korlát véd a kipróbálás ellen.
 - A levelezéshez többtényezős hitelesítés (MFA) kötelező.
 - A kimenő levelezés SPF, DKIM és DMARC hitelesítéssel védett a névvel való visszaélés ellen.
-- Beküldési sebességkorlát (rate limit) a tömeges, automatizált visszaélések kiszűrésére.
+- Beküldési sebességkorlát (rate limit) és honeypot mező a tömeges, automatizált visszaélések ellen.
 
 **Szervezési intézkedések**
 
@@ -156,8 +145,9 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 
 ---
 
-## 8. Változáskövetés
+## 6. Változáskövetés
 
 | Verzió | Dátum | Változás |
 |---|---|---|
 | 1.0 | 2026. szeptember 9. | Első kiállítás. Adatkezelő: Agro-Biotech Kft. Felvéve a webanalitikai adatkezelés és a süti-hozzájárulás. |
+| 2.0 | 2026. szeptember 8. | **Az aláírásgyűjtés megszűnt**, helyébe anonim közvélemény-kutatás lépett; az 1.0 verzió 1. pontja (aláírásgyűjtés) törölve, a `signatures` tábla megszüntetve. A hírlevél önálló adatkezeléssé vált, forrása a kérdőív. A jelszóval védett háttéroldalak pontja törölve (az oldalak nyilvánossá váltak, az Edge Middleware eltávolítva). A kérdőív anonimitásának feltételei tételesen ellenőrizve. Felvéve a leiratkozás e-mailes útja. |
