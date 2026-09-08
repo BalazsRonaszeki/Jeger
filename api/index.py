@@ -186,20 +186,38 @@ def add_contact_to_list(address: str) -> bool:
         return False
 
 
-def refresh_unconfirmed_token(address: str):
-    """Meglévő, még meg nem erősített feliratkozónak új tokent ad. Ha már
-    megerősítette, None-t ad vissza, és nem küldünk neki újabb levelet."""
+def token_for_existing(address: str):
+    """Meglévő, még meg nem erősített feliratkozó tokenjét adja vissza.
+
+    A még ÉRVÉNYES tokent szándékosan újrahasznosítjuk. Ha újat generálnánk,
+    a korábbi levélben lévő hivatkozás azonnal érvénytelenné válna — márpedig
+    aki kétszer tölti ki az űrlapot (mert azt hitte, elsőre nem ment el),
+    tipikusan a régebbi levelet nyitja meg, és hibaüzenetet kapna.
+
+    Újat csak akkor adunk, ha a régi lejárt. Már megerősített címnél None-t
+    adunk vissza, és nem küldünk újabb levelet.
+    """
     try:
         rows = supabase_client.table('subscribers') \
-            .select('id,confirmed_at').eq('email', address).limit(1).execute().data or []
+            .select('id,confirmed_at,confirm_token,token_expires_at') \
+            .eq('email', address).limit(1).execute().data or []
         if not rows or rows[0].get('confirmed_at'):
             return None
+
+        row = rows[0]
+        expires = _parse_ts(row.get('token_expires_at'))
+        still_valid = row.get('confirm_token') and expires and expires > datetime.now(timezone.utc)
+
+        if still_valid:
+            # Ugyanaz a token megy ki újra, így mindkét levél hivatkozása működik.
+            return row['confirm_token']
+
         new_token = str(uuid.uuid4())
         supabase_client.table('subscribers').update({
             'confirm_token': new_token,
             'token_expires_at': (datetime.now(timezone.utc) + timedelta(hours=48)).isoformat(),
             'unsubscribed_at': None,
-        }).eq('id', rows[0]['id']).execute()
+        }).eq('id', row['id']).execute()
         return new_token
     except Exception:
         return None
@@ -277,7 +295,7 @@ async def survey(request: Request,
                 # Már szerepel a címe. Ha még nem erősítette meg, új tokent adunk és
                 # újraküldjük a levelet -- tipikusan azért van itt, mert az első nem ért celba.
                 subscribed = True
-                token = refresh_unconfirmed_token(address)
+                token = token_for_existing(address)
             else:
                 return JSONResponse({
                     'ok': True,
