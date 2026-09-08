@@ -69,9 +69,13 @@ A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 leve
 ## Nyitott feladatok
 
 - [ ] Kettős opt-in: megerősítő levél kiküldése és a `confirm_token` beváltása (`confirmed_at`)
+- [ ] Napi cron a `/api/count`-ra: a Supabase ingyenes csomag 1 hét inaktivitás után szünetelteti
+      a projektet, és az oldal magától semmilyen DB-hívást nem indít
+- [ ] Rendszeres CSV-mentés (az ingyenes csomagon nincs letölthető backup)
 - [ ] Hírlevél-kiküldés Brevóval, `List-Unsubscribe` fejléccel és leiratkozó hivatkozással
 - [x] GA4 mérőazonosító beállítva (`G-7MM2ZJ4K1Z`), betöltés csak hozzájárulás után
 - [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
+- [x] Betűtípusok helyi kiszolgálása (`assets/fonts/fonts.css`), Google Fonts-hívás megszűnt
 
 ## Lokális fejlesztés
 

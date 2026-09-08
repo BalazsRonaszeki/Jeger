@@ -1,4 +1,9 @@
-Copyright 2024 The Montserrat.Git Project Authors (https://github.com/JulietaUla/Montserrat.git)
+A stopjeger.hu az alabbi betutipusokat szolgalja ki helyben. Mindharom a lentebb
+teljes terjedelmeben kozolt SIL Open Font License 1.1 alatt all.
+
+Copyright 2022 The Bricolage Project Authors (https://github.com/ateliertriay/bricolage)
+Copyright 2014-2023 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'
+Copyright 2017 IBM Corp. (https://github.com/IBM/plex), with Reserved Font Name 'Plex'
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
