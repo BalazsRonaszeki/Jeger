@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Feliratkozás megerősítése — stopjeger.hu</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="preload" href="/assets/fonts/source-serif-4-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-400-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+:root{
+  --bg:#eef1ea; --surface:#ffffff; --surface-2:#e4e9df;
+  --ink:#1b2420; --ink-soft:#48544c; --ink-faint:#7c887e;
+  --line:#ccd6c8; --accent:#b3560a; --accent-ink:#ffffff; --accent-soft:#f3e2d2;
+  --silver:#4c6b78;
+  --shadow: 0 1px 2px rgba(20,30,25,.05), 0 10px 28px -14px rgba(20,30,25,.22);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+    --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83;
+    --line:#2c3a37; --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+    --silver:#8bb0bd;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+  --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83;
+  --line:#2c3a37; --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+  --silver:#8bb0bd;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+  font-family:'Source Serif 4', Georgia, serif; font-size:17px; line-height:1.62;
+  display:flex; flex-direction:column;
+}
+a{color:var(--silver)}
+a:hover{color:var(--accent)}
+
+.header-banner{width:100%; line-height:0; overflow:hidden}
+.header-art{width:100%; aspect-ratio:1824/862; max-height:160px; object-fit:cover; object-position:center 42%; display:block}
+
+main{flex:1; display:flex; align-items:center; justify-content:center; padding:3rem 1.4rem}
+.panel{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  box-shadow:var(--shadow); padding:2.6rem 2.2rem; max-width:34rem; width:100%; text-align:center;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono', ui-monospace, monospace;
+  font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); font-weight:600; margin:0 0 .7rem;
+}
+h1{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:1.6rem; margin:0 0 .8rem; text-wrap:balance}
+p{color:var(--ink-soft); margin:.6rem 0}
+.mark{
+  width:3.2rem; height:3.2rem; border-radius:50%; margin:0 auto 1.2rem;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--accent-soft); color:var(--accent); font-size:1.6rem; font-weight:700;
+}
+.btn{
+  display:inline-block; margin-top:1.6rem; padding:.8em 1.8em;
+  background:var(--accent); color:var(--accent-ink); text-decoration:none;
+  border-radius:9px; font-family:'Bricolage Grotesque', sans-serif; font-weight:600;
+}
+.btn:hover{color:var(--accent-ink); filter:brightness(1.08)}
+footer{padding:1.4rem; text-align:center; color:var(--ink-faint); font-size:.84rem}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <img src="/assets/header-art.jpg" alt="" class="header-art">
+</div>
+
+<main>
+  <div class="panel">
+
+    <div id="allapot-ok" hidden>
+      <div class="mark">&#10003;</div>
+      <p class="eyebrow">Megerősítve</p>
+      <h1>Köszönjük, a feliratkozása aktív</h1>
+      <p>Mostantól értesítjük a kezdeményezés fejleményeiről. Ritkán írunk, és csak akkor,
+         ha valóban történt valami.</p>
+      <p>Leiratkozni bármikor lehet: minden levelünk alján ott a leiratkozó hivatkozás, vagy
+         írjon az <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre.</p>
+    </div>
+
+    <div id="allapot-mar-megerositve" hidden>
+      <div class="mark">&#10003;</div>
+      <p class="eyebrow">Már rendben van</p>
+      <h1>Ezt a címet már megerősítették</h1>
+      <p>Nincs több teendője — a feliratkozása aktív.</p>
+    </div>
+
+    <div id="allapot-lejart" hidden>
+      <div class="mark">&#8987;</div>
+      <p class="eyebrow">Lejárt hivatkozás</p>
+      <h1>A megerősítő hivatkozás lejárt</h1>
+      <p>A biztonság kedvéért a megerősítő hivatkozások 48 óráig érvényesek. Töltse ki újra a
+         kérdőívet, és küldünk egy friss levelet — vagy írjon nekünk, és elintézzük.</p>
+      <a class="btn" href="/kerdoiv">Vissza a kérdőívhez</a>
+    </div>
+
+    <div id="allapot-ervenytelen" hidden>
+      <div class="mark">?</div>
+      <p class="eyebrow">Ismeretlen hivatkozás</p>
+      <h1>Ezt a megerősítő hivatkozást nem ismerjük fel</h1>
+      <p>Előfordulhat, hogy a levelezőprogram elvágta a címet. Próbálja meg a levélben lévő teljes
+         hivatkozást bemásolni a böngészőbe, vagy írjon az
+         <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre.</p>
+    </div>
+
+    <div id="allapot-hiba" hidden>
+      <div class="mark">!</div>
+      <p class="eyebrow">Átmeneti hiba</p>
+      <h1>Most nem sikerült a megerősítés</h1>
+      <p>Kérjük, próbálja meg néhány perc múlva ugyanezzel a hivatkozással. Ha továbbra sem megy,
+         írjon az <a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre.</p>
+    </div>
+
+    <p style="margin-top:2rem"><a href="/">&larr; Vissza a főoldalra</a></p>
+  </div>
+</main>
+
+<footer>Agro-Biotech Kft. &nbsp;·&nbsp; <a href="/adatkezeles.html">Adatkezelési tájékoztató</a></footer>
+
+<script>
+(function(){
+  var ervenyes = ['ok','mar-megerositve','lejart','ervenytelen','hiba'];
+  var p = new URLSearchParams(location.search).get('allapot');
+  if (ervenyes.indexOf(p) === -1) p = 'ervenytelen';
+  var el = document.getElementById('allapot-' + p);
+  if (el) el.hidden = false;
+})();
+</script>
+</body>
+</html>

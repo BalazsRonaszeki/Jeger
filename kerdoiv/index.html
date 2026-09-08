@@ -542,7 +542,10 @@ footer{padding:1rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
       if (json.warning) {
         note.textContent = json.warning + ' Ha kérted a tájékoztatást, írj az info@stopjeger.hu címre.';
       } else if (json.subscribed) {
-        note.textContent = 'A kutatás eredményeit összesítve tesszük közzé. A megadott címre a fejleményekről is küldünk tájékoztatást — leiratkozni bármikor lehet.';
+        note.innerHTML = 'A kutatás eredményeit összesítve tesszük közzé.<br><br>' +
+          '<b>Küldtünk egy megerősítő levelet a megadott címre.</b> A feliratkozás akkor lép ' +
+          'életbe, ha rákattint a benne lévő hivatkozásra — addig nem küldünk Önnek semmit. ' +
+          'Ha nem találja, nézze meg a levélszemét mappát is.';
       }
 
       form.style.display = 'none';

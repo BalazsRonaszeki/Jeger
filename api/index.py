@@ -1,15 +1,26 @@
 import os
 import secrets
 import time
+import uuid
+from datetime import datetime, timedelta, timezone
+
+import requests
 from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
 from dotenv import load_dotenv
 
 load_dotenv()
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+SITE_URL        = os.getenv('SITE_URL', 'https://stopjeger.hu').rstrip('/')
+BREVO_API_KEY   = os.getenv('BREVO_API_KEY')
+BREVO_LIST_ID   = os.getenv('BREVO_LIST_ID')
+MAIL_FROM_EMAIL = os.getenv('MAIL_FROM_EMAIL', 'hirlevel@news.stopjeger.hu')
+MAIL_FROM_NAME  = os.getenv('MAIL_FROM_NAME', 'JÉGER-kezdeményezés')
+MAIL_REPLY_TO   = os.getenv('MAIL_REPLY_TO', 'info@stopjeger.hu')
 MAX_PER_MIN = int(os.getenv('MAX_SUBMISSIONS_PER_MINUTE', '6'))
 ADMIN_MAX_ATTEMPTS = int(os.getenv('ADMIN_MAX_ATTEMPTS', '5'))
 ADMIN_LOCKOUT_SECONDS = int(os.getenv('ADMIN_LOCKOUT_SECONDS', '900'))
@@ -87,6 +98,113 @@ def choice(value, allowed):
     return value if value in allowed else None
 
 
+def _parse_ts(value):
+    """Supabase ISO időbélyeg -> datetime, hibánál None."""
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+    except ValueError:
+        return None
+
+
+# --- Brevo ------------------------------------------------------------------
+# A megerősítő levél nélkül a feliratkozás egyszeres opt-in marad. A hozzájárulás
+# a jelölőnégyzettel önmagában is érvényes, de a megerősítés a bizonyíthatóságot
+# és a kézbesíthetőséget is javítja.
+
+def brevo_ready():
+    return bool(BREVO_API_KEY)
+
+
+def send_confirmation_email(address: str, token: str) -> bool:
+    if not brevo_ready():
+        return False
+
+    link = '%s/api/confirm?token=%s' % (SITE_URL, token)
+    html = (
+        '<p>Kedves Olvasónk!</p>'
+        '<p>Köszönjük, hogy kitöltötte a JÉGER-kérdőívet, és kérte a tájékoztatást '
+        'a kezdeményezés fejleményeiről.</p>'
+        '<p><b>Egy lépés maradt:</b> erősítse meg a feliratkozását az alábbi hivatkozással.</p>'
+        '<p><a href="%s" style="display:inline-block;padding:12px 22px;background:#b3560a;'
+        'color:#fff;text-decoration:none;border-radius:8px;font-weight:600">'
+        'Feliratkozásom megerősítése</a></p>'
+        '<p style="font-size:13px;color:#666">Ha a gomb nem működik, másolja be ezt a címet a '
+        'böngészőbe:<br>%s</p>'
+        '<p style="font-size:13px;color:#666">A hivatkozás 48 óráig érvényes. Ha nem Ön kérte a '
+        'feliratkozást, egyszerűen hagyja figyelmen kívül ezt a levelet — megerősítés nélkül nem '
+        'küldünk Önnek semmit, és a címét töröljük.</p>'
+        '<p style="font-size:13px;color:#666">Leiratkozni bármikor lehet: írjon az '
+        '<a href="mailto:info@stopjeger.hu">info@stopjeger.hu</a> címre.</p>'
+    ) % (link, link)
+
+    text = (
+        'Kedves Olvasonk!\n\n'
+        'Koszonjuk, hogy kitoltotte a JEGER-kerdoivet es kerte a tajekoztatast.\n\n'
+        'Egy lepes maradt - erositse meg a feliratkozasat:\n%s\n\n'
+        'A hivatkozas 48 oraig ervenyes. Ha nem On kerte, hagyja figyelmen kivul ezt a levelet.\n'
+        'Leiratkozas barmikor: info@stopjeger.hu\n'
+    ) % link
+
+    try:
+        r = requests.post(
+            'https://api.brevo.com/v3/smtp/email',
+            headers={'api-key': BREVO_API_KEY, 'content-type': 'application/json'},
+            json={
+                'sender': {'name': MAIL_FROM_NAME, 'email': MAIL_FROM_EMAIL},
+                'replyTo': {'email': MAIL_REPLY_TO},
+                'to': [{'email': address}],
+                'subject': 'Erősítse meg a feliratkozását — JÉGER-kezdeményezés',
+                'htmlContent': html,
+                'textContent': text,
+            },
+            timeout=10,
+        )
+        return r.status_code in (200, 201, 202)
+    except Exception:
+        return False
+
+
+def add_contact_to_list(address: str) -> bool:
+    """Megerősítés után kerül a cím a Brevo-listára."""
+    if not brevo_ready() or not BREVO_LIST_ID:
+        return False
+    try:
+        r = requests.post(
+            'https://api.brevo.com/v3/contacts',
+            headers={'api-key': BREVO_API_KEY, 'content-type': 'application/json'},
+            json={
+                'email': address,
+                'listIds': [int(BREVO_LIST_ID)],
+                'updateEnabled': True,
+            },
+            timeout=10,
+        )
+        return r.status_code in (200, 201, 204)
+    except Exception:
+        return False
+
+
+def refresh_unconfirmed_token(address: str):
+    """Meglévő, még meg nem erősített feliratkozónak új tokent ad. Ha már
+    megerősítette, None-t ad vissza, és nem küldünk neki újabb levelet."""
+    try:
+        rows = supabase_client.table('subscribers') \
+            .select('id,confirmed_at').eq('email', address).limit(1).execute().data or []
+        if not rows or rows[0].get('confirmed_at'):
+            return None
+        new_token = str(uuid.uuid4())
+        supabase_client.table('subscribers').update({
+            'confirm_token': new_token,
+            'token_expires_at': (datetime.now(timezone.utc) + timedelta(hours=48)).isoformat(),
+            'unsubscribed_at': None,
+        }).eq('id', rows[0]['id']).execute()
+        return new_token
+    except Exception:
+        return None
+
+
 @app.post('/api/survey')
 async def survey(request: Request,
                  q1: str = Form(None),
@@ -143,18 +261,23 @@ async def survey(request: Request,
                 status_code=400,
                 detail='A hírlevélhez a hozzájárulás elfogadása szükséges'
             )
+
+        token = None
         try:
-            supabase_client.table('subscribers').insert({
+            res = supabase_client.table('subscribers').insert({
                 'email': address,
                 'source': 'kerdoiv',
                 'consent': True,
             }).execute()
+            token = (res.data or [{}])[0].get('confirm_token')
             subscribed = True
         except Exception as exc:
             detail = str(exc)
-            # Már feliratkozott cím: a válasz mentve, ez nem hiba a kitöltő felé.
             if 'subscribers_email_key' in detail or 'duplicate key' in detail or '23505' in detail:
+                # Már szerepel a címe. Ha még nem erősítette meg, új tokent adunk és
+                # újraküldjük a levelet -- tipikusan azért van itt, mert az első nem ért celba.
                 subscribed = True
+                token = refresh_unconfirmed_token(address)
             else:
                 return JSONResponse({
                     'ok': True,
@@ -162,7 +285,55 @@ async def survey(request: Request,
                     'warning': 'A válaszokat rögzítettük, de a feliratkozás nem sikerült.',
                 })
 
+        if token and not send_confirmation_email(address, token):
+            return JSONResponse({
+                'ok': True,
+                'subscribed': True,
+                'warning': 'A válaszokat rögzítettük, de a megerősítő levelet nem sikerült elküldeni.',
+            })
+
     return JSONResponse({'ok': True, 'subscribed': subscribed})
+
+
+@app.get('/api/confirm')
+async def confirm(token: str = None):
+    """A megerősítő levélben lévő hivatkozás célpontja."""
+    if not supabase_client:
+        return RedirectResponse('/megerosites.html?allapot=hiba', status_code=303)
+
+    if not token:
+        return RedirectResponse('/megerosites.html?allapot=ervenytelen', status_code=303)
+
+    try:
+        rows = supabase_client.table('subscribers') \
+            .select('id,email,confirmed_at,token_expires_at') \
+            .eq('confirm_token', token).limit(1).execute().data or []
+    except Exception:
+        return RedirectResponse('/megerosites.html?allapot=hiba', status_code=303)
+
+    if not rows:
+        return RedirectResponse('/megerosites.html?allapot=ervenytelen', status_code=303)
+
+    row = rows[0]
+    if row.get('confirmed_at'):
+        return RedirectResponse('/megerosites.html?allapot=mar-megerositve', status_code=303)
+
+    expires = row.get('token_expires_at')
+    if expires and _parse_ts(expires) and _parse_ts(expires) < datetime.now(timezone.utc):
+        return RedirectResponse('/megerosites.html?allapot=lejart', status_code=303)
+
+    try:
+        supabase_client.table('subscribers').update({
+            'confirmed_at': datetime.now(timezone.utc).isoformat(),
+            'confirm_token': None,
+        }).eq('id', row['id']).execute()
+    except Exception:
+        return RedirectResponse('/megerosites.html?allapot=hiba', status_code=303)
+
+    # A Brevo-listára csak a megerősítés után kerül fel a cím.
+    add_contact_to_list(row['email'])
+
+    return RedirectResponse('/megerosites.html?allapot=ok', status_code=303)
 
 
 @app.get('/api/count')

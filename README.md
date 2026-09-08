@@ -9,6 +9,7 @@ Adatkezelő: **Agro-Biotech Kft.** (adószám: 32031973-2-07)
   - `index.html` — a főoldal (háttéranyag: tudomány, technológia, felügyelet, interjúk, forrásjegyzék)
   - `kerdoiv/index.html` — a közvélemény-kutatás űrlapja
   - `adatkezeles.html` — adatkezelési tájékoztató
+  - `megerosites.html` — a hírlevél-megerősítés visszajelző oldala
   - Süti nincs; a látogatottság-mérés a sütimentes Vercel Web Analytics
     (`/_vercel/insights/script.js`), amit a Vercel dashboardon kell bekapcsolni
 - **Backend:** FastAPI app Vercel Python serverless függvényként az `api/index.py`-ban, Supabase-be ír
@@ -34,6 +35,7 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 |---|---|
 | `POST /api/survey` | Kérdőív beküldése. A válaszokat és az esetleges feliratkozást külön sorba írja. |
 | `GET /api/count` | A beérkezett válaszok száma. |
+| `GET /api/confirm?token=…` | A megerősítő levél célpontja. Beváltja a tokent, felviszi a címet a Brevo-listára, majd a `/megerosites.html`-re irányít. |
 | `GET /api/admin/export?dataset=survey\|subscribers` | CSV-export. Jelszó **csak** `X-Admin-Password` fejlécben. |
 
 ```bash
@@ -55,6 +57,12 @@ Environment változók (Vercel → Project → Settings → Environment Variable
 | `ALLOWED_ORIGINS` | opcionális, default `https://stopjeger.hu,https://www.stopjeger.hu` |
 | `MAX_SUBMISSIONS_PER_MINUTE` | opcionális, default 6 |
 | `ADMIN_MAX_ATTEMPTS` | opcionális, default 5 |
+| `BREVO_API_KEY` | Brevo API-kulcs a megerősítő levelekhez |
+| `BREVO_LIST_ID` | a lista azonosítója, ahová a **megerősített** címek kerülnek |
+| `MAIL_FROM_EMAIL` | default `hirlevel@news.stopjeger.hu` |
+| `MAIL_FROM_NAME` | default `JÉGER-kezdeményezés` |
+| `MAIL_REPLY_TO` | default `info@stopjeger.hu` |
+| `SITE_URL` | a megerősítő hivatkozás alapcíme, default `https://stopjeger.hu` |
 | `ADMIN_LOCKOUT_SECONDS` | opcionális, default 900 |
 
 ## DNS (WebSupport)
@@ -69,7 +77,8 @@ A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 leve
 
 ## Nyitott feladatok
 
-- [ ] Kettős opt-in: megerősítő levél kiküldése és a `confirm_token` beváltása (`confirmed_at`)
+- [x] Kettős opt-in: megerősítő levél + `/api/confirm` + `/megerosites.html` (működéshez `BREVO_API_KEY` kell)
+- [ ] Brevo domain-hitelesítés a `news.stopjeger.hu` aldomainre (DKIM, SPF, brevo-code)
 - [ ] Adatfeldolgozói szerződések (DPA) elfogadása: Supabase, Vercel, Brevo.
       Az adatkezelési tájékoztató 5. pontja azt állítja, hogy ezek érvényben vannak.
 - [ ] Hírlevél-kiküldés Brevóval, `List-Unsubscribe` fejléccel és leiratkozó hivatkozással
