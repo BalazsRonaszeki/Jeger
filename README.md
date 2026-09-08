@@ -9,7 +9,8 @@ Adatkezelő: **Agro-Biotech Kft.** (adószám: 32031973-2-07)
   - `index.html` — a főoldal (háttéranyag: tudomány, technológia, felügyelet, interjúk, forrásjegyzék)
   - `kerdoiv/index.html` — a közvélemény-kutatás űrlapja
   - `adatkezeles.html` — adatkezelési tájékoztató
-  - `cookie-consent.js` — süti-hozzájárulás, GA4 csak hozzájárulás után tölt be
+  - Süti nincs; a látogatottság-mérés a sütimentes Vercel Web Analytics
+    (`/_vercel/insights/script.js`), amit a Vercel dashboardon kell bekapcsolni
 - **Backend:** FastAPI app Vercel Python serverless függvényként az `api/index.py`-ban, Supabase-be ír
 - **`backend/`:** csak dokumentáció és séma, nem fut runtime-ban
   - `supabase_schema.sql` — a `survey_responses` és `subscribers` táblák
@@ -69,10 +70,10 @@ A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 leve
 ## Nyitott feladatok
 
 - [ ] Kettős opt-in: megerősítő levél kiküldése és a `confirm_token` beváltása (`confirmed_at`)
-- [ ] Adatfeldolgozói szerződések (DPA) elfogadása: Supabase, Vercel, Brevo, Google Analytics.
+- [ ] Adatfeldolgozói szerződések (DPA) elfogadása: Supabase, Vercel, Brevo.
       Az adatkezelési tájékoztató 5. pontja azt állítja, hogy ezek érvényben vannak.
 - [ ] Hírlevél-kiküldés Brevóval, `List-Unsubscribe` fejléccel és leiratkozó hivatkozással
-- [x] GA4 mérőazonosító beállítva (`G-7MM2ZJ4K1Z`), betöltés csak hozzájárulás után
+- [x] Google Analytics kivezetve; helyette sütimentes Vercel Web Analytics, süti-sáv nélkül
 - [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
 - [x] Betűtípusok helyi kiszolgálása (`assets/fonts/fonts.css`), Google Fonts-hívás megszűnt
 

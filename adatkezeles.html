@@ -179,13 +179,20 @@ footer{
     aránytalanul nem korlátozza.
   </p>
 
-  <h3>2.4. Webanalitika</h3>
+  <h3>2.4. Látogatottság-mérés</h3>
   <p>
-    A látogatottság mérésére Google Analytics 4 szolgáltatást használunk, <b>kizárólag akkor, ha ehhez
-    a látogató a süti-sávon kifejezetten hozzájárult</b> (GDPR 6. cikk (1) a), valamint az elektronikus
-    hírközlésről szóló 2003. évi C. törvény 155. § (4) bekezdése). Hozzájárulás hiányában a szolgáltatás
-    egyáltalán nem töltődik be. Az IP-cím anonimizálva kerül feldolgozásra; hirdetési és profilalkotási
-    funkciókat nem használunk.
+    A látogatottságot a tárhelyszolgáltatónk saját, <b>sütimentes</b> mérőszolgáltatásával (Vercel Web
+    Analytics) mérjük. A szolgáltatás nem helyez el sütit és nem olvas adatot a látogató
+    végberendezéséről; a látogatót a beérkező kérésből képzett, <b>naponta lenullázódó</b> azonosító
+    (hash) különbözteti meg. Emiatt a látogató sem napok között, sem más weboldalak felé nem követhető
+    nyomon, és az eredmény kizárólag összesített formában áll rendelkezésünkre.
+  </p>
+  <p>
+    Célja a napi egyedi látogatószám és az oldalletöltések mérése. Jogalapja a <b>GDPR 6. cikk (1) f)</b>
+    pontja szerinti jogos érdek: annak megismerése, hogy a kezdeményezés tartalmai elérik-e a
+    közönségüket. Mivel az adatkezelés nem alkalmas természetes személy azonosítására, és nem jár a
+    végberendezésen történő adattárolással, az Eht. 155. § (4) bekezdése szerinti hozzájárulás nem
+    szükséges hozzá.
   </p>
 
   <h2>3. Meddig kezeljük az adatokat</h2>
@@ -205,8 +212,8 @@ footer{
       <td>Az ügy lezárását követő 1 év.</td>
     </tr>
     <tr>
-      <td>Webanalitikai adatok</td>
-      <td>A Google Analytics szolgáltatásban beállított megőrzési idő, legfeljebb 14 hónap.</td>
+      <td>Látogatottsági adatok</td>
+      <td>Kizárólag összesített formában, személyhez nem köthetően. A megkülönböztető azonosító naponta lenullázódik.</td>
     </tr>
   </table>
   </div>
@@ -222,8 +229,8 @@ footer{
   </div>
   <p>
     A hozzájárulás visszavonása nem érinti a visszavonás előtti adatkezelés jogszerűségét. A
-    süti-hozzájárulás az oldal láblécében található <b>„Süti-beállítások”</b> hivatkozással bármikor
-    ugyanolyan egyszerűen módosítható, ahogy megadta.
+    látogatottság-méréshez nem kérünk hozzájárulást, mert ahhoz nem használunk sütit és a mérés
+    személyhez nem köthető (l. a 2.4. és a 6. pontot).
   </p>
 
   <h2>5. Adatfeldolgozók és címzettek</h2>
@@ -250,10 +257,9 @@ footer{
       Európai Unió. Harmadik országba történő továbbítás nem történik.
     </li>
     <li>
-      <b>Google Ireland Limited</b> — webanalitika (Google Analytics 4), <b>kizárólag hozzájárulás
-      esetén</b>. A szolgáltatás keretében sor kerülhet adattovábbításra az Amerikai Egyesült
-      Államokba; ennek garanciáit az általános szerződési feltételek (SCC) és az EU–USA adatvédelmi
-      keretrendszer (Data Privacy Framework) szerinti tanúsítás biztosítja.
+      <b>Vercel Inc.</b> — a látogatottság-mérés (Vercel Web Analytics) is a tárhelyszolgáltatónál
+      történik, ezért új adatfeldolgozó nem lép be a folyamatba. A mérés sütimentes, és kizárólag
+      összesített, személyhez nem köthető adatot eredményez.
     </li>
   </ul>
   <p>
@@ -263,16 +269,17 @@ footer{
   </p>
 
   <h2>6. Sütik és beágyazott tartalmak</h2>
+  <div class="callout">
+    <p>
+      <b>Ez a weboldal nem használ sütit.</b> Nyomkövető, hirdetési vagy profilalkotó szolgáltatást
+      nem alkalmazunk, ezért süti-hozzájárulást sem kérünk.
+    </p>
+  </div>
   <ul>
     <li>
-      <b>Működéshez szükséges tárolás</b> (hozzájárulás nélkül is): a választott világos/sötét
-      megjelenítési mód és a süti-hozzájárulásról hozott döntés ténye. Ezek a látogató más
-      weboldalakon való beazonosítására nem alkalmasak.
-    </li>
-    <li>
-      <b>Webanalitikai sütik</b> (kizárólag hozzájárulás esetén): a Google Analytics 4 <code>_ga</code>
-      és <code>_ga_*</code> sütijei. Hozzájárulás hiányában a szolgáltatás nem töltődik be, és
-      semmilyen adat nem kerül továbbításra.
+      <b>Működéshez szükséges tárolás:</b> a böngésző helyi tárolójában (localStorage) egyedül a
+      választott világos/sötét megjelenítési mód őrződik meg. Ez az adat nem hagyja el a látogató
+      eszközét, és más weboldalakon való beazonosításra nem alkalmas.
     </li>
     <li>
       <b>Beágyazott videók:</b> a videók előnézeti képeit saját kiszolgálónkról töltjük be, így az
@@ -334,10 +341,9 @@ footer{
 <footer>
   <div class="wrap">
     Agro-Biotech Kft. &nbsp;·&nbsp; <a href="/">stopjeger.hu</a>
-    &nbsp;·&nbsp; <a href="#" data-cookie-settings>Süti-beállítások</a>
   </div>
 </footer>
 
-<script src="/cookie-consent.js" defer></script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

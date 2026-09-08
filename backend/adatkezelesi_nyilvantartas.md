@@ -13,8 +13,8 @@
 | **Székhely** | 8000 Székesfehérvár, Zobori út 66/5. |
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
-| **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5. pont indokolását |
-| **A nyilvántartás verziója** | 2.0 |
+| **Adatvédelmi tisztviselő** | Nem kijelölt — l. a 4.2. pont indokolását |
+| **A nyilvántartás verziója** | 2.1 |
 | **Hatályos** | 2026. szeptember 8. |
 | **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
@@ -31,7 +31,7 @@
 | **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (levélküldés) |
 | **Harmadik országba továbbítás** | Vercel Inc. (USA) — a beküldés pillanatában átmeneti áthaladás. Garancia: SCC a Vercel DPA-jában. Tárolás kizárólag az EU-ban (Supabase, eu-west-1, Írország). A levélküldő EU-s adatközpontot használ. |
 | **Törlési határidő** | A hozzájárulás visszavonásáig / leiratkozásig; azt követően haladéktalanul |
-| **Biztonsági intézkedések** | L. a 6. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe), valamint az `info@stopjeger.hu` címre írt levéllel is kérhető |
+| **Biztonsági intézkedések** | L. az 5. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe), valamint az `info@stopjeger.hu` címre írt levéllel is kérhető |
 
 > **Nyitott pont — kettős opt-in.** Az adatbázisséma tartalmazza a megerősítő tokent
 > (`subscribers.confirm_token`, 48 órás lejárattal), de a megerősítő levél kiküldése a jelen
@@ -55,30 +55,30 @@
 | **Címzettek kategóriái** | Adatfeldolgozó: Microsoft Ireland Operations Limited (Exchange Online levelezés) |
 | **Harmadik országba továbbítás** | Nincs — a postafiók tárolási helye az EU |
 | **Törlési határidő** | Az ügy lezárását követő 1 év, ezt követően törlés |
-| **Biztonsági intézkedések** | L. a 6. pontot; többtényezős hitelesítés a postafiókhoz |
+| **Biztonsági intézkedések** | L. az 5. pontot; többtényezős hitelesítés a postafiókhoz |
 
 ---
 
-## 3. Webanalitika
+## 3. Látogatottság-mérés
 
 | Szempont | Tartalom |
 |---|---|
-| **Az adatkezelés célja** | A weboldal látogatottságának és a tartalmak olvasottságának mérése, összesített statisztika készítése |
-| **Jogalap** | GDPR 6. cikk (1) a) — hozzájárulás, az Eht. 155. § (4) bekezdésével összhangban. Hozzájárulás hiányában a szolgáltatás **egyáltalán nem töltődik be** |
-| **Érintettek kategóriái** | A weboldal látogatói, akik a süti-hozzájárulást megadták |
-| **Személyes adatok kategóriái** | Anonimizált IP-cím; eszköz- és böngészőadatok; a megtekintett oldalak és események; a Google Analytics ügyfélazonosítója (`_ga` süti) |
-| **Címzettek kategóriái** | Adatfeldolgozó: Google Ireland Limited |
-| **Harmadik országba továbbítás** | Sor kerülhet USA-ba történő továbbításra. Garancia: SCC + az EU–USA adatvédelmi keretrendszer (Data Privacy Framework) szerinti tanúsítás |
-| **Törlési határidő** | A Google Analytics szolgáltatásban beállított megőrzési idő, legfeljebb 14 hónap |
-| **Biztonsági intézkedések** | IP-anonimizálás bekapcsolva; hirdetési és profilalkotási funkciók (Google Signals, hirdetési személyre szabás) kikapcsolva |
+| **Az adatkezelés célja** | A napi egyedi látogatószám és az oldalletöltések mérése, összesített formában |
+| **Jogalap** | GDPR 6. cikk (1) f) — jogos érdek annak megismeréséhez, hogy a kezdeményezés tartalmai elérik-e a közönségüket. Érdekmérlegelés elvégezve: az adatkezelés sütimentes, személyhez nem köthető, és az érintett érdekeit érdemben nem korlátozza. Az Eht. 155. § (4) szerinti hozzájárulás **nem szükséges**, mert a mérés nem tárol és nem olvas adatot a végberendezésen |
+| **Érintettek kategóriái** | A weboldal látogatói |
+| **Személyes adatok kategóriái** | A beérkező kérésből képzett, naponta lenullázódó megkülönböztető azonosító (hash); a megtekintett oldal. Sem IP-cím, sem süti, sem eszközazonosító nem kerül tárolásra |
+| **Címzettek kategóriái** | Adatfeldolgozó: Vercel Inc. — ugyanaz, aki a tárhelyet is adja, új szereplő nem lép be |
+| **Harmadik országba továbbítás** | A Vercel (USA) már adatfeldolgozó a webkiszolgálás miatt; garancia: SCC a Vercel DPA-jában |
+| **Törlési határidő** | Az adat kizárólag összesítve áll rendelkezésre; a megkülönböztető azonosító naponta megszűnik |
+| **Biztonsági intézkedések** | L. az 5. pontot |
 
-> **Állapot (2026. szeptember 8-tól éles):** a GA4 mérőazonosító `G-7MM2ZJ4K1Z`. A mérőkód
-> kizárólag a süti-sávon adott kifejezett hozzájárulás után töltődik be; a Consent Mode v2
-> alapértelmezése minden tárolási célra `denied`. A `gtag('config', …)` hívás explicit módon
-> kikapcsolja a Google Signals és a hirdetési személyre szabás jelzéseit is.
+> **A weboldal nem használ sütit.** A Google Analytics 2026. szeptember 8-án bevezetésre került,
+> majd még aznap **kivezetésre** — helyette a tárhelyszolgáltató sütimentes mérése fut. Ezzel
+> megszűnt a Google felé történő adattovábbítás, a süti-hozzájárulás szükségessége és maga a
+> süti-sáv is. A `cookie-consent.js` törölve.
 >
-> **Ellenőrizendő a GA4 property beállításaiban:** az adatmegőrzési idő 14 hónapra állítva
-> (a tájékoztató ezt állítja), a Google Signals kikapcsolva, hirdetési funkciók kikapcsolva.
+> A böngésző localStorage-ában egyedül a választott világos/sötét megjelenítési mód őrződik meg;
+> ez nem hagyja el a látogató eszközét.
 
 ---
 
@@ -158,4 +158,5 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 | Verzió | Dátum | Változás |
 |---|---|---|
 | 1.0 | 2026. szeptember 9. | Első kiállítás. Adatkezelő: Agro-Biotech Kft. Felvéve a webanalitikai adatkezelés és a süti-hozzájárulás. |
+| 2.1 | 2026. szeptember 8. | Google Analytics kivezetve, helyette sütimentes látogatottság-mérés a tárhelyszolgáltatónál. A süti-hozzájárulás és a süti-sáv megszűnt. A Supabase Pro csomaggal a napi mentés és a 7 napos naplómegőrzés biztosított. |
 | 2.0 | 2026. szeptember 8. | **Az aláírásgyűjtés megszűnt**, helyébe anonim közvélemény-kutatás lépett; az 1.0 verzió 1. pontja (aláírásgyűjtés) törölve, a `signatures` tábla megszüntetve. A hírlevél önálló adatkezeléssé vált, forrása a kérdőív. A jelszóval védett háttéroldalak pontja törölve (az oldalak nyilvánossá váltak, az Edge Middleware eltávolítva). A kérdőív anonimitásának feltételei tételesen ellenőrizve. Felvéve a leiratkozás e-mailes útja. |
