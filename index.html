@@ -331,7 +331,8 @@ sup.cite a:hover{text-decoration:underline}
 .video-modal-box.portrait{
   width:auto; height:100%; max-width:100%; aspect-ratio:9/16;
 }
-.video-modal-box iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+.video-modal-box iframe,.video-modal-box video{position:absolute; inset:0; width:100%; height:100%; border:0}
+.video-modal-box video{background:#000; object-fit:contain}
 .video-modal-close{
   position:absolute; top:.6rem; right:.6rem; z-index:2; width:2.2rem; height:2.2rem; border-radius:50%;
   background:rgba(10,14,12,.7); border:1px solid rgba(255,255,255,.4); color:#fff; cursor:pointer;
@@ -1979,13 +1980,13 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
           <a class="watch" href="https://www.facebook.com/reel/1730098404953130/" target="_blank" rel="noopener">Megnyitom Facebookon ↗</a>
         </div>
         <div class="video-card">
-          <div class="video-embed video-poster" data-embed-src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F954566290265290%2F&show_text=false&autoplay=true" data-embed-title="Kérdésünk a miniszterhez a kiskőrösi gazdafórumon" data-embed-ratio="9/16" role="button" tabindex="0" aria-label="Videó lejátszása: Kérdésünk a miniszterhez a kiskőrösi gazdafórumon">
+          <div class="video-embed video-poster" data-embed-src="/assets/video/kiskoros-gazdaforum-20260904.mp4" data-embed-type="file" data-embed-title="Kérdésünk a miniszterhez a kiskőrösi gazdafórumon" data-embed-ratio="9/16" role="button" tabindex="0" aria-label="Videó lejátszása: Kérdésünk a miniszterhez a kiskőrösi gazdafórumon">
             <img src="/assets/video-thumbs/kiskoros-gazdaforum.jpg" alt="" loading="lazy" style="object-position:50% 16%">
             <span class="play-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           </div>
-          <div class="who"><h3>Kérdésünk a miniszterhez a kiskőrösi gazdafórumon</h3><span class="role">Hajnal Zsolt · Facebook · 2026.09.04</span></div>
-          <p>Bóna Szabolcs miniszter urat kérdezzük a JÉGER- és egyéb időjárás-manipulációs rendszerekkel kapcsolatos tervekről a kiskőrösi gazdafórumon, 2026. szeptember 4-én.<sup class="cite"><a href="#r28">28</a></sup></p>
-          <a class="watch" href="https://www.facebook.com/reel/954566290265290/" target="_blank" rel="noopener">Megnyitom Facebookon ↗</a>
+          <div class="who"><h3>Kérdésünk a miniszterhez a kiskőrösi gazdafórumon</h3><span class="role">Hajnal Zsolt · teljes felvétel · 2026.09.04</span></div>
+          <p>Bóna Szabolcs miniszter urat kérdezzük a JÉGER- és egyéb időjárás-manipulációs rendszerekkel kapcsolatos tervekről a kiskőrösi gazdafórumon, 2026. szeptember 4-én. A teljes, vágatlan felvétel (10:50) — saját kiszolgálásban, külső beágyazás nélkül.<sup class="cite"><a href="#r28">28</a></sup></p>
+          <a class="watch" href="https://www.facebook.com/reel/954566290265290/" target="_blank" rel="noopener">A rövid változat Facebookon ↗</a>
         </div>
         <div class="video-card">
           <div class="video-embed video-poster" data-embed-src="https://www.youtube-nocookie.com/embed/w6o285a7oqQ?start=2122&autoplay=1" data-embed-title="Beszélgetés Pártai Lucia meteorológussal" role="button" tabindex="0" aria-label="Videó lejátszása: Beszélgetés Pártai Lucia meteorológussal">
@@ -2284,6 +2285,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   <div class="video-modal-box">
     <button class="video-modal-close" type="button" id="videoModalClose" aria-label="Bezárás">✕</button>
     <iframe id="videoModalFrame" src="" title="" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>
+    <video id="videoModalPlayer" controls playsinline preload="none" hidden></video>
   </div>
 </div>
 
@@ -2315,28 +2317,51 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
 (function(){
   var modal = document.getElementById('videoModal');
   var frame = document.getElementById('videoModalFrame');
+  var player = document.getElementById('videoModalPlayer');
   var closeBtn = document.getElementById('videoModalClose');
   var box = modal ? modal.querySelector('.video-modal-box') : null;
   if (!modal || !frame || !closeBtn || !box) return;
-  function openModal(src, title, ratio){
-    frame.src = src;
-    frame.title = title || '';
+  function openModal(src, title, ratio, type){
+    // A sajat kiszolgalasu felvetelek <video> elemben, a beagyazasok iframe-ben mennek.
+    var ownFile = type === 'file';
+    if (player){
+      player.hidden = !ownFile;
+      if (ownFile){
+        player.src = src;
+        player.title = title || '';
+      }
+    }
+    frame.hidden = ownFile;
+    frame.src = ownFile ? '' : src;
+    frame.title = ownFile ? '' : (title || '');
     // Az allo (9/16) videokat a magassaghoz igazitjuk, hogy a teljes kep latszodjon.
     box.classList.toggle('portrait', ratio === '9/16');
     modal.hidden = false;
+    if (ownFile && player){
+      var p = player.play();
+      if (p && p.catch) p.catch(function(){});
+    }
   }
   function closeModal(){
     frame.src = '';
+    if (player){
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      player.hidden = true;
+    }
+    frame.hidden = false;
     modal.hidden = true;
   }
   document.querySelectorAll('.video-poster').forEach(function(poster){
-    poster.addEventListener('click', function(){
-      openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '', poster.dataset.embedRatio);
-    });
+    function open(){
+      openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '', poster.dataset.embedRatio, poster.dataset.embedType);
+    }
+    poster.addEventListener('click', open);
     poster.addEventListener('keydown', function(e){
       if (e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
-        openModal(poster.dataset.embedSrc, poster.dataset.embedTitle || '', poster.dataset.embedRatio);
+        open();
       }
     });
   });

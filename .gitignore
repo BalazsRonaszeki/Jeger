@@ -17,3 +17,8 @@ Dokumentumok/
 
 # A gyokerbe masolt portrek; a hasznalt valtozatuk az assets/profiles/ alatt van
 /*.jpg
+
+# A gyokerbe masolt nyers videofelvetelek (tobb GB); a webre tomoritett valtozat az assets/video/ alatt van
+/*.mp4
+/*.mov
+/*.MOV
