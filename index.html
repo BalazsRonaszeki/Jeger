@@ -291,6 +291,17 @@ sup.cite a:hover{text-decoration:underline}
 .press-card a.watch{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); text-decoration:none}
 .press-card a.watch:hover{text-decoration:underline}
 
+/* ---------- "Az emberi faktor" tenykartyai: ugyanaz a kartya, csak racsban ---------- */
+.factor-grid{
+  display:grid; gap:1rem; margin-top:1.7rem;
+  grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));
+}
+.factor-grid .press-card{flex:1 1 auto; gap:.45rem}
+.factor-grid .press-card b{
+  display:block; font-family:'Bricolage Grotesque',sans-serif; font-weight:700;
+  font-size:1.45rem; line-height:1.15; color:var(--accent); font-variant-numeric:tabular-nums;
+}
+
 /* ---------- FAQ ---------- */
 .faq-list{display:grid; gap:.9rem; margin-top:1.6rem}
 .faq-item{
@@ -725,6 +736,139 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
     <span class="sb-cta">Kitöltöm ↗</span>
   </a>
 </div>
+
+<section class="tinted" id="emberi-faktor">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Kiemelten &nbsp;·&nbsp; Kezelők és lakóövezet</span>
+      <h2>Az emberi faktor</h2>
+    </div>
+    <p class="lead-p">A vitákban szinte mindig a felhőkről van szó. Pedig a rendszer legalsó pontján egy ember áll: egy magánszemély, aki jellemzően a saját portáján, kézzel gyújt meg egy közel 99%-ban acetonos oldatot égető berendezést — és aki az üzemeltető saját előírása szerint a működés teljes ideje alatt a közelben marad.</p>
+
+    <figure class="figure">
+      <div class="diagram-card scenic">
+        <svg viewBox="0 0 1000 460" role="img" aria-label="Metszetrajz egy falusi utcáról: két lakóház között, egy porta udvarán áll a talajgenerátor égő kéménnyel, mellette a kezelő; a rajz jelöli a 10–14 méteres tűzvédelmi sugarat, amelyen kívül esnek a házak.">
+          <defs>
+            <linearGradient id="emberiSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a9d3e6"/><stop offset="60%" stop-color="#cfe3d8"/><stop offset="100%" stop-color="#f3e3bd"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="0" y="0" width="1000" height="372" fill="url(#emberiSky)"/>
+          <rect x="0" y="372" width="1000" height="88" fill="#a8bb78"/>
+          <rect x="0" y="372" width="1000" height="7" fill="#9aae6b"/>
+
+          <!-- bal oldali lakohaz -->
+          <polygon points="-8,236 91,172 190,236" fill="#c1652f"/>
+          <rect x="12" y="236" width="158" height="136" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1.5"/>
+          <rect x="36" y="262" width="34" height="30" fill="#cfe0e4" stroke="#c9b89a"/>
+          <rect x="112" y="262" width="34" height="30" fill="#cfe0e4" stroke="#c9b89a"/>
+          <rect x="74" y="312" width="34" height="60" fill="#a8542a"/>
+          <text x="91" y="162" class="lbl" text-anchor="middle" fill="#4a5559">LAKÓHÁZ</text>
+
+          <!-- jobb oldali lakohaz -->
+          <polygon points="782,246 880,186 978,246" fill="#a8542a"/>
+          <rect x="800" y="246" width="160" height="126" fill="#f2e6d3" stroke="#c9b89a" stroke-width="1.5"/>
+          <rect x="822" y="270" width="32" height="28" fill="#cfe0e4" stroke="#c9b89a"/>
+          <rect x="898" y="270" width="32" height="28" fill="#cfe0e4" stroke="#c9b89a"/>
+          <rect x="862" y="316" width="32" height="56" fill="#c1652f"/>
+          <text x="880" y="176" class="lbl" text-anchor="middle" fill="#4a5559">LAKÓHÁZ</text>
+
+          <!-- kerites a porta korul -->
+          <g stroke="#b9a887" stroke-width="2.4" stroke-linecap="round">
+            <line x1="300" y1="356" x2="300" y2="372"/><line x1="326" y1="356" x2="326" y2="372"/>
+            <line x1="352" y1="356" x2="352" y2="372"/><line x1="378" y1="356" x2="378" y2="372"/>
+            <line x1="648" y1="356" x2="648" y2="372"/><line x1="674" y1="356" x2="674" y2="372"/>
+            <line x1="700" y1="356" x2="700" y2="372"/><line x1="726" y1="356" x2="726" y2="372"/>
+            <line x1="296" y1="360" x2="382" y2="360"/><line x1="644" y1="360" x2="730" y2="360"/>
+          </g>
+
+          <!-- talajgenerator: tarolo kaloda + kemeny + legtartaly -->
+          <rect x="470" y="336" width="30" height="36" rx="2" fill="#7d8a86" stroke="#4a5559" stroke-width="1.5"/>
+          <line x1="470" y1="348" x2="500" y2="348" stroke="#4a5559" stroke-width="1"/>
+          <rect x="518" y="352" width="17" height="20" rx="6" fill="#8d9a96" stroke="#4a5559" stroke-width="1.2"/>
+          <rect x="481" y="296" width="8" height="42" fill="#7d8a86" stroke="#4a5559" stroke-width="1.2"/>
+          <ellipse cx="485" cy="292" rx="6" ry="8" fill="#e0873d"/>
+          <ellipse cx="485" cy="289" rx="3" ry="4.5" fill="#ffd873"/>
+
+          <!-- a felszallo, jobbra sodrodo aeroszol -->
+          <circle cx="485" cy="286" r="4" fill="#e0873d" opacity=".9" class="rising" style="--dx:120px;--dy:-210px; animation-delay:0s"/>
+          <circle cx="485" cy="286" r="4.6" fill="#e0873d" opacity=".85" class="rising" style="--dx:150px;--dy:-195px; animation-delay:-.8s"/>
+          <circle cx="485" cy="286" r="3.6" fill="#e0873d" opacity=".8" class="rising" style="--dx:95px;--dy:-225px; animation-delay:-1.6s"/>
+          <circle cx="485" cy="286" r="4.2" fill="#e0873d" opacity=".85" class="rising" style="--dx:170px;--dy:-180px; animation-delay:-2.4s"/>
+
+          <!-- a kezelo -->
+          <g fill="#4a5559">
+            <circle cx="556" cy="330" r="7"/>
+            <rect x="550" y="339" width="12" height="21" rx="4"/>
+            <rect x="551" y="359" width="4.4" height="13" rx="2"/>
+            <rect x="557" y="359" width="4.4" height="13" rx="2"/>
+            <rect x="540" y="342" width="11" height="4" rx="2" transform="rotate(-18 545 344)"/>
+          </g>
+
+          <!-- 10-14 m-es tuzvedelmi sav -->
+          <g stroke="#c1652f" stroke-width="1.6" stroke-dasharray="5 5" opacity=".85">
+            <line x1="485" y1="300" x2="485" y2="392"/>
+            <line x1="685" y1="286" x2="685" y2="392"/>
+            <line x1="765" y1="272" x2="765" y2="392"/>
+          </g>
+          <line x1="485" y1="392" x2="765" y2="392" stroke="#c1652f" stroke-width="1.6"/>
+          <polygon points="485,392 496,388 496,396" fill="#c1652f"/>
+          <polygon points="765,392 754,388 754,396" fill="#c1652f"/>
+          <text x="585" y="386" class="lbl" text-anchor="middle" fill="#8a4a22">10 m</text>
+          <text x="725" y="386" class="lbl" text-anchor="middle" fill="#8a4a22">14 m</text>
+          <text x="500" y="414" class="lbl" text-anchor="middle" fill="#8a4a22">a NAK egyetlen előírt telepítési távolsága: 10–14 m sugarú kör</text>
+          <text x="500" y="430" class="lbl" text-anchor="middle" fill="#4a5559">és az is éghető anyagra vonatkozik — lakóházra nem</text>
+
+          <!-- feliratok -->
+          <line x1="452" y1="300" x2="476" y2="312" stroke="#4a5559" stroke-width="1" opacity=".6"/>
+          <text x="448" y="298" class="lbl" text-anchor="end" fill="#2f3e42">TALAJGENERÁTOR</text>
+          <line x1="600" y1="330" x2="568" y2="334" stroke="#4a5559" stroke-width="1" opacity=".6"/>
+          <text x="606" y="327" class="lbl" fill="#2f3e42">a kezelő — a működés alatt</text>
+          <text x="606" y="341" class="lbl" fill="#2f3e42">végig a közelben tartózkodik</text>
+          <text x="30" y="60" class="lbl-lg" fill="#2f3e42">Egy porta, egy nyílt láng, egy magánszemély</text>
+          <text x="30" y="80" class="lbl" fill="#4a5559">98,6–98,8%-ban acetonos oldat ég el a kertek között</text>
+        </svg>
+      </div>
+      <figcaption>
+        A rajz a NAK saját kezelői kiadványában szereplő telepítési szabályt ábrázolja.<sup class="cite"><a href="#r34">34</a></sup> A 10–14 méteres sáv az egyetlen előírt távolság — és az is arról szól, hogy ne gyulladjon meg semmi. Lakóépülettől, játszótértől vagy iskolától való védőtávolságot a dokumentum nem ír elő, így a szabályok betartása mellett is állhat lakóház a sávon éppen kívül.
+      </figcaption>
+    </figure>
+
+    <div class="factor-grid">
+      <div class="press-card">
+        <span class="outlet">A hatóanyag</span>
+        <b>98,6–98,8%</b>
+        <p>a JÉGŐR acetontartalma a gyártó biztonsági adatlapja szerint; az ezüst-jodid ebből 1%, a nátrium-jodid 0,2–0,4%.<sup class="cite"><a href="#r4">4</a></sup></p>
+      </div>
+      <div class="press-card">
+        <span class="outlet">A gyártó saját besorolása</span>
+        <b>H225 · H319 · H336</b>
+        <p>fokozottan tűzveszélyes folyadék és gőz; súlyos szemirritációt okoz; álmosságot vagy szédülést okozhat — ezek humán-egészségügyi figyelmeztetések, a vízi élővilágra vonatkozó H410 mellett.<sup class="cite"><a href="#r4">4</a></sup></p>
+      </div>
+      <div class="press-card">
+        <span class="outlet">A telepítés</span>
+        <b>legalább ~45%</b>
+        <p>a 219 automata generátorból ennyi áll utcanév + házszám szintű, belterületi címen a hivatalos nyilvántartás szerint; egyértelműen külterületi mindössze 21%.<sup class="cite"><a href="#r35">35</a></sup></p>
+      </div>
+      <div class="press-card">
+        <span class="outlet">Amit kerestünk</span>
+        <b>0</b>
+        <p>olyan vizsgálat, amely a generátorkezelők aceton-, ezüst- vagy jodidexpozícióját mérte volna — sem itthon, sem a nemzetközi szakirodalomban.<sup class="cite"><a href="#r36">36</a></sup></p>
+      </div>
+    </div>
+
+    <p style="margin-top:1.8rem">Az oldalon eddig a <b>H410</b>-es besorolást emeltük ki: az ezüst-jodid nagyon mérgező a vízi élővilágra, és ez egyértelmű. Ugyanaz az adatlap azonban a keverék egészére <b>három humán-egészségügyi figyelmeztetést</b> is közöl — és a kezelő munkaköri feladata, hogy ezt az anyagot <b>nyílt lánggal meggyújtsa</b>. Az adatlap ráadásul több toxikológiai végpontnál „Nincs adat”-ot közöl, és kémiai biztonsági értékelés nem készült hozzá.<sup class="cite"><a href="#r4">4</a></sup></p>
+
+    <p>Hogy ki végzi ezt, azt az üzemeltető saját, kezelőknek szóló kiadványa írja le. Az „ideális generátorkezelő” eszerint az, aki „precíz, gondos és lelkiismeretes”, <b>„nagyrészt otthon tartózkodik”</b>, „egyszerű érintőképernyős telefont tud/megtanul kezelni”, és <b>„eszköz számára kitelepítési helyszínt tud biztosítani”</b>. Működés közben pedig „a generátor működése közben a közelben tartózkodik… felügyeli a működést”. A dokumentum vegyianyag-kezelési képzettséget, foglalkozás-egészségügyi alkalmassági vizsgálatot vagy kötelező védőfelszerelést <b>nem említ</b> — betanításról ír, amit a kamara kollégái végeznek.<sup class="cite"><a href="#r34">34</a></sup></p>
+
+    <p>Ez a két feltétel — otthon van és helyszínt ad — együtt oda vezet, hogy a berendezés jellemzően annak a portáján áll, aki kezeli; a tároló kaloda pedig a szezonon kívül is ott marad. A hivatalos telepítési nyilvántartásban ennek megfelelően tömegesen szerepelnek falusi utcanevek házszámmal. A konkrét címeket nem közöljük — ezek magánszemélyek ingatlanai —, de az arány önmagában is beszédes.<sup class="cite"><a href="#r35">35</a></sup></p>
+
+    <p>Ami ebből következik, az <b>nem vád, hanem egy hiány</b>. A felhőmagvasítás nemzetközi egészségügyi értékelései — köztük az, amelyre a szakma hivatkozni szokta — mind ugyanazt a kérdést vizsgálják: mennyi ezüst kerül a csapadékba, és az mennyivel marad az ivóvíz-küszöb alatt. Ezek megnyugtató eredményre jutnak. Csakhogy <b>egyik sem arról szól, aki ott áll a berendezés mellett.</b> Az ezüst tartós expozíciójának ismert krónikus hatása az argyria és az argyrosis — a bőr, illetve a szem visszafordíthatatlan elszíneződése —, a foglalkozási határérték pedig 0,01 mg/m³; azt viszont maga az amerikai toxikológiai profil mondja ki, hogy <b>nem ismert, milyen levegőkoncentráció és mennyi idő okozta ezt a dolgozóknál</b>.<sup class="cite"><a href="#r36">36</a></sup></p>
+
+    <p>Nem állítjuk, hogy bármelyik kezelő megbetegedett volna, és azt sem, hogy a lakóövezeti telepítés bárkinek ártott — erre nincs adat. Éppen ez a probléma: 2018 óta, évente <b>április 15-től szeptember 30-ig</b>, közel ezer helyszínen zajlik ez, egy-egy kezelő szezononként több tucatszor indítja el a berendezést<sup class="cite"><a href="#r34">34</a></sup> — és a kérdést eldöntő mérés, egy munkahigiénés expozíciómérés a kezelő mellett, soha nem készült el. 2026 augusztusában ezt hivatalosan is elkértük: a Nemzeti Népegészségügyi és Gyógyszerészeti Központtól tételesen kértük a kezelők munkahigiénés kockázatértékelését, az expozíciós méréseket és az előírt egyéni védőeszközök dokumentált alapját. <b>A válasz még nem érkezett meg.</b></p>
+  </div>
+</section>
 
 <section id="cel">
   <div class="wrap">
@@ -2253,7 +2397,7 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
         <li id="r1">Támogatói okirat, Jegeso_TO_20171025.pdf — 1,8 milliárd Ft, 100% intenzitás, 986 db generátor (223 automata + 763 manuális) tételes melléklete.</li>
         <li id="r2">Hagelabwehr — Wikipédia (de.wikipedia.org/wiki/Hagelabwehr); hagelabwehr.at; wgv.de/hagelabwehr — Ausztria és Németország repülőgépes módszere.</li>
         <li id="r3">havos.ch; swissinfo.ch — a svájci „Hagelflieger” program 2024-es leállítása bizonyítottság hiányában.</li>
-        <li id="r4">JÉGŐR biztonsági adatlap (MSDS), Agro-Chemie Kft., 2025.06.20, v8 — H410 besorolás.</li>
+        <li id="r4">JÉGŐR biztonsági adatlap (MSDS), Agro-Chemie Kft., 2025.06.20, v8 — összetétel: 98,6–98,8% aceton, 1% ezüst-jodid, 0,2–0,4% nátrium-jodid. Az ezüst-jodid komponens H410 (nagyon mérgező a vízi élővilágra); a keverék egészének humán-egészségügyi besorolása H225 (fokozottan tűzveszélyes folyadék és gőz), H319 (súlyos szemirritációt okoz) és H336 (álmosságot vagy szédülést okozhat). Az adatlap több toxikológiai végpontnál „Nincs adat”-ot közöl, és kémiai biztonsági értékelés nem készült.</li>
         <li id="r5">KSZ-0037-2024 hatóanyag-lehívások, számlák, teljesítésigazolások — 150 000 L × kb. 4064 Ft/L (2025).</li>
         <li id="r6">nak.hu — „A jégkármérséklő rendszer környezeti hatásainak vizsgálata” (2020, HL-LAB Környezetvédelmi és Talajvizsgáló Laboratórium, megrendelő: NAK) — teljes szöveg ellenőrizve.</li>
         <li id="r7">telex.hu/gazdasag/2026/07/30 — Bóna Szabolcs agrárminiszter bejelentése a részleges leállításról.</li>
@@ -2283,6 +2427,9 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
         <li id="r31">Békés Vármegyei Kormányhivatal, BE/39/1360-10/2026. számú tájékoztatás (2026.09.08., Dr. Rákóczi Attila főigazgató aláírásával) — a 2026.08.13-án benyújtott közérdekű bejelentés vizsgálatáról; tartalmazza az Agrár- és Élelmiszergazdaságért Felelős Minisztérium 2026.09.04-i közlését az MTA Tanácsadó Testülete útján folyó szakmai vizsgálatról és annak október végi határidejéről. A kezdeményezés birtokában.</li>
         <li id="r32">Hódmezővásárhely Megyei Jogú Város Polgármestere, SZEM/19-2/2026. számú válasz közérdekű adatigénylésre (2026.08.13., Dr. Márki-Zay Péter polgármester aláírásával) — az önkormányzat nem adatkezelő, és nem vezet nyilvántartást a területén lévő talajgenerátorokról. A kezdeményezés birtokában.</li>
         <li id="r33">Magyar Államkincstár, ADATVP/840-2/2026. (2026.08.08., határidő-hosszabbítás) és ADATVP/840-3/2026. (2026.09.03., az adatszolgáltatás I. ütemének teljesítése) számú válaszok közérdekű adatigénylésre — az I. ütemben a támogatói okirat kitakart példánya érkezett meg. A kezdeményezés birtokában.</li>
+        <li id="r34">Nemzeti Agrárgazdasági Kamara: „Országos Jégkármérséklő Rendszer működése — Manuális talajgenerátor” című, generátorkezelőknek szóló ismertető kiadvány — az ideális kezelő és az ideális telepítési helyszín leírása, a kezelő működés közbeni jelenlétének előírása, a védekezési időszak (ápr. 15. – szept. 30.). A kezdeményezés birtokában.</li>
+        <li id="r35">A JÉGER automata talajgenerátorainak hivatalos telepítési nyilvántartása (219 tétel; régió, vármegye, azonosító, koordináta, irányítószám, település, utca, házszám, helyrajzi szám), közérdekű adatigénylésre kiadva — a kezdeményezés birtokában. A telepítési címek belterületi/külterületi megoszlását ebből számoltuk; <b>a konkrét címeket adatvédelmi okból nem tesszük közzé</b>.</li>
+        <li id="r36">Utah Department of Health, Environmental Epidemiology Program: <i>Silver Iodide Cloud Seeding Technical Assist</i> (Nathan LaCross, Ph.D., MPH) — a felhőmagvasítás lakossági egészségügyi értékelése csapadék- és hóminták alapján. <a href="https://appletree.utah.gov/wp-content/uploads/2021/10/Silver_Iodide_Cloud_Seeding.pdf" target="_blank" rel="noopener">appletree.utah.gov ↗</a> · ATSDR: <i>Toxicological Profile for Silver</i> <a href="https://www.atsdr.cdc.gov/toxprofiles/tp146.pdf" target="_blank" rel="noopener">atsdr.cdc.gov ↗</a> · NIOSH Pocket Guide, ezüst (0,01 mg/m³) <a href="https://www.cdc.gov/niosh/npg/npgd0557.html" target="_blank" rel="noopener">cdc.gov ↗</a>. Egyik sem vizsgálja a földi generátorok kezelőinek foglalkozási expozícióját; ilyen vizsgálatot célzott kereséssel sem találtunk.</li>
       </ol>
     </div>
   </div>
