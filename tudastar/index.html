@@ -644,7 +644,17 @@ footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
   stanceBtns.forEach(function(b){ b.addEventListener('click', function(){ state.stance = b.dataset.stance; apply(); }); });
   q.addEventListener('input', function(){ state.text = q.value; apply(); });
   document.getElementById('emptyReset').addEventListener('click', reset);
-  apply();
+
+  // a fooldali allitas-csempek ?allitas=<kulcs> parameterrel erkeznek: elore szurunk es a listahoz gorgetunk
+  var pre = null;
+  try { pre = new URLSearchParams(window.location.search).get('allitas'); } catch(e){}
+  if (pre && claimNames[pre]) {
+    state.claim = pre;
+    apply();
+    window.requestAnimationFrame(function(){ document.getElementById('lista').scrollIntoView({ block: 'start' }); });
+  } else {
+    apply();
+  }
 })();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
