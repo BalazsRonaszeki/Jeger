@@ -37,6 +37,11 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `GET /api/count` | A beérkezett válaszok száma. |
 | `GET /api/confirm?token=…` | A megerősítő levél célpontja. Beváltja a tokent, felviszi a címet a Brevo-listára, majd a `/megerosites.html`-re irányít. |
 | `GET /api/admin/export?dataset=survey\|subscribers` | CSV-export. Jelszó **csak** `X-Admin-Password` fejlécben. |
+| `POST /api/admin/login`, `/login/verify`, `/logout` | Belépés: jelszó, majd e-mailben kapott 6 jegyű kód; HttpOnly munkamenet-süti. |
+| `POST /api/admin/password/check`, `/password/set`, `/password/forgot` | Meghívó elfogadása, jelszó-visszaállítás. |
+| `GET /api/admin/session`, `GET /api/admin/stats?from=&to=` | Munkamenet-állapot; dashboard (napi összesítők, max. 366 nap). |
+| `GET /api/admin/users`, `POST /api/admin/users/invite`, `/users/{id}/disable\|enable\|resend` | Felhasználókezelés (csak admin). |
+| `POST /api/admin/bootstrap` | Az **első** admin meghívása `X-Admin-Password` fejléccel; csak amíg nincs admin. |
 
 ```bash
 curl -H "X-Admin-Password: <jelszo>" \
@@ -64,6 +69,47 @@ Environment változók (Vercel → Project → Settings → Environment Variable
 | `MAIL_REPLY_TO` | default `info@stopjeger.hu` |
 | `SITE_URL` | a megerősítő hivatkozás alapcíme, default `https://stopjeger.hu` |
 | `ADMIN_LOCKOUT_SECONDS` | opcionális, default 900 |
+| `ADMIN_AUTH_SECRET` | **belső felület:** hosszú véletlen titok a belépési kódok HMAC-jéhez — nélküle az `/api/admin/*` 503-at ad |
+| `ADMIN_MAIL_FROM_EMAIL` | opcionális külön feladó a meghívó- és kódlevelekhez (default: `MAIL_FROM_EMAIL`) |
+| `VERCEL_API_TOKEN` | a dashboard látogatószámaihoz: Vercel access token |
+| `VERCEL_PROJECT_ID` | a Vercel-projekt azonosítója |
+| `VERCEL_TEAM_ID` | csak ha a projekt team alatt van |
+
+## Belső felület (`/admin`)
+
+Meghívásos, jelszó + e-mailes kód (2FA) belépésű felület a munkatársaknak. Kód: `api/_admin.py`
+(az aláhúzás miatt a Vercel nem csinál belőle önálló függvényt), felület: `admin/`, tesztek:
+`python -m unittest backend/tests/test_admin.py -v`.
+
+| Oldal | |
+|---|---|
+| `/admin/` | belépés (jelszó → e-mailes kód), elfelejtett jelszó |
+| `/admin/jelszo/#meghivo=…` | meghívó elfogadása / jelszó-visszaállítás (a token a `#` után, így nem kerül szervernaplóba) |
+| `/admin/vezerlopult/` | kezdőlap-csempék (Dashboard, Blog — fejlesztés alatt, Felhasználók), dashboard, felhasználókezelés |
+
+**Biztonság röviden:** scrypt jelszóhash; tokenek és kódok csak hash-ként az adatbázisban; a belépési kód
+10 percig és 5 próbálkozásig él; 5 hibás jelszó után 15 perc zárolás; munkamenet 12 óra (2 óra tétlenség
+után lejár); SameSite=Strict süti + saját fejléc és Origin-ellenőrzés a CSRF ellen; szigorú CSP és
+`noindex` az `/admin` alatt. A dashboard kizárólag napi darabszámot kap, e-mail-címet soha.
+
+**Ismert korlát:** a második faktor e-mailes kód, ami ugyanabba a postafiókba érkezik, mint a
+jelszó-visszaállító levél — a munkatársak postafiókján ezért különösen fontos az MFA.
+
+**Élesítés lépései:**
+
+1. Supabase → SQL Editor: `backend/migrations/2026-09-11_admin_felulet.sql` lefuttatása egyben, majd a fájl
+   végén lévő **ellenőrző lekérdezés** — minden sornak `ok`-nak kell lennie.
+2. Vercel env: `ADMIN_AUTH_SECRET` (kötelező), `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID` (+ `VERCEL_TEAM_ID`), majd redeploy.
+3. Brevo: a feladó domain hitelesítése (DKIM/SPF) — enélkül a belépési kódok spambe mehetnek.
+4. Az első admin meghívása:
+
+   ```bash
+   curl -X POST https://stopjeger.hu/api/admin/bootstrap \
+     -H "X-Admin-Password: <ADMIN_PASSWORD>" -H "Content-Type: application/json" \
+     -d '{"email": "te@pelda.hu", "name": "Neved"}'
+   ```
+
+   A további munkatársakat az admin a felületről hívja meg.
 
 ## DNS (WebSupport)
 

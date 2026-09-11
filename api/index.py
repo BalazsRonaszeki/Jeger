@@ -415,3 +415,21 @@ async def admin_export(request: Request, dataset: str = 'survey'):
         media_type='text/csv',
         headers={'Content-Disposition': 'attachment; filename="' + table + '.csv"'}
     )
+
+
+# --- Belső felület (/admin) ----------------------------------------------------
+# Külön modulban él (api/_admin.py — az aláhúzás miatt a Vercel nem csinál belőle önálló
+# függvényt). A betöltés szándékosan védett: ha bármi okból elhasal, a kérdőív és a
+# hírlevél-megerősítés ettől még zavartalanul működik, csak az admin végpontok adnak 503-at.
+try:
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import _admin
+    _admin.configure(supabase_client)
+    app.include_router(_admin.router)
+except Exception as _admin_exc:
+    print('A belső felület modulja nem töltődött be: %r' % (_admin_exc,))
+
+    @app.api_route('/api/admin/{rest:path}', methods=['GET', 'POST'])
+    async def admin_unavailable(rest: str):
+        raise HTTPException(status_code=503, detail='A belső felület jelenleg nem érhető el')

@@ -13,9 +13,9 @@
 | **Székhely** | 8000 Székesfehérvár, Zobori út 66/5. |
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
-| **Adatvédelmi tisztviselő** | Nem kijelölt — l. a 4.2. pont indokolását |
-| **A nyilvántartás verziója** | 2.1 |
-| **Hatályos** | 2026. szeptember 8. |
+| **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5.2. pont indokolását |
+| **A nyilvántartás verziója** | 2.2 |
+| **Hatályos** | 2026. szeptember 11. |
 | **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
 ---
@@ -31,7 +31,7 @@
 | **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (levélküldés) |
 | **Harmadik országba továbbítás** | Vercel Inc. (USA) — a beküldés pillanatában átmeneti áthaladás. Garancia: SCC a Vercel DPA-jában. Tárolás kizárólag az EU-ban (Supabase, eu-west-1, Írország). A levélküldő EU-s adatközpontot használ. |
 | **Törlési határidő** | A hozzájárulás visszavonásáig / leiratkozásig; azt követően haladéktalanul |
-| **Biztonsági intézkedések** | L. az 5. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe), valamint az `info@stopjeger.hu` címre írt levéllel is kérhető |
+| **Biztonsági intézkedések** | L. a 6. pontot; a leiratkozás minden levélben egy kattintással elérhető (List-Unsubscribe), valamint az `info@stopjeger.hu` címre írt levéllel is kérhető |
 
 > **Nyitott pont — kettős opt-in.** Az adatbázisséma tartalmazza a megerősítő tokent
 > (`subscribers.confirm_token`, 48 órás lejárattal), de a megerősítő levél kiküldése a jelen
@@ -55,7 +55,7 @@
 | **Címzettek kategóriái** | Adatfeldolgozó: Microsoft Ireland Operations Limited (Exchange Online levelezés) |
 | **Harmadik országba továbbítás** | Nincs — a postafiók tárolási helye az EU |
 | **Törlési határidő** | Az ügy lezárását követő 1 év, ezt követően törlés |
-| **Biztonsági intézkedések** | L. az 5. pontot; többtényezős hitelesítés a postafiókhoz |
+| **Biztonsági intézkedések** | L. a 6. pontot; többtényezős hitelesítés a postafiókhoz |
 
 ---
 
@@ -70,7 +70,7 @@
 | **Címzettek kategóriái** | Adatfeldolgozó: Vercel Inc. — ugyanaz, aki a tárhelyet is adja, új szereplő nem lép be |
 | **Harmadik országba továbbítás** | A Vercel (USA) már adatfeldolgozó a webkiszolgálás miatt; garancia: SCC a Vercel DPA-jában |
 | **Törlési határidő** | Az adat kizárólag összesítve áll rendelkezésre; a megkülönböztető azonosító naponta megszűnik |
-| **Biztonsági intézkedések** | L. az 5. pontot |
+| **Biztonsági intézkedések** | L. a 6. pontot |
 
 > **A weboldal nem használ sütit.** A Google Analytics 2026. szeptember 8-án bevezetésre került,
 > majd még aznap **kivezetésre** — helyette a tárhelyszolgáltató sütimentes mérése fut. Ezzel
@@ -82,9 +82,30 @@
 
 ---
 
-## 4. Nem tartozik a nyilvántartás hatálya alá
+## 4. A belső felület felhasználói
 
-### 4.1. Az anonim kérdőív
+| Szempont | Tartalom |
+|---|---|
+| **Az adatkezelés célja** | A stopjeger.hu belső felületéhez (dashboard, később blog-szerkesztés) hozzáférő munkatársak azonosítása, a hozzáférés biztonságának fenntartása és a hozzáférések naplózása |
+| **Jogalap** | GDPR 6. cikk (1) f) — az Adatkezelő jogos érdeke a belső rendszer védelméhez, a jogosulatlan hozzáférés megakadályozásához és az incidensek kivizsgálhatóságához. Érdekmérlegelés elvégezve: a kezelt adatkör a hozzáféréshez feltétlenül szükségesre korlátozott, IP-cím nem kerül tárolásra |
+| **Érintettek kategóriái** | A felületre meghívott munkatársak és önkéntesek |
+| **Személyes adatok kategóriái** | E-mail-cím; név (nem kötelező); szerepkör; fiókállapot; a jelszó **kizárólag scrypt-hash** formában; a meghívó- és jelszó-visszaállító tokenek, valamint a munkamenet-token **SHA-256-hash** formában; az e-mailes belépési kódok **HMAC** formában; a meghívás, az aktiválás és az utolsó belépés időpontja; a sikertelen belépések száma és az esetleges zárolás ideje; eseménynapló (belépés, sikertelen belépés, meghívás, letiltás, jelszócsere) **IP-cím nélkül** |
+| **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (meghívó-, jelszó-visszaállító és belépési kód levelek) |
+| **Harmadik országba továbbítás** | Mint az 1. pontban |
+| **Törlési határidő** | Fiók: a hozzáférés megszűnésekor letiltandó, a munkakapcsolat vagy az önkéntes közreműködés megszűnését követő 30 napon belül törlendő. Belépési kódok, tokenek, munkamenetek: lejáratuk után legfeljebb 7 nappal automatikusan törlődnek. Eseménynapló: 1 év — **nyitott pont:** az éves törlés még nincs automatizálva, addig évente kézzel kell elvégezni |
+| **Biztonsági intézkedések** | L. a 6. pontot |
+
+> **A dashboard nem kezel új személyes adatot.** A felületen megjelenő látogatói, kérdőív- és
+> hírlevél-adatok kizárólag **napi darabszámok**; e-mail-cím, egyedi válaszsor vagy azonosító nem
+> jut el a böngészőig. Az összesítő adatbázis-függvények a `survey_responses` és a `subscribers`
+> táblát **külön** kérdezik le, közös azonosító vagy összekapcsolás nélkül — az 5.1. pont
+> anonimitási feltételei ezért változatlanul teljesülnek.
+
+---
+
+## 5. Nem tartozik a nyilvántartás hatálya alá
+
+### 5.1. Az anonim kérdőív
 
 A `/kerdoiv` oldalon kitöltött kérdőív nem gyűjt nevet, e-mail-címet vagy egyéb azonosítót, és a
 válaszok nem köthetők vissza természetes személyhez, ezért nem minősül személyes adat kezelésének
@@ -102,14 +123,14 @@ válaszok nem köthetők vissza természetes személyhez, ezért nem minősül s
 **Újra kell értékelni**, ha a kérdőív bármely új mezővel bővül, ha a válaszokhoz időbélyeg vagy
 IP-cím kerül, vagy ha a két tábla között bármilyen összekötés létesül.
 
-### 4.2. Adatvédelmi tisztviselő (DPO)
+### 5.2. Adatvédelmi tisztviselő (DPO)
 
 Kijelölése nem kötelező. Az Adatkezelő nem közhatalmi szerv; fő tevékenysége nem az érintettek
 rendszeres és szisztematikus, nagymértékű megfigyelése; és nem végez nagy számban különleges adatok
 kezelését (GDPR 37. cikk (1) a)–c) pont). **Felülvizsgálandó**, ha a feliratkozói adatbázis mérete
 nagyságrendet nő.
 
-### 4.3. Adatvédelmi hatásvizsgálat (DPIA)
+### 5.3. Adatvédelmi hatásvizsgálat (DPIA)
 
 Jelenleg nem szükséges, mert az adatkezelés nem jár valószínűsíthetően magas kockázattal (nincs
 automatizált döntéshozatal, profilalkotás, szisztematikus megfigyelés vagy nyilvános terület
@@ -118,7 +139,7 @@ hírlevél-küldésbe.
 
 ---
 
-## 5. Az adatbiztonsági intézkedések általános leírása (GDPR 32. cikk)
+## 6. Az adatbiztonsági intézkedések általános leírása (GDPR 32. cikk)
 
 **Technikai intézkedések**
 
@@ -134,6 +155,15 @@ hírlevél-küldésbe.
   fogadható el (query paraméterben nem, mert az bekerülne a kiszolgálói naplókba), az összehasonlítás
   konstans idejű, és IP-nkénti próbálkozás-korlát véd a kipróbálás ellen.
 - A levelezéshez többtényezős hitelesítés (MFA) kötelező.
+- **Belső felület:** meghívásos hozzáférés; belépéskor jelszó **és** e-mailben kiküldött, 10 percig érvényes,
+  legfeljebb 5 próbálkozásig használható kód (kétlépcsős azonosítás). A jelszó scrypt-hash, a tokenek és
+  kódok csak hash formában tárolódnak. 5 hibás jelszó után 15 perces zárolás. A munkamenet-süti HttpOnly,
+  Secure és SameSite=Strict; 12 óra után, illetve 2 óra tétlenség után lejár. Az oldalak szigorú
+  tartalombiztonsági szabályzattal (CSP) és keresőmotoros indexelés tilalmával szolgálódnak ki. Szerepkörök:
+  adminisztrátor (meghívhat és letilthat) és szerkesztő; letiltáskor a munkamenetek azonnal megszűnnek.
+- **Ismert korlát:** az e-mailes kód ugyanabba a postafiókba érkezik, mint a jelszó-visszaállító levél, ezért a
+  belső felület biztonsága a munkatársak postafiókjának biztonságán is múlik — a postafiókokon az MFA ezért
+  különösen fontos.
 - A kimenő levelezés SPF, DKIM és DMARC hitelesítéssel védett a névvel való visszaélés ellen.
 - Beküldési sebességkorlát (rate limit) és honeypot mező a tömeges, automatizált visszaélések ellen.
 
@@ -153,10 +183,11 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 
 ---
 
-## 6. Változáskövetés
+## 7. Változáskövetés
 
 | Verzió | Dátum | Változás |
 |---|---|---|
+| 2.2 | 2026. szeptember 11. | Felvéve a 4. pont: a belső felület (dashboard) felhasználóinak adatkezelése — meghívásos hozzáférés, jelszó + e-mailes kód, eseménynapló IP-cím nélkül. A korábbi 4–6. pont 5–7. lett. A 6. pont kiegészült a belső felület biztonsági intézkedéseivel és az e-mailes második faktor ismert korlátjával. |
 | 1.0 | 2026. szeptember 9. | Első kiállítás. Adatkezelő: Agro-Biotech Kft. Felvéve a webanalitikai adatkezelés és a süti-hozzájárulás. |
 | 2.1 | 2026. szeptember 8. | Google Analytics kivezetve, helyette sütimentes látogatottság-mérés a tárhelyszolgáltatónál. A süti-hozzájárulás és a süti-sáv megszűnt. A Supabase Pro csomaggal a napi mentés és a 7 napos naplómegőrzés biztosított. |
 | 2.0 | 2026. szeptember 8. | **Az aláírásgyűjtés megszűnt**, helyébe anonim közvélemény-kutatás lépett; az 1.0 verzió 1. pontja (aláírásgyűjtés) törölve, a `signatures` tábla megszüntetve. A hírlevél önálló adatkezeléssé vált, forrása a kérdőív. A jelszóval védett háttéroldalak pontja törölve (az oldalak nyilvánossá váltak, az Edge Middleware eltávolítva). A kérdőív anonimitásának feltételei tételesen ellenőrizve. Felvéve a leiratkozás e-mailes útja. |

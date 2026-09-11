@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Jelszó beállítása — stopjeger.hu belső felület</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<button id="themeToggle" class="theme-toggle floating" type="button" aria-label="Sötét/világos téma váltása" title="Sötét/világos téma váltása">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 14.5A8.5 8.5 0 0 1 9.5 3.2a.5.5 0 0 0-.6-.7 9.5 9.5 0 1 0 12.6 12.6.5.5 0 0 0-.7-.6Z"/></svg>
+</button>
+
+<main class="auth">
+  <div class="auth-card">
+    <span class="eyebrow">STOP JÉGER · belső felület</span>
+
+    <section id="stateChecking">
+      <h1>Egy pillanat…</h1>
+      <p class="muted">Ellenőrizzük a hivatkozást.</p>
+    </section>
+
+    <section id="stateForm" hidden>
+      <h1 id="formTitle">Jelszó beállítása</h1>
+      <p class="muted" id="formLead"></p>
+      <form id="formPassword" novalidate>
+        <input type="email" id="accountEmail" autocomplete="username" hidden>
+        <label class="field"><span>Új jelszó (legalább 12 karakter)</span>
+          <input id="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+        <label class="field"><span>Jelszó még egyszer</span>
+          <input id="password2" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+        <p class="hint" id="pwHint">Tipp: egy hosszú, több szóból álló mondat könnyen megjegyezhető és erős.</p>
+        <button class="btn" type="submit">Jelszó mentése</button>
+      </form>
+    </section>
+
+    <section id="stateDone" hidden>
+      <h1>Kész!</h1>
+      <p class="muted">A jelszavad elmentettük. Belépéskor a jelszó mellett egy e-mailben kapott kódot is kérünk.</p>
+      <p><a class="btn" href="/admin/">Tovább a belépéshez</a></p>
+    </section>
+
+    <section id="stateInvalid" hidden>
+      <h1>A hivatkozás nem érvényes</h1>
+      <p class="muted" id="invalidText">A hivatkozás lejárt, már felhasználták, vagy hiányos. Kérj új meghívót az adminisztrátortól, vagy használd a belépési oldalon az „Elfelejtett jelszó?” lehetőséget.</p>
+      <p><a class="btn btn-ghost" href="/admin/">A belépési oldalra</a></p>
+    </section>
+
+    <p id="msg" class="msg" role="status" aria-live="polite" hidden></p>
+  </div>
+</main>
+
+<script src="/admin/common.js"></script>
+<script src="/admin/jelszo.js"></script>
+</body>
+</html>

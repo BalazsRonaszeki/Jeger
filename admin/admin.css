@@ -1,0 +1,210 @@
+/* stopjeger.hu — belső felület. A színek és betűk a nyilvános oldaléval egyeznek. */
+:root{
+  --bg:#eef1ea; --surface:#ffffff; --surface-2:#e4e9df;
+  --ink:#1b2420; --ink-soft:#48544c; --ink-faint:#6f7b72; --line:#ccd6c8;
+  --accent:#b3560a; --accent-ink:#ffffff; --accent-soft:#f3e2d2;
+  --silver:#4c6b78; --silver-soft:#dde7ea;
+  /* grafikon: egyetlen sorozatszín (dataviz-validátorral ellenőrizve a #ffffff felületen) */
+  --series:#b3560a; --series-hover:#8f4508; --grid:#e3e8df; --axis:#b9c4b5;
+  --ok:#2f6b33; --ok-soft:#dfeadb; --warn:#8a6414; --warn-soft:#f2e8cf; --danger:#a1261d; --danger-soft:#f6dcd9;
+  --shadow:0 1px 2px rgba(20,30,25,.05), 0 10px 28px -14px rgba(20,30,25,.22);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+    --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#8a968e; --line:#2c3a37;
+    --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+    --silver:#8bb0bd; --silver-soft:#20343a;
+    /* sötét módban külön árnyalat: a #e0873d túl világos a sötét felülethez (validátor) */
+    --series:#cc6d2b; --series-hover:#e0873d; --grid:#26312f; --axis:#3b4845;
+    --ok:#8cc08e; --ok-soft:#1f3322; --warn:#d9b35c; --warn-soft:#352c16; --danger:#f0a39c; --danger-soft:#3a1d1a;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+  --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#8a968e; --line:#2c3a37;
+  --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+  --silver:#8bb0bd; --silver-soft:#20343a;
+  --series:#cc6d2b; --series-hover:#e0873d; --grid:#26312f; --axis:#3b4845;
+  --ok:#8cc08e; --ok-soft:#1f3322; --warn:#d9b35c; --warn-soft:#352c16; --danger:#f0a39c; --danger-soft:#3a1d1a;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-size:17px; line-height:1.55}
+h1,h2,h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; margin:0; letter-spacing:-.01em; line-height:1.2; text-wrap:balance}
+.hint{font-size:.84rem; line-height:1.45; color:var(--ink-faint)}
+/* mobilon a többsorosra törő fejléc ne takarja a tartalmat */
+@media (max-width:640px){ .topbar{position:static} }
+h1{font-size:clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem)}
+h2{font-size:1.12rem}
+p{margin:0 0 .9rem}
+a{color:var(--silver)}
+a:hover{color:var(--accent)}
+.muted{color:var(--ink-soft)}
+.mono,.eyebrow{font-family:'IBM Plex Mono', ui-monospace, monospace}
+.eyebrow{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.shell{max-width:1100px; margin:0 auto; padding-left:1.25rem; padding-right:1.25rem}
+
+/* ---------- gombok, mezők ---------- */
+.btn{
+  font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.82rem; font-weight:600;
+  padding:.62rem 1.1rem; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:var(--accent-ink);
+  cursor:pointer; white-space:nowrap;
+}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.55; cursor:progress}
+.btn-ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--accent); color:var(--accent); filter:none}
+.btn-sm{padding:.4rem .75rem; font-size:.74rem}
+.btn-danger{background:transparent; color:var(--danger); border-color:var(--danger)}
+.link{all:unset; cursor:pointer; color:var(--silver); text-decoration:underline; font-size:.92rem}
+.link:hover{color:var(--accent)}
+.btn:focus-visible,.link:focus-visible,input:focus-visible,select:focus-visible,.preset:focus-visible,.tile:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+label.field{display:block; margin:0 0 .9rem}
+label.field > span{display:block; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:.3rem}
+input[type=email],input[type=password],input[type=text],input[type=date],select{
+  width:100%; font:inherit; font-size:1rem; padding:.6rem .75rem; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface); color:var(--ink); color-scheme:light dark;
+}
+input:focus,select:focus{outline:none; border-color:var(--accent)}
+input.code-input{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:1.6rem; letter-spacing:.35em; text-align:center}
+
+.msg{padding:.7rem .9rem; border-radius:8px; font-size:.94rem; background:var(--silver-soft); color:var(--ink); margin:1rem 0 0}
+.msg.error{background:var(--danger-soft); color:var(--danger)}
+.msg.ok{background:var(--ok-soft); color:var(--ok)}
+
+/* ---------- témaváltó ---------- */
+.theme-toggle{
+  width:2.4rem; height:2.4rem; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+}
+.theme-toggle:hover{border-color:var(--accent); color:var(--accent)}
+.theme-toggle svg{width:1.05rem; height:1.05rem}
+.theme-toggle.floating{position:fixed; top:1rem; right:1rem; box-shadow:var(--shadow)}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{display:none}
+:root[data-theme="light"] .theme-toggle .icon-moon{display:block}
+:root[data-theme="dark"] .theme-toggle .icon-sun{display:block}
+:root:not([data-theme]) .theme-toggle .icon-moon{display:block}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .theme-toggle .icon-moon{display:none}
+  :root:not([data-theme]) .theme-toggle .icon-sun{display:block}
+}
+
+/* ---------- belépés, jelszó ---------- */
+.auth{max-width:430px; margin:9vh auto 3rem; padding-left:1.25rem; padding-right:1.25rem}
+.auth-card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:1.8rem 1.6rem; box-shadow:var(--shadow)}
+.auth-card h1{margin:.4rem 0 1rem}
+.auth-card .btn{width:100%; margin-top:.3rem; padding-top:.75rem; padding-bottom:.75rem}
+.auth-card .aside{margin:1rem 0 0; text-align:center}
+.auth-foot{margin-top:1.2rem; text-align:center; font-size:.82rem; color:var(--ink-faint)}
+
+/* ---------- vezérlőpult: fejléc ---------- */
+.topbar{background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20}
+.topbar-inner{display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding-top:.7rem; padding-bottom:.7rem}
+.brand{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:700; text-decoration:none; color:var(--ink)}
+.brand span{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.72rem; color:var(--ink-faint); font-weight:400}
+.nav{display:flex; gap:.2rem; flex-wrap:wrap}
+.nav a{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.8rem; text-decoration:none; color:var(--ink-soft); padding:.4rem .7rem; border-radius:6px}
+.nav a:hover{color:var(--accent)}
+.nav a[aria-current="page"]{background:var(--surface-2); color:var(--ink)}
+.who{margin-left:auto; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; font-size:.9rem}
+.who-name{color:var(--ink-soft); overflow-wrap:anywhere}
+.role-badge,.badge{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.66rem; letter-spacing:.05em; text-transform:uppercase; padding:.18em .55em; border-radius:99px; background:var(--silver-soft); color:var(--silver); white-space:nowrap}
+.badge.warn{background:var(--warn-soft); color:var(--warn)}
+.badge.ok{background:var(--ok-soft); color:var(--ok)}
+.badge.danger{background:var(--danger-soft); color:var(--danger)}
+
+main.shell{padding-top:2rem; padding-bottom:4rem}
+.view-head{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.1rem}
+.view-head p{margin:0}
+
+/* ---------- kezdőlap-csempék ---------- */
+.tiles{display:grid; gap:1rem; margin-top:1.4rem; grid-template-columns:repeat(auto-fit, minmax(min(260px,100%),1fr))}
+.tile{
+  display:flex; flex-direction:column; gap:.45rem; text-decoration:none; color:inherit; min-height:9.5rem;
+  background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:12px;
+  padding:1.1rem 1.2rem; box-shadow:var(--shadow); transition:transform .15s ease, border-color .15s ease;
+}
+a.tile:hover{transform:translateY(-2px); border-color:var(--accent); color:inherit}
+.tile b{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:1.2rem}
+.tile-kicker{display:flex; align-items:center; gap:.5rem; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.tile-desc{font-size:.92rem; color:var(--ink-soft)}
+.tile-go{margin-top:auto; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.76rem; font-weight:600; color:var(--silver)}
+.tile.is-disabled{border-left-color:var(--line); cursor:not-allowed}
+.tile.is-disabled b,.tile.is-disabled .tile-desc{color:var(--ink-faint)}
+.tile.is-disabled .tile-kicker{color:var(--ink-faint)}
+
+/* ---------- szűrősor ---------- */
+.filters{display:flex; flex-wrap:wrap; align-items:flex-end; gap:.6rem 1rem; padding:.9rem 1rem; background:var(--surface); border:1px solid var(--line); border-radius:12px; margin-bottom:1.2rem}
+.presets{display:flex; flex-wrap:wrap; gap:.35rem}
+.preset{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.76rem; padding:.45rem .8rem; border-radius:99px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); cursor:pointer}
+.preset:hover{border-color:var(--accent); color:var(--accent)}
+.preset[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.range-inputs{display:flex; flex-wrap:wrap; gap:.6rem; align-items:flex-end}
+.range-inputs label.field{margin:0; min-width:9.5rem}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(min(230px,100%),1fr)); margin-bottom:1.2rem}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1rem 1.15rem; box-shadow:var(--shadow)}
+.kpi-label{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.72rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-faint)}
+.kpi-value{display:block; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:2.3rem; font-weight:700; line-height:1.15; margin:.25rem 0 .2rem}
+.kpi-sub{font-size:.86rem; color:var(--ink-soft)}
+
+/* ---------- grafikon-kártyák ---------- */
+.cards{display:grid; gap:1rem}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.2rem 1rem; box-shadow:var(--shadow)}
+.card-head{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:.6rem}
+.card-head p{margin:.15rem 0 0; font-size:.86rem}
+.card-note{font-size:.9rem}
+#dashBody{transition:opacity .2s ease}
+#dashBody.loading{opacity:.45}
+
+.chart{position:relative; width:100%}
+.chart svg{display:block; width:100%; height:auto; overflow:visible}
+.chart svg:focus{outline:none}
+.chart svg:focus-visible{outline:2px solid var(--accent); outline-offset:4px; border-radius:4px}
+.chart .grid{stroke:var(--grid); stroke-width:1; shape-rendering:crispEdges}
+.chart .axis{stroke:var(--axis); stroke-width:1; shape-rendering:crispEdges}
+.chart .tick{fill:var(--ink-faint); font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; font-variant-numeric:tabular-nums}
+.chart .bar{fill:var(--series)}
+.chart .bar.is-active{fill:var(--series-hover)}
+.chart .guide{stroke:var(--axis); stroke-width:1}
+.chart .hit{fill:transparent}
+.chart .empty-note{fill:var(--ink-faint); font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px}
+
+.tooltip{
+  position:absolute; top:0; left:0; pointer-events:none; z-index:5; min-width:8rem;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
+  padding:.45rem .65rem; font-size:.82rem; line-height:1.35; white-space:nowrap;
+}
+.tooltip strong{display:block; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:1.05rem}
+.tooltip .tip-row{display:flex; align-items:center; gap:.4rem; color:var(--ink-soft)}
+.tooltip .key{display:inline-block; width:12px; height:2px; background:var(--series); border-radius:1px}
+
+/* ---------- táblázatok ---------- */
+.table-wrap{overflow-x:auto; margin-top:.8rem}
+.data-table{width:100%; border-collapse:collapse; font-size:.9rem}
+.data-table th{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-faint); text-align:left; font-weight:600; padding:.45rem .6rem; border-bottom:1px solid var(--line)}
+.data-table td{padding:.45rem .6rem; border-bottom:1px solid var(--grid); vertical-align:middle}
+.data-table td.num,.data-table th.num{text-align:right; font-variant-numeric:tabular-nums}
+.data-table .actions{display:flex; gap:.35rem; flex-wrap:wrap; justify-content:flex-end}
+
+/* ---------- meghívó űrlap ---------- */
+.invite-form{display:grid; gap:.8rem; grid-template-columns:repeat(auto-fit, minmax(min(200px,100%),1fr)); align-items:end; margin-top:.8rem}
+.invite-form label.field{margin:0}
+.users-card{margin-top:1rem}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .who{margin-left:0; width:100%}
+  .kpi-value{font-size:2rem}
+  .auth{margin-top:5vh}
+}
+@media (prefers-reduced-motion: reduce){
+  .tile,#dashBody{transition:none}
+}
