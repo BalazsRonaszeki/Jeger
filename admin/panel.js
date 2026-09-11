@@ -44,7 +44,9 @@
     }
     $('whoName').textContent = me.name || me.email;
     $('whoRole').textContent = ROLE[me.role] || me.role;
-    $('helloName').textContent = me.name ? ', ' + me.name.split(' ')[0] : '';
+    // Magyar névsorrend: a keresztnév a név utolsó szava ("Kovács Anna" -> "Anna").
+    var givenName = me.name ? me.name.trim().split(/\s+/).pop() : '';
+    $('helloName').textContent = givenName ? ', ' + givenName : '';
     var isAdmin = me.role === 'admin';
     $('navUsers').hidden = !isAdmin;
     $('tileUsers').hidden = !isAdmin;
