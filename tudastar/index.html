@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tudástár — STOP JÉGER-kezdeményezés</title>
+<meta name="description" content="Válogatott tanulmányok, nemzetközi jelentések és hatósági dokumentumok a jégeső-elhárításról: mit találtak, mit támasztanak alá, és hol vannak a korlátaik.">
+<link rel="canonical" href="https://stopjeger.hu/tudastar">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stopjeger.hu/tudastar">
+<meta property="og:site_name" content="stopjeger.hu">
+<meta property="og:title" content="Tudástár — mit mond a tudomány a jégeső-elhárításról?">
+<meta property="og:description" content="Tanulmányok és jelentések a jégeső-elhárítás hatékonyságáról, csapadékhatásáról, környezeti és egészségügyi vonatkozásairól — forrással, korlátokkal, ellenpontokkal.">
+<meta property="og:image" content="https://stopjeger.hu/assets/header-art.jpg">
+<meta property="og:locale" content="hu_HU">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="preload" href="/assets/fonts/source-serif-4-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-400-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+:root{
+  --bg:#eef1ea; --surface:#ffffff; --surface-2:#e4e9df;
+  --ink:#1b2420; --ink-soft:#48544c; --ink-faint:#7c887e; --line:#ccd6c8;
+  --accent:#b3560a; --accent-ink:#ffffff; --accent-soft:#f3e2d2;
+  --silver:#4c6b78; --silver-soft:#dde7ea;
+  --ok:#3d6b3f; --ok-soft:#dfeadb; --warn:#8a6414; --warn-soft:#f2e8cf;
+  --shadow: 0 1px 2px rgba(20,30,25,.05), 0 10px 28px -14px rgba(20,30,25,.22);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+    --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83; --line:#2c3a37;
+    --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+    --silver:#8bb0bd; --silver-soft:#20343a;
+    --ok:#8cc08e; --ok-soft:#1f3322; --warn:#d9b35c; --warn-soft:#352c16;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181a; --surface:#1a2224; --surface-2:#212b2c;
+  --ink:#e9ede5; --ink-soft:#b6c1b8; --ink-faint:#7e8a83; --line:#2c3a37;
+  --accent:#e0873d; --accent-ink:#1b1206; --accent-soft:#3a2a17;
+  --silver:#8bb0bd; --silver-soft:#20343a;
+  --ok:#8cc08e; --ok-soft:#1f3322; --warn:#d9b35c; --warn-soft:#352c16;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-size:18px; line-height:1.62}
+::selection{background:var(--accent); color:var(--accent-ink)}
+a{color:var(--silver)}
+a:hover{color:var(--accent)}
+h1,h2,h3{font-family:'Bricolage Grotesque', system-ui, sans-serif; text-wrap:balance; margin:0; letter-spacing:-.01em}
+p{margin:0 0 1.1rem}
+p:last-child{margin-bottom:0}
+.mono{font-family:'IBM Plex Mono', ui-monospace, monospace}
+.wrap{max-width:980px; margin:0 auto; padding-left:1.6rem; padding-right:1.6rem}
+.eyebrow{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600}
+
+/* theme toggle */
+.theme-toggle{position:fixed; top:1rem; right:1rem; z-index:30; width:2.6rem; height:2.6rem; border-radius:50%;
+  background:color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter:blur(6px);
+  border:1px solid var(--line); box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink)}
+.theme-toggle:hover{border-color:var(--accent); color:var(--accent)}
+.theme-toggle svg{width:1.15rem; height:1.15rem}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{display:none}
+:root[data-theme="light"] .theme-toggle .icon-moon{display:block}
+:root[data-theme="dark"] .theme-toggle .icon-sun{display:block}
+:root:not([data-theme]) .theme-toggle .icon-moon{display:block}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .theme-toggle .icon-moon{display:none}
+  :root:not([data-theme]) .theme-toggle .icon-sun{display:block}
+}
+
+/* hero */
+.hero{padding:3.4rem 0 2.6rem; border-bottom:1px solid var(--line);
+  background:radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in srgb, var(--silver) 16%, transparent), transparent), var(--bg)}
+.back{display:inline-flex; gap:.4em; align-items:center; font-family:'IBM Plex Mono',monospace; font-size:.78rem; text-decoration:none; color:var(--ink-faint); margin-bottom:1.6rem}
+.back:hover{color:var(--accent)}
+.hero .eyebrow{display:flex; align-items:center; gap:.6em; margin-bottom:1rem}
+.hero .eyebrow::before{content:""; width:1.6em; height:2px; background:var(--accent); display:inline-block}
+.hero h1{font-size:clamp(2.2rem, 1.5rem + 3vw, 3.4rem); font-weight:700}
+.hero .lede{font-size:1.16rem; color:var(--ink-soft); margin-top:1.1rem; max-width:44rem}
+.statline{margin-top:1.9rem; display:flex; flex-wrap:wrap; gap:.6rem 2.2rem; border-top:1px solid var(--line); padding-top:1.3rem}
+.statline div b{display:block; font-family:'Bricolage Grotesque',sans-serif; font-size:1.7rem; line-height:1.1; font-variant-numeric:tabular-nums}
+.statline div span{font-size:.82rem; color:var(--ink-faint)}
+
+/* claims */
+section{padding:2.8rem 0}
+section.tinted{background:var(--surface-2)}
+.section-head{margin-bottom:1.3rem}
+.section-head h2{font-size:clamp(1.4rem,1.15rem + 1vw,1.9rem); font-weight:700}
+.section-head .eyebrow{display:block; margin-bottom:.5rem}
+.section-head p{color:var(--ink-soft); margin-top:.6rem; font-size:1rem}
+.claims{display:grid; gap:.8rem; grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
+.claim{all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; gap:.35rem;
+  background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--line); border-radius:10px;
+  padding:.95rem 1.1rem; box-shadow:var(--shadow); transition:transform .15s ease, border-color .15s ease}
+.claim:hover{transform:translateY(-1px); border-color:var(--accent)}
+.claim:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.claim[aria-pressed="true"]{border-color:var(--accent); border-left-color:var(--accent); background:var(--accent-soft)}
+.claim .num{font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.claim b{font-family:'Bricolage Grotesque',sans-serif; font-size:1.02rem; line-height:1.3}
+.claim span.desc{font-size:.88rem; color:var(--ink-soft); line-height:1.45}
+.claim span.count{font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint)}
+
+/* toolbar */
+.toolbar{position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line); padding:.8rem 0}
+.toolbar .wrap{display:flex; flex-wrap:wrap; gap:.6rem .9rem; align-items:center}
+.search{flex:1 1 16rem; min-width:0; position:relative}
+.search input{width:100%; font:inherit; font-size:.95rem; padding:.55rem .8rem .55rem 2.1rem; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink)}
+.search input:focus{outline:none; border-color:var(--accent)}
+.search svg{position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:1rem; height:1rem; color:var(--ink-faint)}
+.chips{display:flex; flex-wrap:wrap; gap:.4rem}
+.chip{font-family:'IBM Plex Mono',monospace; font-size:.74rem; padding:.42em .85em; border-radius:99px; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink-soft); cursor:pointer; white-space:nowrap}
+.chip:hover{border-color:var(--accent); color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+/* a ragados kereso ne takarja el a talalatsort, amikor egy allitasra kattintva ide gorgetunk */
+#lista{scroll-margin-top:4.6rem}
+.result-line{font-family:'IBM Plex Mono',monospace; font-size:.74rem; color:var(--ink-faint); margin:0 0 1rem}
+.result-line button{all:unset; cursor:pointer; color:var(--accent); text-decoration:underline; margin-left:.6em}
+
+/* entries */
+.entries{display:grid; gap:1rem}
+.entry{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.25rem 1.4rem 1.1rem; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:.55rem}
+.entry[hidden]{display:none}
+.entry .meta{display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .8rem; font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; color:var(--silver)}
+.stance{font-weight:600; padding:.18em .6em; border-radius:99px; letter-spacing:.04em}
+.stance.s-alatamaszt{background:var(--ok-soft); color:var(--ok)}
+.stance.s-arnyal{background:var(--warn-soft); color:var(--warn)}
+.stance.s-ellenpont{background:var(--accent-soft); color:var(--accent)}
+.stance.s-hatter{background:var(--silver-soft); color:var(--silver)}
+.entry h3{font-size:1.14rem; line-height:1.3}
+.entry .orig{font-size:.86rem; color:var(--ink-faint); font-style:italic; line-height:1.4}
+.entry .cite-line{font-size:.84rem; color:var(--ink-soft); line-height:1.45}
+.entry .found{font-size:.97rem}
+.entry .found b{color:var(--ink)}
+.entry details{border-top:1px dashed var(--line); padding-top:.55rem}
+.entry summary{cursor:pointer; list-style:none; font-family:'IBM Plex Mono',monospace; font-size:.74rem; color:var(--ink-faint); display:inline-flex; gap:.4em; align-items:center}
+.entry summary::-webkit-details-marker{display:none}
+.entry summary::before{content:"+"; color:var(--accent); font-weight:600}
+.entry details[open] summary::before{content:"–"}
+.entry details p{font-size:.9rem; color:var(--ink-soft); margin:.5rem 0 0}
+.entry .foot{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.5rem}
+.tags{display:flex; flex-wrap:wrap; gap:.35rem}
+.tag{font-family:'IBM Plex Mono',monospace; font-size:.66rem; padding:.2em .6em; border-radius:6px; background:var(--surface-2); color:var(--ink-soft)}
+.entry a.src{font-family:'IBM Plex Mono',monospace; font-size:.76rem; font-weight:600; color:var(--accent); text-decoration:none; white-space:nowrap}
+.entry a.src:hover{text-decoration:underline}
+.empty{padding:2rem; text-align:center; color:var(--ink-faint); border:1px dashed var(--line); border-radius:12px}
+
+.note{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--silver); border-radius:10px; padding:1.1rem 1.3rem; font-size:.96rem; color:var(--ink-soft)}
+.legend{display:grid; gap:.5rem; margin-top:1rem; grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr)); font-size:.86rem; color:var(--ink-soft)}
+.legend div{display:flex; gap:.6rem; align-items:baseline}
+.legend .stance{font-family:'IBM Plex Mono',monospace; font-size:.66rem; text-transform:uppercase; white-space:nowrap}
+footer{padding:2.4rem 0 4rem; color:var(--ink-faint); font-size:.82rem}
+
+@media(max-width:600px){
+  body{font-size:16.5px}
+  .wrap{padding-left:1.1rem; padding-right:1.1rem}
+  .hero{padding:2.4rem 0 2rem}
+  .theme-toggle{top:.7rem; right:.7rem; width:2.3rem; height:2.3rem}
+  .toolbar{position:static}
+  .entry{padding:1.1rem 1.1rem 1rem}
+}
+</style>
+</head>
+<body>
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Sötét/világos téma váltása" title="Sötét/világos téma váltása">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 14.5A8.5 8.5 0 0 1 9.5 3.2a.5.5 0 0 0-.6-.7 9.5 9.5 0 1 0 12.6 12.6.5.5 0 0 0-.7-.6Z"/></svg>
+</button>
+
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="/">← vissza a főoldalra</a>
+    <div class="eyebrow">STOP JÉGER-kezdeményezés &nbsp;·&nbsp; Tudástár</div>
+    <h1>Mit mond a tudomány?</h1>
+    <p class="lede">Tanulmányok, nemzetközi jelentések és hatósági dokumentumok a jégeső-elhárításról. Mindegyiknél leírjuk közérthetően, <b>mit talált</b>, <b>melyik állításunkhoz kapcsolódik</b>, és <b>hol vannak a korlátai</b> — a forrás pedig egy kattintásra elérhető.</p>
+    <div class="statline">
+      <div><b id="statAll">–</b><span>forrás a tudástárban</span></div>
+      <div><b id="statPeer">–</b><span>lektorált tudományos publikáció</span></div>
+      <div><b id="statCounter">–</b><span>ellenpont — ezeket is közöljük</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Amit állítunk</span>
+      <h2>Öt állítás — és ami alátámasztja őket</h2>
+      <p>Kattints egy állításra, és a lista csak az ahhoz kapcsolódó forrásokat mutatja.</p>
+    </div>
+    <div class="claims" id="claims">
+      <button class="claim" type="button" data-claim="hatekonysag" aria-pressed="false">
+        <span class="num">01 · Hatékonyság</span>
+        <b>A jégeső-elhárítás hatékonysága nincs bizonyítva.</b>
+        <span class="desc">Randomizált kísérlet nem igazolta, egyes vizsgálatok szerint a magvasítás akár növelheti is a jég energiáját.</span>
+        <span class="count" data-count-for="hatekonysag"></span>
+      </button>
+      <button class="claim" type="button" data-claim="csapadek" aria-pressed="false">
+        <span class="num">02 · Csapadék</span>
+        <b>A csapadékra gyakorolt hatás egyik irányban sincs igazolva.</b>
+        <span class="desc">Zivatarfelhőkben a magvasítás csökkentheti és növelheti is a csapadékot; statisztikailag egyik sem bizonyított.</span>
+        <span class="count" data-count-for="csapadek"></span>
+      </button>
+      <button class="claim" type="button" data-claim="kornyezet" aria-pressed="false">
+        <span class="num">03 · Környezet</span>
+        <b>A generátorok közvetlen környezetét itthon senki nem mérte.</b>
+        <span class="desc">Külföldön a generátor mellett mérhető ezüstdúsulást találtak — a hazai vizsgálat módszere ezt nem láthatta.</span>
+        <span class="count" data-count-for="kornyezet"></span>
+      </button>
+      <button class="claim" type="button" data-claim="egeszseg" aria-pressed="false">
+        <span class="num">04 · Kezelők</span>
+        <b>A kezelők expozícióját senki nem vizsgálta.</b>
+        <span class="desc">Az egészségügyi értékelések a lakosságról szólnak, nem arról, aki a berendezés mellett áll.</span>
+        <span class="count" data-count-for="egeszseg"></span>
+      </button>
+      <button class="claim" type="button" data-claim="felugyelet" aria-pressed="false">
+        <span class="num">05 · Felügyelet</span>
+        <b>Független értékelés és valódi felügyelet nélkül ez nem működhet.</b>
+        <span class="desc">A nemzetközi szervezetek rendszeres felülvizsgálatot várnak — ahol van bejelentési kötelezettség, ott is hiányos.</span>
+        <span class="count" data-count-for="felugyelet"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="toolbar" id="toolbar">
+  <div class="wrap">
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Keresés: szerző, ország, kulcsszó…" aria-label="Keresés a tudástárban">
+    </label>
+    <div class="chips" id="stanceChips" role="group" aria-label="Szűrés álláspont szerint">
+      <button class="chip" type="button" data-stance="" aria-pressed="true">Mind</button>
+      <button class="chip" type="button" data-stance="alatamaszt" aria-pressed="false">Alátámasztja</button>
+      <button class="chip" type="button" data-stance="arnyal" aria-pressed="false">Árnyalja</button>
+      <button class="chip" type="button" data-stance="ellenpont" aria-pressed="false">Ellenpont</button>
+      <button class="chip" type="button" data-stance="hatter" aria-pressed="false">Háttér</button>
+    </div>
+  </div>
+</div>
+
+<section class="tinted" id="lista">
+  <div class="wrap">
+    <p class="result-line" id="resultLine" aria-live="polite"></p>
+    <div class="entries" id="entries">
+
+      <!-- ===================== 01 HATÉKONYSÁG ===================== -->
+
+      <article class="entry" data-claims="hatekonysag" data-stance="alatamaszt" data-type="peer" data-year="2021">
+        <div class="meta"><span>Lektorált tanulmány · 2021</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>A svájci jégkísérlet újraelemzése: magvasítva háromszoros jégenergia</h3>
+        <div class="orig">A Re-Evaluation of the Swiss Hail Suppression Experiment Using Permutation Techniques Shows Enhancement of Hail Energies When Seeding</div>
+        <div class="cite-line">Auf der Maur, A., Germann, U. — <i>Atmosphere</i> 12(12), 1623</div>
+        <p class="found">A Grossversuch IV Európa legnagyobb, legjobban dokumentált jégelhárítási kísérlete volt. A nyers adatok újraelemzése szerint <b>a magvasított jégcellákban a jég kinetikus energiája mintegy háromszor nagyobb volt</b>, mint a nem magvasítottakban — a szerzők szerint ez „az ellenkezője annak, amit a magvasítástól várnak”. Ilyen eredmény véletlenül kevesebb mint 1% eséllyel jön ki.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A kísérlet szovjet típusú rakétás magvasítással dolgozott, nem talajgenerátorral, és egyetlen (bár kiemelten gondos) kísérlet újraelemzése. Az eredeti, 1986-os értékelés nem talált szignifikáns különbséget (lásd lent).</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Svájc</span><span class="tag">randomizált kísérlet</span><span class="tag">rakéta</span></div><a class="src" href="https://doi.org/10.3390/atmos12121623" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="alatamaszt" data-type="peer" data-year="1986">
+        <div class="meta"><span>Lektorált tanulmány · 1986</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Grossversuch IV: öt év randomizált kísérlet, szignifikáns különbség nélkül</h3>
+        <div class="orig">Main Results of Grossversuch IV</div>
+        <div class="cite-line">Federer, B., Waldvogel, A., Schmid, W. és mtsai. — <i>Journal of Climate and Applied Meteorology</i> 25, 917–957</div>
+        <p class="found">1977 és 1981 között Közép-Svájcban, francia, olasz és svájci kutatócsoportok részvételével véletlenszerűen magvasították vagy hagyták érintetlenül a jégcellákat, 330 jégpárnából álló sűrű mérőhálózattal (1300 km²) és kalibrált radarral. A fő, előre rögzített elemzés szerint <b>nincs statisztikailag szignifikáns különbség</b> a magvasított és a nem magvasított jégcellák között.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Rakétás módszer, egyetlen térségben. A kísérlet mégis a jégelhárítás egyik legszigorúbb, randomizált tesztje maradt.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Svájc</span><span class="tag">randomizált kísérlet</span></div><a class="src" href="https://journals.ametsoc.org/view/journals/apme/25/7/1520-0450_1986_025_0917_mrogi_2_0_co_2.xml" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag kornyezet felugyelet" data-stance="alatamaszt" data-type="peer" data-year="2020">
+        <div class="meta"><span>Lektorált tanulmány · 2020</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Hatvan év Mendozában: nincs egyértelmű bizonyíték, nincs független értékelés</h3>
+        <div class="orig">Sixty Years of Hail Suppression Activities in Mendoza, Argentina: Uncertainties, Gaps in Knowledge and Future Perspectives</div>
+        <div class="cite-line">Rivera, J. A., Otero, F., Naranjo Tamayo, E., Silva, M. — <i>Frontiers in Environmental Science</i></div>
+        <p class="found">Argentína legfontosabb borvidékén évtizedek óta folyik jégelhárítás. A szerzők szerint <b>nincs egyértelmű tudományos bizonyíték</b> arra, hogy a jég gyakorisága vagy mérete statisztikailag szignifikánsan csökkent volna. A tartományi törvény által előírt független értékelések nem nyilvánosak, és a talajszinten várhatóan felhalmozódó hatóanyag hatását megfelelően értékelni kellene — átfogó monitoring nincs.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Repülőgépes magvasítás, és perspektíva-cikk: a meglévő eredményeket értékeli, nem új terepi mérés. A helyzet — borvidék, üzemeltetői értékelés, nyilvánosság hiánya — sok ponton hasonlít a hazaira.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Argentína</span><span class="tag">repülőgép</span><span class="tag">szabadon olvasható</span></div><a class="src" href="https://doi.org/10.3389/fenvs.2020.00045" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag csapadek" data-stance="alatamaszt" data-type="org" data-year="2003">
+        <div class="meta"><span>Tudományos testület · 2003</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Az amerikai Nemzeti Kutatási Tanács: nincs meggyőző bizonyíték</h3>
+        <div class="orig">Critical Issues in Weather Modification Research</div>
+        <div class="cite-line">National Research Council (Egyesült Államok) — The National Academies Press</div>
+        <p class="found">A bizottság következtetése szerint <b>továbbra sincs meggyőző tudományos bizonyíték a szándékos időjárás-módosítás hatékonyságára</b>. A jégelhárítás és a csapadéknövelés esetében — a téli hegyvidéki felhők lehetséges kivételével — a kísérletek nem szolgáltatták a tudományos érvényességhez szükséges statisztikai és fizikai bizonyítékot.</p>
+        <details><summary>Korlátai és kontextus</summary><p>2003-as jelentés. Azóta a téli, hegyvidéki felhők magvasításában érdemi kutatási előrelépés történt — a nyári zivatarok és a jég esetében nem.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">áttekintés</span></div><a class="src" href="https://doi.org/10.17226/10829" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="alatamaszt" data-type="peer" data-year="2017">
+        <div class="meta"><span>Lektorált tanulmány · 2017</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Moldova: a védett területeken nőtt a jégesők előfordulása</h3>
+        <div class="orig">Effects of Hail Suppression Operational Programs on Hail Frequency and Environment in Moldova</div>
+        <div class="cite-line">Cazac, V., Daradur, M., Leah, T., Pandey, R. P. — <i>Present Environment and Sustainable Development</i> 11(1)</div>
+        <p class="found">A moldovai rakétás jégelhárítás adatai alapján <b>a jégesők előfordulása a védett területeken nőtt</b> (0,05-ös szinten statisztikailag tesztelve), és a védett területek tavaiban az ezüstvegyületek szintje kétszerese vagy többszöröse volt a kontrollterületekének. A szerzők a vitatott hatás, a megbízható gazdasági haszonbecslés hiánya és a környezeti következmények miatt <b>nem javasolnak további beruházást</b>.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Rakétás rendszer, nem talajgenerátor; a vízminőségi adatok az 1983–1991-es időszakból származnak.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Moldova</span><span class="tag">rakéta</span><span class="tag">ezüst a vízben</span></div><a class="src" href="https://doi.org/10.1515/pesd-2017-0013" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="alatamaszt" data-type="peer" data-year="2013">
+        <div class="meta"><span>Lektorált tanulmány · 2013</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Szerbia: a jégelhárítás kiterjesztése mellett is nőtt a jégesők száma</h3>
+        <div class="orig">Is Hail Suppression Useful in Serbia? – General Review and New Results</div>
+        <div class="cite-line">Gavrilov, M. B., Marković, S. B., Zorn, M. és mtsai. — <i>Acta geographica Slovenica</i> 53(1), 165–179</div>
+        <p class="found">Szomszédunkban az egész országra kiterjedő jégelhárítás működik. A teljes szerbiai jégadatsor (1967–2010) feldolgozása szerint <b>a jégesők gyakorisága nőtt</b> — ellentétben azzal, amit a jégelhárítástól vártak. A szerzők áttekintésük alapján tudományosan megalapozatlannak tartják a tevékenységet.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Trendelemzés: a növekedést az éghajlatváltozás és a megfigyelési gyakorlat változása is befolyásolhatja, ezért önmagában nem bizonyítja, hogy a jégelhárítás növeli a jeget. A szerzők megfogalmazása a szakirodalom átlagánál élesebb.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Szerbia</span><span class="tag">rakéta</span><span class="tag">trendelemzés</span></div><a class="src" href="https://doi.org/10.3986/AGS53302" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="arnyal" data-type="peer" data-year="2026">
+        <div class="meta"><span>Lektorált tanulmány · 2026</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>ETH Zürich: kisebb jégverte terület — de nagyobb jégszemek</h3>
+        <div class="orig">Impact of cloud seeding on simulated hailstorms and its dependence on CAPE, wind shear, and tracking thresholds</div>
+        <div class="cite-line">Papaevangelou, N., Villanueva, D., Lohmann, U. — <i>Atmospheric Chemistry and Physics</i> 26, 9393–9412</div>
+        <p class="found">Nyolc valós svájci és dél-németországi zivatar számítógépes modellezése korai ezüst-jodidos magvasítással. <b>Az esetek 80%-ában nőtt az átlagos jégszemátmérő</b> (medián +7,6%, ami +31,3% kinetikus energiát jelent), miközben a jégverte terület mediánja 39,8%-kal csökkent. A jégtömeg változása nem egyértelmű, és a hatás nem függött rendszeresen a zivatar energiájától.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Numerikus modell, nem terepi mérés. Azt mutatja, hogy a magvasítás hatása összetett: ugyanaz a beavatkozás egyszerre csökkentheti a jégverte területet és növelheti a lehulló jégszemek méretét.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Svájc</span><span class="tag">modellezés</span><span class="tag">szabadon olvasható</span></div><a class="src" href="https://doi.org/10.5194/acp-26-9393-2026" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="arnyal" data-type="peer" data-year="2019">
+        <div class="meta"><span>Lektorált tanulmány · 2019</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>A hatékonyság a légkör aeroszol-összetételén múlik</h3>
+        <div class="orig">Hail suppression effectiveness for varying solubility of natural aerosols in water</div>
+        <div class="cite-line">Kovačević, N. — <i>Meteorology and Atmospheric Physics</i> 131, 585–599</div>
+        <p class="found">Numerikus felhőmodellel vizsgálták, hogyan függ a jégelhárítás eredménye a légkörben természetesen jelen lévő részecskéktől. <b>A talajon mért jégelhárítási hatékonyság csökken, ha a természetes aeroszol vízben kevésbé oldódik</b>; jól oldódó részecskék (pl. tengeri só) mellett a jég csökkenése a talajon mért eső növekedésével járhat együtt.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Modellezés. Arra figyelmeztet, hogy ugyanaz a beavatkozás más-más légköri környezetben eltérően hat — a hazai viszonyokra ilyen vizsgálatról nem tudunk.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">modellezés</span></div><a class="src" href="https://doi.org/10.1007/s00703-018-0587-4" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="arnyal" data-type="peer" data-year="2006">
+        <div class="meta"><span>Lektorált tanulmány · 2006</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>A holland meteorológiai intézet áttekintése: az ágyú hatástalan, a magvasítás bizonyítéka korlátozott</h3>
+        <div class="orig">If cannons cannot fight hail, what else?</div>
+        <div class="cite-line">Wieringa, J., Holleman, I. (KNMI) — <i>Meteorologische Zeitschrift</i> 15(6), 659–669</div>
+        <p class="found">A jégágyúk és a robbanásos módszerek a szerzők szerint hatástalanok. A magvasítási stratégiák közül néhány fizikailag hihető, de <b>„a kísérleti bizonyíték még mindig korlátozott”</b>. Az ezüst-jodid felhasznált mennyiségéből nem várnak komoly ökológiai mellékhatást.</p>
+        <details><summary>Korlátai és kontextus</summary><p>2006-os áttekintés, főleg a „nyers erő” módszereiről; a talajgenerátoros módszert nem értékeli külön.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Hollandia</span><span class="tag">áttekintés</span></div><a class="src" href="https://doi.org/10.1127/0941-2948/2006/0147" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag kornyezet felugyelet" data-stance="arnyal" data-type="gov" data-year="2024">
+        <div class="meta"><span>Kormányzati jelentés · 2024</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>Az amerikai Számvevőszék: a hatást nehéz kimutatni, a bejelentések hiányosak lehetnek</h3>
+        <div class="orig">Cloud Seeding Technology: Assessing Effectiveness and Other Challenges (GAO-25-107328)</div>
+        <div class="cite-line">U.S. Government Accountability Office — 2024. december 19.</div>
+        <p class="found">A jelentés szerint <b>a felhőmagvasítás hatását a hatékonysági kutatások korlátai miatt nehéz értékelni</b>, és csak megfelelő felhőtípus esetén lehet egyáltalán eredményes. Az ezüst-jodid a kevés friss vizsgálat alapján a jelenlegi szinten nem jelent környezeti vagy egészségügyi aggályt, de <b>nem ismert, hogy a szélesebb körű használatnak lenne-e hatása</b>. A szövetségi bejelentési kötelezettség nem feltétlenül tartalmaz minden, a megfigyeléshez szükséges információt.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Elsősorban a csapadéknövelésről szól, a jégelhárításról kevésbé. A környezeti megállapítás ellenpontként is olvasható — ezért „árnyalja” besorolású.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">számvevőszék</span></div><a class="src" href="https://www.gao.gov/products/gao-25-107328" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag kornyezet felugyelet" data-stance="arnyal" data-type="org" data-year="2025">
+        <div class="meta"><span>Nemzetközi szervezet · 2025</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>Meteorológiai Világszervezet (WMO): óvatos hatékonyság, rendszeres felülvizsgálat</h3>
+        <div class="orig">WMO Statement on Weather Modification</div>
+        <div class="cite-line">World Meteorological Organization — a Végrehajtó Tanács 79. ülésszakán jóváhagyva, 2025. június</div>
+        <p class="found">A WMO a gyakorlatot sem nem ajánlja, sem nem ellenzi. Egyes projektekben a jégszemek méretének csökkenéséről számoltak be; a jégágyúk és ionizációs módszerek hatására nincs tudományos bizonyíték. A publikált vizsgálatok nem mutattak jelentős egészségügyi vagy környezeti hatást az ezüst-jodidtól, ugyanakkor <b>a nem szándékolt következmények, köztük a szél irányában jelentkező és ökológiai hatások, további vizsgálatot igényelnek</b>. Az operatív programokat <b>rendszeresen, lehetőleg évente felül kell vizsgálni</b>.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Konszenzusos állásfoglalás, amely mindkét irányban tartalmaz megállapításokat. A környezeti rész ellenpont; a felülvizsgálati elvárás és a nem szándékolt hatások vizsgálatának igénye alátámasztja a kezdeményezés követeléseit.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">nemzetközi</span><span class="tag">állásfoglalás</span></div><a class="src" href="https://wmo.int/content/wmo-statement-weather-modification" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="ellenpont" data-type="peer" data-year="2016">
+        <div class="meta"><span>Lektorált tanulmány · 2016</span><span class="stance s-ellenpont">Ellenpont</span></div>
+        <h3>A francia ANELFA-program: a talajgenerátoros módszer eredményei</h3>
+        <div class="orig">Hail prevention by ground-based silver iodide generators: Results of historical and modern field projects</div>
+        <div class="cite-line">Dessens, J., Sánchez, J. L., Berthet, C., Hermida, L., Merino, A. — <i>Atmospheric Research</i> 170, 98–111</div>
+        <p class="found">A világ leghosszabb ideje működő időjárás-módosító programjának, a francia ANELFA 1952 óta tartó talajgenerátoros jégelhárításának történeti és mai eredményeit összegzi (2015-ben 838 állomás, kb. 70 000 km²). <b>A módszer eredményességét bemutató munka</b> — ha valaki a talajgenerátoros jégelhárítás mellett érvel, jó eséllyel ilyen eredményekre hivatkozik.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Az értékelés kezdetben biztosítási kár/kockázat arányokon, később jégpárna-hálózat adatain alapult, nem randomizált kísérleten. Azért szerepel itt, mert a vita becsületes bemutatásához ez is hozzátartozik.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Franciaország</span><span class="tag">talajgenerátor</span></div><a class="src" href="https://doi.org/10.1016/j.atmosres.2015.11.008" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="hatekonysag" data-stance="ellenpont" data-type="thesis" data-year="2024">
+        <div class="meta"><span>Hazai szakdolgozat · 2024</span><span class="stance s-ellenpont">Ellenpont</span></div>
+        <h3>ELTE: a jégesők több mint 70%-át megelőzte a kijuttatás</h3>
+        <div class="orig">Az Országos Jégkármérséklő Rendszer generátorainak használata és a jégkárbejelentések közötti kapcsolat előzetes vizsgálata</div>
+        <div class="cite-line">Dóka Imre Péter — BSc szakdolgozat, ELTE Meteorológiai Tanszék; témavezetők: Szobonya Nikoletta (NAK), dr. Breuer Hajnalka (ELTE)</div>
+        <p class="found">Három év adatai alapján <b>a jégesők több mint 70%-ánál a jég hullását megelőzte az ezüst-jodid időben történő kijuttatása</b>, „így a méret csökkentése minden ilyen esetben bekövetkezhetett”. A dolgozat a jégbejelentések szubjektivitását is kiemeli mint az értékelés fő nehézségét.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A vizsgálat a beavatkozás <i>időzítését</i> méri, nem a <i>hatását</i>: kontrollcsoport nélkül nem mutatja ki, hogy a jég valóban kisebb lett. Előzetes, BSc-szintű munka, egyik témavezetője a rendszert üzemeltető NAK munkatársa.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Magyarország</span><span class="tag">JÉGER</span></div><a class="src" href="https://nimbus.elte.hu/tanszek/docs/BSc/2024_2/Doka_Imre_Peter_2024.pdf" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <!-- ===================== 02 CSAPADÉK ===================== -->
+
+      <article class="entry" data-claims="csapadek" data-stance="alatamaszt" data-type="peer" data-year="2017">
+        <div class="meta"><span>Lektorált tanulmány · 2017</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Geresdi István és munkatársai: zivatarfelhőben a magvasítás csökkentheti vagy növelheti is a csapadékot</h3>
+        <div class="orig">Evaluation of Orographic Cloud Seeding Using a Bin Microphysics Scheme: Two-Dimensional Approach</div>
+        <div class="cite-line">Geresdi, I. (Pécsi Tudományegyetem), Xue, L., Rasmussen, R. (NCAR) — <i>Journal of Applied Meteorology and Climatology</i> 56(5), 1443–1462</div>
+        <p class="found">Részletes felhőfizikai modellel vizsgálták az ezüst-jodidos magvasítást hegy fölötti felhőkben. Rétegfelhőben csak a repülőgépes magvasítás növelte a csapadékot; <b>konvektív (zivatar-) felhőben a magvasítás csökkentheti vagy növelheti is a csapadékot</b>, és jelentősen átrendezheti a felszíni csapadék térbeli eloszlását. A hatás annál kisebb, minél hatékonyabban ad csapadékot a felhő magától.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Idealizált, kétdimenziós modell hegyvidéki felhőkre, nem jégelhárítási terepkísérlet. Épp azt támasztja alá, amit állítunk: a csapadékhatás iránya zivatarfelhőben nem eleve adott — sem a „nem veszi el az esőt”, sem az „elveszi az esőt” nem igazolt.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">magyar szerző</span><span class="tag">modellezés</span></div><a class="src" href="https://doi.org/10.1175/JAMC-D-16-0045.1" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="csapadek" data-stance="alatamaszt" data-type="conf" data-year="2025">
+        <div class="meta"><span>Konferencia-összefoglaló · 2025</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Pécsi kutatók: a csapadéknövelés statisztikai igazolása vitatható</h3>
+        <div class="orig">A csapadék mesterséges növelésének lehetőségei</div>
+        <div class="cite-line">Sarkadi Noémi, Geresdi István (PTE) — 51. Meteorológiai Tudományos Napok, HungaroMet, 2025. december</div>
+        <p class="found">A tapasztalatok szerint kedvező körülmények között akár 5–20%-os csapadéknövekedés is elérhető lehet, <b>„ugyanakkor ennek statisztikai igazolása a légkör magas fokú természetes változékonysága miatt vitatható”</b>. A beavatkozások objektív értékelésére a numerikus modellezést javasolják.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Rövid konferencia-összefoglaló a csapadéknövelésről, nem a jégelhárításról. A mondat azonban általános: a légkör természetes változékonysága miatt a beavatkozások hatását mérésekkel nehéz bizonyítani — ez a csapadékcsökkentő hatásra is igaz.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Magyarország</span><span class="tag">HungaroMet</span></div><a class="src" href="https://www.met.hu/doc/rendezvenyek/metnapok-2025/51.Meteorologiai_Tudomanyos_Napok_2025-osszefoglalo.pdf" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="csapadek" data-stance="arnyal" data-type="peer" data-year="2013">
+        <div class="meta"><span>Lektorált tanulmány · 2013</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>Még a legkedvezőbb esetben is kicsi a hatás</h3>
+        <div class="orig">Implementation of a Silver Iodide Cloud-Seeding Parameterization in WRF. Part II: 3D Simulations of Actual Seeding Events and Sensitivity Tests</div>
+        <div class="cite-line">Xue, L., Tessendorf, S. A., Nelson, E. és mtsai. — <i>Journal of Applied Meteorology and Climatology</i> 52(6), 1458–1476</div>
+        <p class="found">Négy valós, idahói téli magvasítás szimulációja szerint a magvasítás <b>a teljes modellterületen 1%-nál kevesebbel</b>, a célterületen legfeljebb 5%-kal növelte a csapadékot. A többlet főként abból adódott, hogy a magvasítás a levegő vízgőzét „használta el” — vagyis a csapadék részben átrendeződik.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Téli, hegyvidéki felhők — a magvasítás szempontjából a legkedvezőbb és legjobban kutatott eset, nem nyári zivatar. Azért érdekes, mert még itt is kicsi és nehezen mérhető a hatás.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">modellezés</span></div><a class="src" href="https://doi.org/10.1175/JAMC-D-12-0149.1" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="csapadek" data-stance="hatter" data-type="peer" data-year="2023">
+        <div class="meta"><span>Lektorált tanulmány · 2023</span><span class="stance s-hatter">Háttér</span></div>
+        <h3>A Kárpát-medence nyári csapadéka a talajnedvességre is érzékeny</h3>
+        <div class="orig">Soil moisture precipitation feedbacks in the Eastern European Alpine region in convection-permitting climate simulations</div>
+        <div class="cite-line">Truhetz, H., Mishra, A. N. (Wegener Center, Grazi Egyetem) — <i>International Journal of Climatology</i> 43, 6763–6782</div>
+        <p class="found">A Kelet-Alpok és a Pannon-medence nyári csapadékának nagy felbontású modellezése szerint <b>a talajnedvesség erősen befolyásolja, hol alakul ki a következő csapadékesemény</b>, az intenzitást viszont alig. A mély talajnedvesség ±10%-os bizonytalansága helyileg akár ±40%-os eltérést okozhat a nyári csapadék előrejelzett változásában.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Nem a jégelhárításról szól. Háttérként azért fontos, mert megmutatja, mennyi természetes tényező alakítja a helyi nyári csapadékot — ezért nehéz bármely beavatkozás csapadékhatását kimutatni vagy kizárni.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Pannon-medence</span><span class="tag">klímamodell</span></div><a class="src" href="https://doi.org/10.1002/joc.8234" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="csapadek felugyelet" data-stance="ellenpont" data-type="peer" data-year="2023">
+        <div class="meta"><span>Lektorált tanulmány · 2023</span><span class="stance s-ellenpont">Ellenpont</span></div>
+        <h3>Burgundia: ugyanaz a szárazság-gyanú — a klímaelemzés nem talált csapadékhatást</h3>
+        <div class="orig">Changing local climate patterns through hail suppression systems: conflict and inequalities between farmers and wine producers in the Burgundy Region (France)</div>
+        <div class="cite-line">Petit, S., Castel, T., Henrion, G. és mtsai. — <i>Regional Environmental Change</i> 23(3), 89</div>
+        <p class="found">Burgundiában a szőlőket védő ezüst-jodidos talajgenerátorok telepítése egybeesett a 2018–2020-as súlyos aszályokkal, az állattartók összefüggést gyanítottak, és <b>konfliktus alakult ki a gazdák között</b>. A klímaelemzés <b>nem talált helyi vagy regionális hatást a csapadék mennyiségére</b>; az aszályok a hosszú távú éghajlatváltozás mintázatába illeszkednek. A szerzők szerint az ilyen technikai megoldások regionális konfliktusokhoz vezethetnek.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A „szárazságot okoz” állítás ellen szól — ezért ellenpont. Ugyanakkor pontosan leírja a hazaihoz hasonló társadalmi helyzetet, és rámutat, hogy átlátható működés nélkül a gyanú és a konfliktus elkerülhetetlen.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Franciaország</span><span class="tag">talajgenerátor</span><span class="tag">társadalmi konfliktus</span></div><a class="src" href="https://doi.org/10.1007/s10113-023-02076-5" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <!-- ===================== 03 KÖRNYEZET ===================== -->
+
+      <article class="entry" data-claims="kornyezet egeszseg" data-stance="alatamaszt" data-type="peer" data-year="2021">
+        <div class="meta"><span>Lektorált tanulmány · 2021</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Aragónia I.: a generátor mellett tízszer annyi ezüst a talajban, mint a mezőgazdasági határérték</h3>
+        <div class="orig">Influence of hail suppression systems over silver content in the environment in Aragón (Spain). I: Rainfall and soils</div>
+        <div class="cite-line">Causapé, J., Pey, J., Orellana-Macías, J. M., Reyes, J. (IGME, CSIC) — <i>Science of the Total Environment</i> 784, 147220</div>
+        <p class="found">Aragóniában 1973 óta ugyanolyan acetonos ezüst-jodidos talajgenerátorok működnek, mint nálunk, 10×10 km-es hálóban. <b>Közvetlenül a generátor mellett a talajban kb. 10 mg/kg ezüst</b> volt — a helyi mezőgazdasági határérték (1 mg/kg) tízszerese —, <b>1 km-re viszont már a 0,1 mg/kg-os kimutatási határ körüli érték</b>. A generátor melletti csapadékgyűjtőben 85 μg/m²·nap ülepedett ki, a többiben 0,14–0,37. Az ezüst a talaj felszínén marad (6,67 mg/kg a felszínen, 0,34 mg/kg 30 cm mélyen), és a jégelhárított régiókban a csapadékban és a talajban is több, mint a szomszédos területeken.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Csaknem 50 év kibocsátás után mérték; a hazai hálózat nagy része 2018 óta működik. A tágabb térség talajmintáinak többsége a határérték alatt maradt. A hazai hatástanulmány (lásd lent) 3×3 km-es rácson, 0–30 cm-es mintával és 1 mg/kg-os kimutatási határral dolgozott, így ezt a generátor körüli foltot nem láthatta.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Spanyolország</span><span class="tag">talajgenerátor</span><span class="tag">terepi mérés</span></div><a class="src" href="https://doi.org/10.1016/j.scitotenv.2021.147220" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="kornyezet" data-stance="arnyal" data-type="peer" data-year="2021">
+        <div class="meta"><span>Lektorált tanulmány · 2021</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>Aragónia II.: a vizekben nincs jelentős felhalmozódás — a juh májában igen</h3>
+        <div class="orig">Influence of hail suppression systems over silver content in the environment in Aragón (Spain). II: Water, sediments and biota</div>
+        <div class="cite-line">Causapé, J., Orellana-Macías, J. M., Valero-Garcés, B., Vázquez, I. — <i>Science of the Total Environment</i> 779, 146403</div>
+        <p class="found">50 év ezüst-jodid-kibocsátás után <b>a vizekben és üledékekben nem jelentős a felhalmozódás</b>: a vízminták a szennyezetlen háttér fölött, de messze az amerikai ajánlott érték (100 μg/L) alatt maradtak. A szerzők szerint az ezüstöt a növények veszik fel: <b>a jégelhárított területen legelő juh májában 10,2 mg/kg</b> ezüst volt, a kontrollállatéban 0,5 mg/kg. Cserepes kísérletben magas ezüstkoncentrációnál a búza növekedése gátolt volt.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A víz- és üledékeredmény megnyugtató — ezt is közölni kell. A juhos összehasonlítás mindössze két állaton alapul, ezért csak jelzésértékű; a cserepes kísérlet koncentrációi jóval a terepi értékek felett voltak.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Spanyolország</span><span class="tag">víz</span><span class="tag">élővilág</span></div><a class="src" href="https://doi.org/10.1016/j.scitotenv.2021.146403" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="kornyezet" data-stance="alatamaszt" data-type="peer" data-year="2016">
+        <div class="meta"><span>Lektorált tanulmány · 2016</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Ismételt magvasítás esetén az élővilágot is érintheti</h3>
+        <div class="orig">Potential risk of acute toxicity induced by AgI cloud seeding on soil and freshwater biota</div>
+        <div class="cite-line">Fajardo, C., Costa, G., Ortiz, L. T. és mtsai. (Complutense Egyetem, Madrid) — <i>Ecotoxicology and Environmental Safety</i> 133, 433–441</div>
+        <p class="found">Laboratóriumban a többszöri magvasítás után várható koncentrációkkal vizsgálták az ezüst-jodid hatását. A talajbaktériumok életképessége mérsékelten csökkent, és a fitoplankton fotoszintetikus aktivitása szignifikánsan csökkent; a talajlakó fonalféreg túlélésére nem volt hatás. A szerzők szerint <b>ha ugyanazon a területen ismételten magvasítanak, és a hatóanyag felhalmozódik, az mérsékelten érintheti a szárazföldi és vízi élővilágot</b>.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Akut, laboratóriumi teszt; a terepi, hosszú távú hatásról nem ad közvetlen adatot.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Spanyolország</span><span class="tag">ökotoxikológia</span></div><a class="src" href="https://doi.org/10.1016/j.ecoenv.2016.06.028" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="kornyezet" data-stance="ellenpont" data-type="report" data-year="2020">
+        <div class="meta"><span>Hazai hatástanulmány · 2019–2020</span><span class="stance s-ellenpont">Ellenpont</span></div>
+        <h3>A JÉGER hivatalos környezeti vizsgálata: 750 talajminta, mind „&lt;1 mg/kg”</h3>
+        <div class="orig">Az országos hatókörű, talajgenerátoros technológiájú jégkár mérséklő rendszer (JÉGER) által okozott környezeti terhelés felmérése, modellezése</div>
+        <div class="cite-line">HL-LAB Környezetvédelmi és Talajvizsgáló Laboratórium – Enviro-Expert Kft. — megrendelő: Nemzeti Agrárgazdasági Kamara (NEFELA-terület: 2020. január; országos: 2020)</div>
+        <p class="found">A NAK által megrendelt két jelentés terjedési modell és talaj-, talajvízmérés alapján arra jut, hogy a rendszer környezeti terhelése elhanyagolható: <b>az ezüst a 750 talajminta mindegyikében „&lt;1 mg/kg” volt</b>, és a modell szerint a talaj a 2 mg/kg-os hazai határértéket csak 1846–23 072 év alatt érné el.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Saját elemzésünk: a mintavételi pontokat 3×3 km-es receptorhálós modell jelölte ki, a 0–30 cm-es réteget egyben mintázták, a kimutatási határ 1 mg/kg volt — tízszer durvább, mint az aragóniai mérésé. Így a generátor körüli néhány száz méteres folt nem jelenhetett meg az eredményekben. A vizsgálatot az üzemeltető rendelte meg, nem hatóság végezte, és a kezelők expozícióját nem mérte.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Magyarország</span><span class="tag">JÉGER</span><span class="tag">NAK megrendelés</span></div><a class="src" href="/#r44">Részletek a főoldalon ↗</a></div>
+      </article>
+
+      <!-- ===================== 04 KEZELŐK, EGÉSZSÉG ===================== -->
+
+      <article class="entry" data-claims="egeszseg" data-stance="alatamaszt" data-type="gov" data-year="1990">
+        <div class="meta"><span>Kormányzati toxikológiai profil</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>ATSDR: az ezüst foglalkozási expozíciójának ismert hatása — és ami nem ismert</h3>
+        <div class="orig">Toxicological Profile for Silver</div>
+        <div class="cite-line">Agency for Toxic Substances and Disease Registry (Egyesült Államok)</div>
+        <p class="found">Az ezüst tartós expozíciójának ismert krónikus hatása az <b>argyria és az argyrosis</b> — a bőr, illetve a szem visszafordíthatatlan elszíneződése. A profil szerint ugyanakkor <b>nem ismert, milyen levegőkoncentráció és mennyi idő okozta ezt a dolgozóknál</b>.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Általános toxikológiai összefoglaló, nem a felhőmagvasításról szól. A generátorkezelők expozícióját sehol nem vizsgálták — itt pontosan ez a hiány látszik.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">toxikológia</span></div><a class="src" href="https://www.atsdr.cdc.gov/toxprofiles/tp146.pdf" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="egeszseg" data-stance="hatter" data-type="gov" data-year="">
+        <div class="meta"><span>Munkaegészségügyi határérték</span><span class="stance s-hatter">Háttér</span></div>
+        <h3>NIOSH: az ezüst ajánlott munkahelyi határértéke 0,01 mg/m³</h3>
+        <div class="orig">NIOSH Pocket Guide to Chemical Hazards — Silver (metal dust and soluble compounds, as Ag)</div>
+        <div class="cite-line">National Institute for Occupational Safety and Health (Egyesült Államok)</div>
+        <p class="found">Az amerikai munkavédelmi intézet az ezüstre <b>0,01 mg/m³</b> munkahelyi expozíciós határértéket ajánl. Ahhoz, hogy egy generátorkezelő expozícióját ehhez viszonyítani lehessen, mérés kellene a berendezés mellett — ilyen mérés itthon nem készült.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Referenciaérték, nem vizsgálat.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">munkavédelem</span></div><a class="src" href="https://www.cdc.gov/niosh/npg/npgd0557.html" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="egeszseg" data-stance="arnyal" data-type="gov" data-year="">
+        <div class="meta"><span>Közegészségügyi értékelés</span><span class="stance s-arnyal">Árnyalja</span></div>
+        <h3>Utah egészségügyi hatósága: a lakosságra megnyugtató — a kezelőkről nem szól</h3>
+        <div class="orig">Silver Iodide Cloud Seeding Technical Assist</div>
+        <div class="cite-line">Utah Department of Health, Environmental Epidemiology Program (LaCross, N.)</div>
+        <p class="found">A felhőmagvasítás lakossági egészségügyi értékelése csapadék- és hóminták alapján: az ezüst mennyisége a csapadékban az ivóvízre vonatkozó küszöb alatt marad. <b>A földi generátorok kezelőinek foglalkozási expozícióját nem vizsgálja</b>.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A felhőmagvasítás egészségügyi értékelései jellemzően ezt a kérdést — a csapadék útján érintett lakosságot — vizsgálják. A lakosságra nézve ez ellenpont; a kezelők szempontjából éppen a hiányt mutatja.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">közegészségügy</span></div><a class="src" href="https://appletree.utah.gov/wp-content/uploads/2021/10/Silver_Iodide_Cloud_Seeding.pdf" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="egeszseg" data-stance="hatter" data-type="doc" data-year="2025">
+        <div class="meta"><span>Gyártói dokumentum · 2025</span><span class="stance s-hatter">Háttér</span></div>
+        <h3>A JÉGŐR biztonsági adatlapja: 98,6–98,8% aceton, három humán figyelmeztetés</h3>
+        <div class="orig">JÉGŐR — biztonsági adatlap (Agro-Chemie Kft., 8. verzió, felülvizsgálat: 2025.06.20)</div>
+        <div class="cite-line">Agro-Chemie Kft.</div>
+        <p class="found">A hazai hálózatban használt hatóanyag gyártói adatlapja szerint a keverék <b>98,6–98,8%-ban aceton</b>, 1% ezüst-jodid és 0,2–0,4% nátrium-jodid. Humán-egészségügyi besorolása: <b>H225</b> (fokozottan tűzveszélyes), <b>H319</b> (súlyos szemirritáció), <b>H336</b> (álmosság, szédülés); az ezüst-jodid H410-es (nagyon mérgező a vízi élővilágra). Több toxikológiai végpontnál „nincs adat”.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Az adatlap a szállított, el nem égetett anyagra vonatkozik; hogy égéskor pontosan milyen anyagok távoznak a kéményből, arról nem szól.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">Magyarország</span><span class="tag">hatóanyag</span></div><a class="src" href="/#r4">Részletek a főoldalon ↗</a></div>
+      </article>
+
+      <article class="entry" data-claims="egeszseg felugyelet" data-stance="alatamaszt" data-type="doc" data-year="2009">
+        <div class="meta"><span>Hatósági dokumentum · 2009</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Európai Bizottság, 2009: „minden berendezésnek … megfelelő képesítéssel rendelkező kezelője van”</h3>
+        <div class="orig">N 710/2007. sz. állami támogatás – Magyarország: Díjfizetési támogatás jégeső-elhárító rendszerben való részvétel céljára, C(2008) 1090</div>
+        <div class="cite-line">Európai Bizottság — Brüsszel, 2009.02.25.</div>
+        <p class="found">A NEFELA-tagdíjak támogatásáról szóló bizottsági határozat a magyar hatóságok leírása alapján rögzíti: a három megyében működő 141 talajgenerátor mindegyikének <b>„1 fő, megfelelő képesítéssel rendelkező kezelője van”</b>, a hálózatot pedig meteorológusok irányítják 24 órás szolgálatban. Az oldat 8 g/l ezüst-jodidot tartalmaz, egy generátor évente 200–260 órát üzemel.</p>
+        <details><summary>Korlátai és kontextus</summary><p>A mai, kezelőknek szóló NAK-kiadvány képesítést vagy vegyianyag-kezelési végzettséget nem említ — betanításról ír. Hogy a 2009-ben hivatkozott „megfelelő képesítés” mit jelentett, és ma kinek kell megfelelnie, tisztázandó.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">EU</span><span class="tag">NEFELA</span></div><a class="src" href="https://ec.europa.eu/competition/state_aid/cases/223184/223184_928345_31_2.pdf" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+      <!-- ===================== 05 FELÜGYELET ===================== -->
+
+      <article class="entry" data-claims="felugyelet" data-stance="alatamaszt" data-type="gov" data-year="2026">
+        <div class="meta"><span>Kormányzati jelentés · 2026</span><span class="stance s-alatamaszt">Alátámasztja</span></div>
+        <h3>Amerikai Számvevőszék, 2026: a bejelentések több mint fele valószínűleg hibás</h3>
+        <div class="orig">Weather Modification: NOAA Should Strengthen Oversight (GAO-26-108013)</div>
+        <div class="cite-line">U.S. Government Accountability Office — 2026. február 23.</div>
+        <p class="found">Az Egyesült Államokban az időjárás-módosító tevékenységet be kell jelenteni. A számvevőszék szerint <b>a beküldött jelentések több mint fele valószínűleg hibás</b> (pl. hiányoznak a kötelező adatok, térképek), a felügyelő hatóságnak nincs írásos útmutatója az ellenőrzésükre, és az üzemeltetők ellentmondásos adatot jelenthetnek, vagy el is mulaszthatják a bejelentést.</p>
+        <details><summary>Korlátai és kontextus</summary><p>Amerikai helyzet. Ott legalább létezik bejelentési kötelezettség — Magyarországon a magánkézben lévő rendszerekre ilyen sincs. A jelentés azt mutatja: nyilvántartás önmagában nem elég, ellenőrzés is kell.</p></details>
+        <div class="foot"><div class="tags"><span class="tag">USA</span><span class="tag">számvevőszék</span><span class="tag">nyilvántartás</span></div><a class="src" href="https://www.gao.gov/products/gao-26-108013" target="_blank" rel="noopener">Forrás ↗</a></div>
+      </article>
+
+    </div>
+    <div class="empty" id="empty" hidden>Nincs a szűrésnek megfelelő forrás. <button type="button" class="chip" id="emptyReset" style="margin-left:.5rem">Szűrők törlése</button></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Hogyan olvasd</span>
+      <h2>Miért szerepelnek ellenpontok is?</h2>
+    </div>
+    <div class="note">
+      <p>A tudástár elsősorban azokat a forrásokat gyűjti, amelyek a kezdeményezés állításait alátámasztják. Ha azonban csak ezeket mutatnánk, azt tennénk, amit a rendszer üzemeltetőinek is felrovunk: a számunkra kedvező eredményeket emelnénk ki. Ezért <b>a legfontosabb ellenérveket is közöljük</b>, és minden forrásnál leírjuk a korlátait. Az álláspontunk ettől nem gyengül — hanem hitelesebb lesz.</p>
+      <p>Hangsúlyozzuk: nem állítjuk, hogy a jégeső-elhárítás bizonyítottan szárazságot okoz. Azt állítjuk, hogy <b>sem a hatékonysága, sem az ártalmatlansága nincs igazolva</b>, és hogy a hiányzó vizsgálatokat független szervnek kellene elvégeznie.</p>
+    </div>
+    <div class="legend">
+      <div><span class="stance s-alatamaszt">Alátámasztja</span><span>közvetlenül a kezdeményezés valamelyik állítása mellett szól</span></div>
+      <div><span class="stance s-arnyal">Árnyalja</span><span>vegyes eredmény: egy része mellettünk, egy része ellenünk szól</span></div>
+      <div><span class="stance s-ellenpont">Ellenpont</span><span>a rendszer mellett vagy egy általunk is elutasított állítás ellen szól</span></div>
+      <div><span class="stance s-hatter">Háttér</span><span>referenciaérték vagy tudományos háttér, önmagában nem foglal állást</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0">STOP JÉGER-kezdeményezés · <a href="/">Főoldal</a> · <a href="/#jegyzetek">Jegyzetek és források</a> · <a href="/adatkezeles.html">Adatkezelési tájékoztató</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var stored = null;
+  try { stored = localStorage.getItem('infotainment_theme'); } catch(e){}
+  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  btn.addEventListener('click', function(){
+    var current = root.getAttribute('data-theme');
+    if (!current) current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('infotainment_theme', next); } catch(e){}
+  });
+})();
+
+(function(){
+  var entries = Array.prototype.slice.call(document.querySelectorAll('.entry'));
+  var claimBtns = Array.prototype.slice.call(document.querySelectorAll('.claim'));
+  var stanceBtns = Array.prototype.slice.call(document.querySelectorAll('#stanceChips .chip'));
+  var q = document.getElementById('q');
+  var line = document.getElementById('resultLine');
+  var empty = document.getElementById('empty');
+  var state = { claim:'', stance:'', text:'' };
+  var claimNames = { hatekonysag:'Hatékonyság', csapadek:'Csapadék', kornyezet:'Környezet', egeszseg:'Kezelők', felugyelet:'Felügyelet' };
+  var stanceNames = { alatamaszt:'Alátámasztja', arnyal:'Árnyalja', ellenpont:'Ellenpont', hatter:'Háttér' };
+
+  function norm(s){ return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  entries.forEach(function(e){ e._text = norm(e.textContent); });
+
+  document.getElementById('statAll').textContent = entries.length;
+  document.getElementById('statPeer').textContent = entries.filter(function(e){ return e.dataset.type === 'peer'; }).length;
+  document.getElementById('statCounter').textContent = entries.filter(function(e){ return e.dataset.stance === 'ellenpont'; }).length;
+  claimBtns.forEach(function(b){
+    var c = b.dataset.claim;
+    var n = entries.filter(function(e){ return e.dataset.claims.split(' ').indexOf(c) !== -1; }).length;
+    b.querySelector('.count').textContent = n + ' forrás →';
+  });
+
+  function apply(){
+    var t = norm(state.text.trim());
+    var shown = 0;
+    entries.forEach(function(e){
+      var ok = (!state.claim || e.dataset.claims.split(' ').indexOf(state.claim) !== -1)
+            && (!state.stance || e.dataset.stance === state.stance)
+            && (!t || e._text.indexOf(t) !== -1);
+      e.hidden = !ok;
+      if (ok) shown++;
+    });
+    empty.hidden = shown !== 0;
+    var parts = [];
+    if (state.claim) parts.push(claimNames[state.claim]);
+    if (state.stance) parts.push(stanceNames[state.stance]);
+    if (t) parts.push('„' + state.text.trim() + '”');
+    line.innerHTML = shown + ' / ' + entries.length + ' forrás' + (parts.length ? ' · szűrés: ' + parts.join(' · ') + '<button type="button" id="resetBtn">szűrők törlése</button>' : '');
+    var rb = document.getElementById('resetBtn');
+    if (rb) rb.addEventListener('click', reset);
+    claimBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.claim === state.claim)); });
+    stanceBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.stance === state.stance)); });
+  }
+  function reset(){ state.claim = ''; state.stance = ''; state.text = ''; q.value = ''; apply(); }
+
+  claimBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.claim = state.claim === b.dataset.claim ? '' : b.dataset.claim;
+      apply();
+      document.getElementById('lista').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  stanceBtns.forEach(function(b){ b.addEventListener('click', function(){ state.stance = b.dataset.stance; apply(); }); });
+  q.addEventListener('input', function(){ state.text = q.value; apply(); });
+  document.getElementById('emptyReset').addEventListener('click', reset);
+  apply();
+})();
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
