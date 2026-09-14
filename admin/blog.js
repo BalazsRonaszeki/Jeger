@@ -134,6 +134,7 @@
   var cover = { id: '', alt: '', credit: '' };
   var changeSeq = 0, savedSeq = 0;
   var saving = null, autosaveTimer = 0, conflict = false;
+  var retryDelay = 0; // átmeneti szerverhiba után ennyi ms múlva újrapróbáljuk a mentést
   var slugTouched = false;
   var dirtyBlocks = new Set();
   var checkedFields = { title: '', excerpt: '' };
@@ -280,16 +281,26 @@
         } else {
           setSaveState('Mentve ' + clockTime());
         }
+        if (retryDelay) { retryDelay = 0; SJ.showMsg($('edMsg'), ''); }
         return post;
       } catch (e) {
         if (!handleAuthError(e)) {
           if (e.status === 409) {
             conflict = true;
             setSaveState('Nem mentve — ütközés');
+            flash(e.message, 'error');
+          } else if (e.status === 0 || e.status >= 500) {
+            // Átmeneti kimaradás (pl. a Supabase átjárója nem válaszol): a szöveg a böngészőben
+            // megvan, csendben újrapróbáljuk, egyre ritkábban.
+            retryDelay = Math.min(retryDelay ? retryDelay * 2 : 5000, 60000);
+            setSaveState('Nem sikerült menteni — újrapróbálom ' + Math.round(retryDelay / 1000) + ' mp múlva…');
+            flash('A szerver átmenetileg nem válaszolt. A szöveged megvan, a mentést automatikusan újrapróbáljuk — ne zárd be a lapot.', '');
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(function () { saveNow().catch(function () {}); }, retryDelay);
           } else {
             setSaveState('A mentés nem sikerült');
+            flash(e.message, 'error');
           }
-          flash(e.message, 'error');
         }
         throw e;
       } finally {

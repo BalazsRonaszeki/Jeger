@@ -339,7 +339,8 @@ class BlogApiTests(test_admin.AdminTests):
         class Broken:
             def __getattr__(self, name):
                 def fail(*a, **kw):
-                    raise RuntimeError('relation "public.blog_posts" does not exist')
+                    raise RuntimeError("{'message': \"Could not find the table 'public.blog_posts' in the schema cache\", "
+                                       "'code': 'PGRST205'}")
                 return fail
 
         _blog.store = _blog.GuardedStore(Broken())
@@ -349,6 +350,31 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertIn('2026-09-14_blog.sql', r.json()['detail'])
         self.assertEqual(self.client.get('/blog/sitemap.xml').status_code, 503)
         self.assertEqual(self.client.get('/blog').status_code, 503)
+
+    def test_transient_gateway_timeout_read_retried_write_not(self):
+        class Flaky:
+            def __init__(self):
+                self.calls = {'get_post': 0, 'update_post': 0}
+
+            def get_post(self, post_id):
+                self.calls['get_post'] += 1
+                if self.calls['get_post'] == 1:
+                    raise RuntimeError("{'message': 'JSON could not be generated', 'code': 504, "
+                                       "'details': 'Gateway Timeout'}")
+                return {'id': post_id}
+
+            def update_post(self, *a):
+                self.calls['update_post'] += 1
+                raise RuntimeError('Gateway Timeout')
+
+        flaky = Flaky()
+        guarded = _blog.GuardedStore(flaky, retry_delay=0)
+        self.assertEqual(guarded.get_post('x'), {'id': 'x'})  # az olvasás másodszorra sikerül
+        with self.assertRaises(_blog.HTTPException) as ctx:
+            guarded.update_post('x', 1, {})
+        self.assertEqual(flaky.calls['update_post'], 1)          # írást nem ismétlünk
+        self.assertEqual(ctx.exception.status_code, 503)
+        self.assertIn('átmenetileg', ctx.exception.detail)
 
     def test_delete_only_drafts(self):
         self.editor()

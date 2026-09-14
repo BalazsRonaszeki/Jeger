@@ -513,25 +513,49 @@ class SupabaseBlogStore:
         return self.c.storage.from_(BUCKET).download(path)
 
 
-class GuardedStore:
-    """Az adatbázis-hibát (pl. le nem futott migráció) érthető 503-ra fordítja nyers 500 helyett,
-    a valódi okot pedig a szervernaplóba írja."""
+def is_transient_db_error(exc):
+    """A Supabase átjárójának átmeneti kimaradása (502/503/504) vagy hálózati időtúllépés."""
+    code = str(getattr(exc, 'code', '') or '')
+    text = str(exc)
+    return (code in ('502', '503', '504') or 'Timeout' in type(exc).__name__
+            or any(s in text for s in ('Gateway Timeout', 'Bad Gateway', 'Service Unavailable')))
 
-    def __init__(self, inner):
+
+class GuardedStore:
+    """Az adatbázis-hibát érthető 503-ra fordítja nyers 500 helyett, a valódi okot a szervernaplóba írja.
+    Az olvasásokat átmeneti kimaradásnál egyszer újrapróbálja; az írásokat nem, mert egy időtúllépéskor
+    nem tudni, végrehajtódott-e (a verzióellenőrzés miatt az ismétlés hamis ütközést jelezne)."""
+
+    READS = {'list_posts', 'get_post', 'slug_owner', 'published', 'published_by_slug', 'published_slugs',
+             'download_object'}
+
+    def __init__(self, inner, retry_delay=0.8):
         self._inner = inner
+        self._retry_delay = retry_delay
 
     def __getattr__(self, name):
         method = getattr(self._inner, name)
 
         def call(*args, **kwargs):
-            try:
-                return method(*args, **kwargs)
-            except HTTPException:
-                raise
-            except Exception as exc:
-                print('Blog adatbázis-hiba (%s): %r' % (name, exc))
-                raise HTTPException(status_code=503, detail='A blog adatbázisa nem érhető el. '
-                                                            'Lefutott a 2026-09-14_blog.sql migráció?')
+            attempts = 2 if name in self.READS else 1
+            for attempt in range(attempts):
+                try:
+                    return method(*args, **kwargs)
+                except HTTPException:
+                    raise
+                except Exception as exc:
+                    transient = is_transient_db_error(exc)
+                    if transient and attempt + 1 < attempts:
+                        time.sleep(self._retry_delay)
+                        continue
+                    print('Blog adatbázis-hiba (%s): %r' % (name, exc))
+                    if 'PGRST205' in str(exc):
+                        detail = 'A blog adatbázisa nem érhető el. Lefutott a 2026-09-14_blog.sql migráció?'
+                    elif transient:
+                        detail = 'Az adatbázis átmenetileg nem válaszolt. Pár másodperc múlva újra próbálkozunk.'
+                    else:
+                        detail = 'A blog adatbázis-művelete nem sikerült.'
+                    raise HTTPException(status_code=503, detail=detail)
         return call
 
 
