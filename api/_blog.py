@@ -513,12 +513,34 @@ class SupabaseBlogStore:
         return self.c.storage.from_(BUCKET).download(path)
 
 
+class GuardedStore:
+    """Az adatbázis-hibát (pl. le nem futott migráció) érthető 503-ra fordítja nyers 500 helyett,
+    a valódi okot pedig a szervernaplóba írja."""
+
+    def __init__(self, inner):
+        self._inner = inner
+
+    def __getattr__(self, name):
+        method = getattr(self._inner, name)
+
+        def call(*args, **kwargs):
+            try:
+                return method(*args, **kwargs)
+            except HTTPException:
+                raise
+            except Exception as exc:
+                print('Blog adatbázis-hiba (%s): %r' % (name, exc))
+                raise HTTPException(status_code=503, detail='A blog adatbázisa nem érhető el. '
+                                                            'Lefutott a 2026-09-14_blog.sql migráció?')
+        return call
+
+
 store = None
 
 
 def configure(supabase_client):
     global store
-    store = SupabaseBlogStore(supabase_client) if supabase_client else None
+    store = GuardedStore(SupabaseBlogStore(supabase_client)) if supabase_client else None
 
 
 def require_store():

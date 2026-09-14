@@ -335,6 +335,21 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertEqual(r.status_code, 200, r.text)
         self.assertEqual(self.client.get('/blog/%s' % post['slug']).status_code, 404)
 
+    def test_missing_tables_give_readable_503(self):
+        class Broken:
+            def __getattr__(self, name):
+                def fail(*a, **kw):
+                    raise RuntimeError('relation "public.blog_posts" does not exist')
+                return fail
+
+        _blog.store = _blog.GuardedStore(Broken())
+        self.editor()
+        r = self.client.get('/api/admin/blog/posts')
+        self.assertEqual(r.status_code, 503)
+        self.assertIn('2026-09-14_blog.sql', r.json()['detail'])
+        self.assertEqual(self.client.get('/blog/sitemap.xml').status_code, 503)
+        self.assertEqual(self.client.get('/blog').status_code, 503)
+
     def test_delete_only_drafts(self):
         self.editor()
         post = self.create()
