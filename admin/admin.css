@@ -186,6 +186,24 @@ a.tile:hover{transform:translateY(-2px); border-color:var(--accent); color:inher
 .tooltip .tip-row{display:flex; align-items:center; gap:.4rem; color:var(--ink-soft)}
 .tooltip .key{display:inline-block; width:12px; height:2px; background:var(--series); border-radius:1px}
 
+/* ---------- kérdőív-válaszok megoszlása ---------- */
+.dist{margin-top:2.2rem}
+.dist-head h2{font-size:1.35rem}
+.dist-head p{margin-top:.3rem; max-width:52rem; font-size:.9rem}
+.dist-grid{display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(min(420px,100%),1fr))}
+.dist-wide{grid-column:1 / -1}
+.dist-card h3{font-size:1rem; line-height:1.35; margin:.15rem 0 .25rem}
+.dist-num{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.7rem; font-weight:600; color:var(--accent)}
+.dist-meta{font-size:.82rem; margin:0 0 .7rem}
+.dist-rows{list-style:none; margin:0; padding:0; display:grid; gap:.45rem}
+.dist-wide .dist-rows{grid-template-columns:repeat(auto-fit, minmax(min(400px,100%),1fr)); column-gap:2rem}
+.dist-row{display:grid; grid-template-columns:minmax(6.5rem, 9.5rem) 1fr auto; align-items:center; gap:.7rem; font-size:.88rem}
+.dist-label{color:var(--ink)}
+.dist-track{position:relative; height:12px; background:var(--grid); border-radius:0 4px 4px 0}
+.dist-bar{position:absolute; left:0; top:0; bottom:0; min-width:2px; background:var(--series); border-radius:0 4px 4px 0}
+.dist-bar.is-zero{background:var(--axis); width:2px !important}
+.dist-value{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.76rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right; min-width:5.5rem}
+
 /* ---------- táblázatok ---------- */
 .table-wrap{overflow-x:auto; margin-top:.8rem}
 .data-table{width:100%; border-collapse:collapse; font-size:.9rem}

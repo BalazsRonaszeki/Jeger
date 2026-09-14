@@ -376,6 +376,31 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertEqual(ctx.exception.status_code, 503)
         self.assertIn('átmenetileg', ctx.exception.detail)
 
+    def test_author_defaults_profile_and_public_avatar(self):
+        user = self.editor()
+        r = self.client.get('/api/admin/blog/authors')
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertEqual(r.json()['me']['id'], user['id'])
+
+        photo = str(uuid.uuid4())
+        r = self.client.post('/api/admin/blog/me', json={'name': '  Kovács   Anna ', 'photo_id': photo}, headers=H)
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertEqual(self.store.users[user['id']]['name'], 'Kovács Anna')
+        self.assertEqual(self.client.post('/api/admin/blog/me', json={'name': ''}, headers=H).status_code, 400)
+
+        post = self.create(author_id=user['id'], author_display='ezt figyelmen kívül kell hagyni')
+        self.assertEqual((post['author_display'], post['author_photo']), ('Kovács Anna', photo))
+        post = self.publish(post, token=self.factcheck(post)['token']).json()['post']
+        page = self.client.get('/blog/%s' % post['slug']).text
+        self.assertIn('<img class="avatar" src="/blog/kepek/%s.jpg"' % photo, page)
+        self.assertIn('Kovács Anna', page)
+
+        # szabad név és szervezet
+        other = self.create(author_display='Vendégszerző')
+        self.assertEqual((other['author_id'], other['author_display']), (None, 'Vendégszerző'))
+        r = self.client.post('/api/admin/blog/posts', json={'title': 'x', 'author_id': str(uuid.uuid4())}, headers=H)
+        self.assertEqual(r.status_code, 400)  # nem létező munkatárs
+
     def test_delete_only_drafts(self):
         self.editor()
         post = self.create()

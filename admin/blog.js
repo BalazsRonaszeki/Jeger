@@ -132,6 +132,8 @@
   /* ================================================================== szerkesztő: állapot */
   var post = null;          // a szerver által utoljára visszaadott állapot
   var cover = { id: '', alt: '', credit: '' };
+  var authors = [];          // aktív munkatársak névvel: {id, name, photo_id}
+  var myProfile = null;      // {id, name, photo_id}
   var changeSeq = 0, savedSeq = 0;
   var saving = null, autosaveTimer = 0, conflict = false;
   var retryDelay = 0; // átmeneti szerverhiba után ennyi ms múlva újrapróbáljuk a mentést
@@ -150,7 +152,9 @@
   async function openEditor(id) {
     setView('editor');
     resetEditor();
+    await loadAuthors();
     if (!id) {
+      setAuthor(myProfile && myProfile.name ? myProfile.id : 'org', '');
       document.title = 'Új bejegyzés — stopjeger.hu belső felület';
       $('postTitle').focus();
       return;
@@ -191,7 +195,7 @@
     post = p;
     $('postTitle').value = p.title || '';
     $('postExcerpt').value = p.excerpt || '';
-    $('postAuthor').value = p.author_display || '';
+    setAuthor(p.author_id || (p.author_display ? 'custom' : 'org'), p.author_display || '');
     $('postSlug').value = p.slug || '';
     slugTouched = true;
     checkedFields = { title: p.title || '', excerpt: p.excerpt || '' };
@@ -247,7 +251,8 @@
       title: $('postTitle').value,
       excerpt: $('postExcerpt').value,
       slug: $('postSlug').value,
-      author_display: $('postAuthor').value,
+      author_id: authorChoice().id,
+      author_display: authorChoice().display,
       body_html: editor.innerHTML,
       cover_image: cover.id,
       cover_alt: cover.alt,
@@ -334,6 +339,119 @@
   $('postSlug').addEventListener('input', function () { slugTouched = true; onChange(); });
   $('postSlug').addEventListener('blur', function () { $('postSlug').value = slugify($('postSlug').value); });
   $('postAuthor').addEventListener('input', onChange);
+  $('postAuthorSel').addEventListener('change', function () {
+    setAuthor($('postAuthorSel').value, $('postAuthor').value);
+    if ($('postAuthorSel').value === 'custom') $('postAuthor').focus();
+    onChange();
+  });
+
+  /* ================================================================== szerző és profil */
+  async function loadAuthors() {
+    try {
+      var data = await SJ.api('/blog/authors');
+      authors = data.authors;
+      myProfile = data.me;
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      authors = [];
+      myProfile = { id: me.id, name: me.name || '', photo_id: null };
+      flash(e.message, 'error');
+    }
+  }
+
+  function renderAuthorOptions(selected) {
+    var sel = $('postAuthorSel');
+    sel.textContent = '';
+    var list = authors.slice();
+    if (myProfile && !list.some(function (a) { return a.id === myProfile.id; })) {
+      list.unshift({ id: myProfile.id, name: myProfile.name || '(még nincs megadva a neved)', photo_id: myProfile.photo_id });
+    }
+    list.forEach(function (a) {
+      var label = a.name + (myProfile && a.id === myProfile.id ? ' (te)' : '');
+      sel.appendChild(node('option', { value: a.id, text: label }));
+    });
+    if (selected && selected !== 'org' && selected !== 'custom' && !list.some(function (a) { return a.id === selected; })) {
+      sel.appendChild(node('option', { value: selected, text: 'Korábbi munkatárs' }));
+    }
+    sel.appendChild(node('option', { value: 'org', text: 'STOP JÉGER-kezdeményezés (szervezet)' }));
+    sel.appendChild(node('option', { value: 'custom', text: 'Más szerző (név megadása)…' }));
+    sel.value = selected;
+  }
+
+  function authorById(id) {
+    if (myProfile && myProfile.id === id) return myProfile;
+    return authors.filter(function (a) { return a.id === id; })[0] || null;
+  }
+
+  function setAuthor(choice, customName) {
+    renderAuthorOptions(choice);
+    $('postAuthor').hidden = choice !== 'custom';
+    $('postAuthor').value = choice === 'custom' ? customName : '';
+    var person = authorById(choice);
+    var avatar = $('authorAvatar');
+    avatar.textContent = '';
+    avatar.className = 'avatar';
+    if (person && person.photo_id) {
+      avatar.appendChild(node('img', { src: '/blog/kepek/' + person.photo_id + '.jpg', alt: '' }));
+    } else {
+      avatar.className = 'avatar avatar-empty';
+      avatar.textContent = choice === 'org' ? 'SJ' : initials(person ? person.name : customName);
+    }
+    var mine = !!(myProfile && choice === myProfile.id);
+    $('profileBox').hidden = !mine;
+    if (mine) {
+      $('profileName').value = myProfile.name || '';
+      $('profilePhoto').textContent = myProfile.photo_id ? 'Fotó cseréje' : 'Fotó feltöltése';
+      $('profilePhotoRemove').hidden = !myProfile.photo_id;
+    }
+  }
+
+  function initials(name) {
+    return (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join('');
+  }
+
+  function authorChoice() {
+    var v = $('postAuthorSel').value;
+    if (v === 'org') return { id: '', display: '' };
+    if (v === 'custom') return { id: '', display: $('postAuthor').value };
+    return { id: v, display: '' };
+  }
+
+  async function saveProfile(extra) {
+    var body = Object.assign({ name: $('profileName').value }, extra || {});
+    var res = await SJ.api('/blog/me', { method: 'POST', body: body });
+    myProfile = res.me;
+    await loadAuthors();
+    setAuthor($('postAuthorSel').value, $('postAuthor').value);
+    onChange(); // a bejegyzés a szerző friss nevét és fotóját a következő mentéskor veszi át
+    return res.me;
+  }
+
+  $('profileSave').addEventListener('click', async function () {
+    var done = busyButton($('profileSave'), 'Mentés…');
+    try {
+      await saveProfile();
+      flash('A profilod elmentve.', 'ok');
+    } catch (e) {
+      if (!handleAuthError(e)) flash(e.message, 'error');
+    } finally {
+      done();
+    }
+  });
+
+  $('profilePhoto').addEventListener('click', function () {
+    if (!$('profileName').value.trim()) { flash('Előbb add meg a neved.', 'error'); $('profileName').focus(); return; }
+    openImageDialog('profile');
+  });
+
+  $('profilePhotoRemove').addEventListener('click', async function () {
+    try {
+      await saveProfile({ photo_id: '' });
+      flash('A profilfotód eltávolítva.', 'ok');
+    } catch (e) {
+      if (!handleAuthError(e)) flash(e.message, 'error');
+    }
+  });
   $('postExcerpt').addEventListener('input', function () { updateExcerptCount(); onChange(); });
 
   function updateExcerptCount() { $('excerptCount').textContent = $('postExcerpt').value.length; }
@@ -1225,7 +1343,12 @@
     $('formImage').reset();
     $('imgPreview').hidden = true;
     SJ.showMsg($('imgMsg'), '');
-    $('dlgImageTitle').textContent = target === 'cover' ? 'Borítókép feltöltése' : 'Kép beszúrása a szövegbe';
+    $('dlgImageTitle').textContent = { cover: 'Borítókép feltöltése', profile: 'Profilfotó feltöltése' }[target] || 'Kép beszúrása a szövegbe';
+    $('imgProfileNote').hidden = target !== 'profile';
+    if (target === 'profile') {
+      document.querySelector('input[name=rights][value=sajat]').checked = true;
+      $('imgAlt').value = $('profileName').value.trim() + ' portréja';
+    }
     $('dlgImage').showModal();
   }
 
@@ -1252,7 +1375,7 @@
     if (!file) return;
     SJ.showMsg($('imgMsg'), 'A kép előkészítése…');
     try {
-      var prepared = await prepareImage(file);
+      var prepared = await prepareImage(file, imgState.target === 'profile' ? 480 : 0);
       imgState.prepared = prepared;
       var reader = new FileReader();
       reader.onload = function () {
@@ -1268,20 +1391,31 @@
   });
 
   /* Újrakódolás JPEG-be, legfeljebb 1600 px-re: kisebb fájl, és a helyadatok (EXIF/GPS) is kimaradnak. */
-  async function prepareImage(file) {
+  /* square > 0: középről négyzetesre vágva, ekkora oldalhosszra (profilfotó). */
+  async function prepareImage(file, square) {
     if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('JPEG, PNG vagy WebP képet tölts fel.');
     if (file.size > 25 * 1024 * 1024) throw new Error('A kép túl nagy (legfeljebb 25 MB).');
     var bitmap;
     try { bitmap = await createImageBitmap(file); } catch (e) { throw new Error('Ezt a képet nem sikerült beolvasni.'); }
-    var scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
-    var w = Math.max(1, Math.round(bitmap.width * scale)), h = Math.max(1, Math.round(bitmap.height * scale));
+    var sx = 0, sy = 0, sw = bitmap.width, sh = bitmap.height, w, h;
+    if (square) {
+      var side = Math.min(bitmap.width, bitmap.height);
+      sx = Math.round((bitmap.width - side) / 2);
+      sy = Math.round((bitmap.height - side) / 2);
+      sw = sh = side;
+      w = h = Math.min(square, side);
+    } else {
+      var scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+      w = Math.max(1, Math.round(bitmap.width * scale));
+      h = Math.max(1, Math.round(bitmap.height * scale));
+    }
     var canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, w, h);
-    ctx.drawImage(bitmap, 0, 0, w, h);
+    ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, w, h);
     if (bitmap.close) bitmap.close();
     var quality = 0.86, blob = null;
     do {
@@ -1311,7 +1445,9 @@
     var done = busyButton($('imgSubmit'), 'Feltöltés…');
     try {
       var res = await SJ.api('/blog/images', { method: 'POST', form: form });
-      if (imgState.target === 'cover') {
+      if (imgState.target === 'profile') {
+        await saveProfile({ photo_id: res.id });
+      } else if (imgState.target === 'cover') {
         cover = { id: res.id, alt: alt, credit: $('imgCredit').value.trim() };
         renderCover();
         onChange();
@@ -1319,7 +1455,7 @@
         insertFigure(res, alt, $('imgCredit').value.trim());
       }
       $('dlgImage').close();
-      flash(imgState.target === 'cover' ? 'Borítókép beállítva.' : 'Kép beszúrva.', 'ok');
+      flash({ cover: 'Borítókép beállítva.', profile: 'A profilfotód elmentve.' }[imgState.target] || 'Kép beszúrva.', 'ok');
     } catch (e) {
       if (!handleAuthError(e)) SJ.showMsg($('imgMsg'), e.message, 'error');
     } finally {
@@ -1459,7 +1595,7 @@
 
   function lockEditor(locked) {
     editor.contentEditable = locked ? 'false' : 'true';
-    ['postTitle', 'postExcerpt', 'postAuthor', 'btnPublish', 'btnSave', 'btnSpell', 'btnFact', 'btnFormat', 'btnImage'].forEach(function (id) {
+    ['postTitle', 'postExcerpt', 'postAuthor', 'postAuthorSel', 'btnPublish', 'btnSave', 'btnSpell', 'btnFact', 'btnFormat', 'btnImage'].forEach(function (id) {
       $(id).disabled = locked;
     });
     if (!locked) { $('postSlug').disabled = !!(post && post.published_at); updateUndo(); updateMeta(); }

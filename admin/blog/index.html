@@ -147,8 +147,24 @@
             </div>
           </div>
 
-          <label class="field"><span>Szerző a cikk alatt</span>
-            <input type="text" id="postAuthor" maxlength="120" placeholder="STOP JÉGER-kezdeményezés" autocomplete="off"></label>
+          <div class="author-box">
+            <label class="field-label" for="postAuthorSel">Szerző a cikk alatt</label>
+            <div class="author-row">
+              <span class="avatar avatar-empty" id="authorAvatar" aria-hidden="true"></span>
+              <select id="postAuthorSel"></select>
+            </div>
+            <input type="text" id="postAuthor" maxlength="120" placeholder="A szerző neve" autocomplete="off" aria-label="A szerző neve" hidden>
+            <div class="profile-box" id="profileBox" hidden>
+              <span class="field-label">A profilod</span>
+              <input type="text" id="profileName" maxlength="80" autocomplete="name" placeholder="Vezetéknév Keresztnév" aria-label="A neved">
+              <div class="profile-actions">
+                <button type="button" class="btn btn-ghost btn-sm" id="profilePhoto">Fotó feltöltése</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="profilePhotoRemove" hidden>Fotó eltávolítása</button>
+                <button type="button" class="btn btn-sm" id="profileSave">Név mentése</button>
+              </div>
+              <p class="hint">A neved és a fotód nyilvánosan megjelenik a bejegyzéseid alatt.</p>
+            </div>
+          </div>
           <label class="field"><span>Webcím</span>
             <span class="slug-wrap"><span class="slug-prefix">stopjeger.hu/blog/</span><input type="text" id="postSlug" maxlength="90" autocomplete="off" spellcheck="false"></span></label>
           <p class="hint" id="slugHint">A címből készül. Első publikálás után már nem változtatható, mert a megosztott hivatkozások elromlanának.</p>
@@ -190,6 +206,8 @@
     <label class="field"><span>Képaláírás / forrás</span>
       <input type="text" id="imgCredit" maxlength="200" placeholder="pl. Fotó: Kovács Anna · CC BY 4.0"></label>
     <p class="hint">AI-generált képnél a képaláírás jelezze, hogy illusztráció — különben valódi fotónak hiheti az olvasó.</p>
+
+    <p class="hint" id="imgProfileNote" hidden>A profilfotód négyzetesre vágva, a neved mellett jelenik meg a bejegyzéseid alatt — nyilvánosan.</p>
 
     <label class="confirm"><input type="checkbox" id="imgConfirm"> Megerősítem, hogy a kép felhasználására jogosultak vagyunk, és nem jogdíjas anyag.</label>
 

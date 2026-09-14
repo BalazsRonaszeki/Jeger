@@ -220,6 +220,10 @@ class SupabaseStore:
     def get_user(self, user_id):
         return self._one(self.c.table('admin_users').select('*').eq('id', user_id).limit(1).execute().data)
 
+    def list_authors(self):
+        return self.c.table('admin_users').select('id,name,photo_id').eq('status', 'active') \
+            .order('name').execute().data or []
+
     def list_users(self):
         return self.c.table('admin_users').select(
             'id,email,name,role,status,created_at,activated_at,last_login_at'
@@ -853,6 +857,60 @@ def subscribers_block(d_from, d_to, days, totals):
                 'active': totals.get('subscribers_active'), 'pending': totals.get('subscribers_pending')}
     except Exception:
         return {'status': 'error', 'message': 'A hírlevél-adatokat nem sikerült lekérdezni. Lefutott az SQL-migráció?'}
+
+
+# A kérdőív kérdései és válaszlehetőségei, a kerdoiv/index.html szövegével egyezően.
+LIKERT_AGREE = [('1', 'Egyáltalán nem'), ('2', 'Inkább nem'), ('3', 'Inkább igen'), ('4', 'Teljes mértékben')]
+SURVEY_QUESTIONS = [
+    {'key': 'respondent_type', 'text': 'Milyen minőségben tölti ki a kérdőívet?',
+     'options': [('gazdalkodo', 'Gazdálkodó'), ('maganszemely', 'Magánszemély')]},
+    {'key': 'hail_damage', 'text': 'Érte-e már Önt jégkár?', 'note': 'Csak a gazdálkodók kapták meg.',
+     'options': [('igen', 'Igen'), ('nem', 'Nem')]},
+    {'key': 'county', 'text': 'Melyik megyében él vagy gazdálkodik?', 'options': None},
+    {'key': 'effective', 'text': 'Fontosnak tartom, hogy egy hatékony, jól ellenőrzött jégelhárító rendszer működjön.',
+     'options': LIKERT_AGREE},
+    {'key': 'danger', 'text': 'A JÉGER és egyéb időjárás-befolyásoló rendszerek potenciális veszélyt jelentenek '
+                              'az ökoszisztémára és a mezőgazdaságra.', 'options': LIKERT_AGREE},
+    {'key': 'transparency', 'text': 'A JÉGER és egyéb időjárás-befolyásoló rendszereket az elvárható átláthatósággal '
+                                    'és ellenőrzéssel (monitoringgal) üzemeltetik.', 'options': LIKERT_AGREE},
+    {'key': 'reporting', 'text': 'Legyen azonnali bejelentési kötelezettség minden jégelhárító rendszerre.',
+     'options': LIKERT_AGREE},
+    {'key': 'health', 'text': 'Mennyire tart a JÉGER és egyéb időjárás-befolyásoló, -manipulációs rendszerek '
+                              'egészségre gyakorolt hatásától?',
+     'options': [('1', 'Egyáltalán nem'), ('2', 'Kicsit'), ('3', 'Eléggé'), ('4', 'Nagyon')]},
+]
+
+
+def build_survey_summary(rows):
+    """(kérdés, válasz, darab) sorokból kérdésenkénti megoszlás, a kérdőív sorrendjében.
+    Az üres válasz „Nem válaszolt” sor lesz; ismeretlen értéket (pl. elírt megyenév) is megmutatunk."""
+    counts = {}
+    for r in rows or []:
+        counts.setdefault(r['question'], {})[r['answer'] or ''] = int(r['n'])
+    questions = []
+    for q in SURVEY_QUESTIONS:
+        c = dict(counts.get(q['key'], {}))
+        skipped = c.pop('', 0)
+        if q['options'] is None:
+            answers = [{'value': v, 'label': v, 'n': n} for v, n in sorted(c.items(), key=lambda kv: (-kv[1], kv[0]))]
+        else:
+            answers = [{'value': v, 'label': label, 'n': c.pop(v, 0)} for v, label in q['options']]
+            answers += [{'value': v, 'label': v, 'n': n} for v, n in sorted(c.items())]
+        answered = sum(a['n'] for a in answers)
+        questions.append({'key': q['key'], 'text': q['text'], 'note': q.get('note'), 'answers': answers,
+                          'answered': answered, 'skipped': skipped, 'asked': answered + skipped})
+    total = questions[0]['asked'] if questions else 0
+    return {'total': total, 'questions': questions}
+
+
+@router.get('/survey-summary')
+def survey_summary(user=Depends(current_user)):
+    try:
+        rows = store.rpc('admin_survey_distribution')
+    except Exception:
+        raise HTTPException(status_code=503, detail='A válaszmegoszlást nem sikerült lekérdezni. '
+                                                    'Lefutott a 2026-09-14_szerzok_es_valaszmegoszlas.sql migráció?')
+    return no_store(build_survey_summary(rows))
 
 
 @router.get('/stats')

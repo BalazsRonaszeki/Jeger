@@ -54,6 +54,8 @@ class FakeStore:
     def get_user_by_email(self, email): return self._find(self.users, email=email)
     def get_user(self, user_id): return self._find(self.users, id=user_id)
     def list_users(self): return [copy.deepcopy(u) for u in self.users.values()]
+    def list_authors(self): return [{'id': u['id'], 'name': u.get('name'), 'photo_id': u.get('photo_id')}
+                                    for u in self.users.values() if u['status'] == 'active']
     def count_admins(self): return sum(1 for u in self.users.values() if u['role'] == 'admin')
 
     def insert_user(self, data):
@@ -286,6 +288,28 @@ class AdminTests(unittest.TestCase):
         self.assertEqual(data['visitors']['status'], 'not_configured')
         self.assertEqual(self.client.get('/api/admin/stats?from=2026-09-05&to=2026-09-01').status_code, 400)
         self.assertEqual(self.client.get('/api/admin/stats?from=2024-01-01&to=2026-09-01').status_code, 400)
+
+    def test_survey_summary_orders_options_and_counts_skips(self):
+        self.assertEqual(self.client.get('/api/admin/survey-summary').status_code, 401)
+        user, pw = self.make_active()
+        self.login(user['email'], pw)
+        self.store.rpc_data = {'admin_survey_distribution': [
+            {'question': 'respondent_type', 'answer': 'maganszemely', 'n': 6},
+            {'question': 'respondent_type', 'answer': 'gazdalkodo', 'n': 3},
+            {'question': 'respondent_type', 'answer': '', 'n': 1},
+            {'question': 'county', 'answer': 'Békés', 'n': 2},
+            {'question': 'county', 'answer': 'Baranya', 'n': 5},
+            {'question': 'effective', 'answer': '4', 'n': 7},
+            {'question': 'effective', 'answer': '2', 'n': 1},
+        ]}
+        data = self.client.get('/api/admin/survey-summary').json()
+        self.assertEqual(data['total'], 10)
+        q = {x['key']: x for x in data['questions']}
+        self.assertEqual([a['label'] for a in q['respondent_type']['answers']], ['Gazdálkodó', 'Magánszemély'])
+        self.assertEqual((q['respondent_type']['answered'], q['respondent_type']['skipped']), (9, 1))
+        self.assertEqual([a['label'] for a in q['county']['answers']], ['Baranya', 'Békés'])  # gyakoriság szerint
+        self.assertEqual([a['n'] for a in q['effective']['answers']], [0, 1, 0, 7])  # minden fok megjelenik
+        self.assertEqual(q['health']['answers'][3]['label'], 'Nagyon')
 
     def test_not_configured_returns_503(self):
         _admin.store = None

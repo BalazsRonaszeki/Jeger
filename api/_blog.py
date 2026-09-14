@@ -395,7 +395,8 @@ def reading_minutes(text):
 def content_hash(post):
     payload = json.dumps([post.get('title') or '', post.get('excerpt') or '', post.get('body_html') or '',
                           post.get('author_display') or '', post.get('cover_image') or '',
-                          post.get('cover_alt') or '', post.get('cover_credit') or ''], ensure_ascii=False)
+                          post.get('cover_alt') or '', post.get('cover_credit') or '']
+                         + ([post['author_photo']] if post.get('author_photo') else []), ensure_ascii=False)
     return hashlib.sha256(payload.encode('utf-8')).hexdigest()
 
 
@@ -874,6 +875,7 @@ class PostBody(BaseModel):
     title: str = ''
     excerpt: str = ''
     slug: str = ''
+    author_id: str = ''
     author_display: str = ''
     body_html: str = ''
     cover_image: str = ''
@@ -914,7 +916,8 @@ def _post_or_404(post_id):
 
 def post_out(post):
     digest = content_hash(post)
-    out = {k: post.get(k) for k in ('id', 'slug', 'title', 'excerpt', 'author_display', 'body_html', 'cover_image',
+    out = {k: post.get(k) for k in ('id', 'slug', 'title', 'excerpt', 'author_id', 'author_display', 'author_photo',
+                                    'body_html', 'cover_image',
                                     'cover_alt', 'cover_credit', 'status', 'version', 'published_at',
                                     'pub_updated_at', 'updated_at', 'created_at', 'fact_check')}
     out['url'] = '%s/blog/%s' % (site_url(), post['slug'])
@@ -942,15 +945,74 @@ def _fields_from(body):
     cover = (body.cover_image or '').strip().lower()
     if cover and not UUID_RE.match(cover):
         raise HTTPException(status_code=400, detail='Érvénytelen borítókép.')
-    return {
+    return dict(_author_fields(body), **{
         'title': clean_line(body.title, TITLE_MAX),
         'excerpt': clean_line(body.excerpt, EXCERPT_MAX),
-        'author_display': clean_line(body.author_display, AUTHOR_MAX),
         'body_html': sanitize_html(body.body_html),
         'cover_image': cover or None,
         'cover_alt': clean_line(body.cover_alt, 300),
         'cover_credit': clean_line(body.cover_credit, 200),
-    }
+    })
+
+
+def _author_fields(body):
+    """A szerző: egy munkatárs (neve és fotója a mentés pillanatában rögzül), vagy szabadon megadott név,
+    vagy üresen hagyva a kezdeményezés maga."""
+    author_id = (body.author_id or '').strip().lower()
+    if not author_id:
+        return {'author_id': None, 'author_display': clean_line(body.author_display, AUTHOR_MAX), 'author_photo': None}
+    if not UUID_RE.match(author_id):
+        raise HTTPException(status_code=400, detail='Érvénytelen szerző.')
+    try:
+        author = _admin.store.get_user(author_id)
+    except Exception:
+        raise HTTPException(status_code=503, detail='A szerzőt nem sikerült lekérdezni. Pár másodperc múlva újrapróbáljuk.')
+    if not author or author.get('status') != 'active':
+        raise HTTPException(status_code=400, detail='A kiválasztott szerző már nem aktív munkatárs.')
+    name = clean_line(author.get('name'), AUTHOR_MAX)
+    if not name:
+        raise HTTPException(status_code=400, detail='A kiválasztott szerzőnek még nincs megadva a neve.')
+    return {'author_id': author_id, 'author_display': name, 'author_photo': author.get('photo_id')}
+
+
+class ProfileBody(BaseModel):
+    name: str = ''
+    photo_id: str | None = None   # None: nem változik, '': a fotó törlése
+
+
+def _me_out(user):
+    return {'id': user['id'], 'name': user.get('name') or '', 'photo_id': user.get('photo_id')}
+
+
+@admin_router.get('/authors')
+def authors_list(user=Depends(current_user)):
+    try:
+        rows = _admin.store.list_authors()
+    except Exception:
+        raise HTTPException(status_code=503, detail='A szerzők listáját nem sikerült lekérdezni. Lefutott a 2026-09-14_szerzok_es_valaszmegoszlas.sql migráció?')
+    return no_store({'authors': [{'id': r['id'], 'name': r['name'], 'photo_id': r.get('photo_id')}
+                                 for r in rows if (r.get('name') or '').strip()],
+                     'me': _me_out(user)})
+
+
+@admin_router.post('/me', dependencies=[Depends(require_same_origin)])
+def profile_update(body: ProfileBody, user=Depends(current_user)):
+    name = _admin.clean_name(body.name)
+    if not name:
+        raise HTTPException(status_code=400, detail='Add meg a neved — így jelenik meg a bejegyzéseid alatt.')
+    data = {'name': name}
+    if body.photo_id is not None:
+        photo = body.photo_id.strip().lower()
+        if photo and not UUID_RE.match(photo):
+            raise HTTPException(status_code=400, detail='Érvénytelen fotó.')
+        data['photo_id'] = photo or None
+    try:
+        _admin.store.update_user(user['id'], data)
+    except Exception:
+        raise HTTPException(status_code=503, detail='A profilt nem sikerült menteni. Lefutott a 2026-09-14_szerzok_es_valaszmegoszlas.sql migráció?')
+    safe_audit(user['id'], 'profile_updated')
+    user.update(data)
+    return no_store({'ok': True, 'me': _me_out(user)})
 
 
 @admin_router.get('/posts')
@@ -1089,7 +1151,8 @@ def publish(post_id: str, body: PublishBody, user=Depends(current_user)):
     fields = {
         'status': 'published', 'version': post['version'] + 1, 'pub_hash': digest, 'fact_check': fact,
         'pub_title': post['title'], 'pub_excerpt': post.get('excerpt') or '', 'pub_body_html': post['body_html'],
-        'pub_author': post.get('author_display') or '', 'pub_cover_image': post.get('cover_image'),
+        'pub_author': post.get('author_display') or '', 'pub_author_photo': post.get('author_photo'),
+        'pub_cover_image': post.get('cover_image'),
         'pub_cover_alt': post.get('cover_alt') or '', 'pub_cover_credit': post.get('cover_credit') or '',
         'published_by': user['id'], 'updated_at': now,
     }
@@ -1376,7 +1439,10 @@ def blog_post(slug: str):
     author = post.get('pub_author') or 'STOP JÉGER-kezdeményezés'
     cover_id = post.get('pub_cover_image')
 
-    byline = ['<span>%s</span>' % _esc(author),
+    author_photo = post.get('pub_author_photo')
+    avatar = ('<img class="avatar" src="%s" alt="" width="32" height="32" decoding="async">' % image_url(author_photo)
+              if author_photo and post.get('pub_author') else '')
+    byline = ['<span class="byline-author">%s%s</span>' % (avatar, _esc(author)),
               '<time datetime="%s">%s</time>' % (_esc(post.get('published_at') or ''), hu_date(post.get('published_at'))),
               '<span>%d perc olvasás</span>' % minutes]
     if post.get('pub_updated_at'):
@@ -1393,7 +1459,8 @@ def blog_post(slug: str):
         '@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': title, 'description': excerpt,
         'datePublished': post.get('published_at'), 'dateModified': post.get('pub_updated_at') or post.get('published_at'),
         'mainEntityOfPage': url, 'inLanguage': 'hu',
-        'author': {'@type': 'Person' if post.get('pub_author') else 'Organization', 'name': author},
+        'author': dict({'@type': 'Person' if post.get('pub_author') else 'Organization', 'name': author},
+                       **({'image': image_url(author_photo, absolute=True)} if avatar else {})),
         'publisher': {'@type': 'Organization', 'name': 'STOP JÉGER-kezdeményezés', 'url': site_url()},
     }
     if cover_id:

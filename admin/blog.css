@@ -170,3 +170,15 @@ label.confirm input{margin-top:.3rem}
 .img-preview{display:flex; gap:.8rem; align-items:center; margin:-.3rem 0 .9rem}
 .img-preview img{width:7rem; height:4.5rem; object-fit:cover; border-radius:6px; border:1px solid var(--line)}
 input[type=file]{font:inherit; font-size:.9rem; max-width:100%}
+
+/* ---------- szerző, profil ---------- */
+.author-box{margin:0 0 1rem}
+.author-row{display:flex; align-items:center; gap:.6rem}
+.author-row select{flex:1; min-width:0}
+.avatar{display:inline-flex; align-items:center; justify-content:center; flex:none; width:2.4rem; height:2.4rem; border-radius:50%; overflow:hidden; background:var(--surface-2); border:1px solid var(--line)}
+.avatar img{width:100%; height:100%; object-fit:cover; display:block}
+.avatar-empty{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.72rem; font-weight:600; color:var(--ink-soft)}
+#postAuthor{margin-top:.5rem}
+.profile-box{margin-top:.8rem; padding:.7rem .75rem; border:1px dashed var(--line); border-radius:10px}
+.profile-actions{display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.5rem}
+.profile-box .hint{margin:.5rem 0 0}

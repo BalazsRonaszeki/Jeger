@@ -135,9 +135,21 @@
         </article>
       </div>
     </div>
+
+    <section class="dist" aria-labelledby="distTitle">
+      <div class="view-head dist-head">
+        <div>
+          <h2 id="distTitle">Kérdőív-válaszok megoszlása</h2>
+          <p class="muted">Az összes eddigi kitöltés alapján — <b id="distTotal">—</b> kitöltés. A fenti időszak-szűrő erre nem vonatkozik. Kérdésenként csak összesített darabszám; a válaszokat egymással nem kapcsoljuk össze.</p>
+        </div>
+      </div>
+      <p id="distMsg" class="msg" role="status" aria-live="polite" hidden></p>
+      <div class="dist-grid" id="distGrid"></div>
+    </section>
   </section>
 
   <!-- ===================== Felhasználók (admin) ===================== -->
+
   <section id="viewUsers" hidden>
     <div class="view-head">
       <h1>Felhasználók</h1>

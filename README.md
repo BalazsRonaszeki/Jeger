@@ -45,6 +45,9 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `GET/POST /api/admin/blog/posts`, `/posts/{id}`, `/posts/{id}/delete` | Blogbejegyzések listája, létrehozása, mentése (verziószámos ütközésvédelem), vázlat törlése. |
 | `POST /api/admin/blog/spellcheck`, `/posts/{id}/factcheck` | Helyesírás- és tényellenőrzés (Claude API; a tényellenőrzés a Tudástárral dolgozik). |
 | `POST /api/admin/blog/posts/{id}/publish`, `/unpublish`, `POST /api/admin/blog/images` | Publikálás (friss tényellenőrzés-token kell), visszavonás, képfeltöltés jogcímmel. |
+| `GET /api/admin/blog/authors`, `POST /api/admin/blog/me` | Szerzőválasztó (aktív munkatársak névvel, fotóval); saját név és profilfotó. |
+| `GET /api/admin/survey-summary` | A kérdőív válaszainak kérdésenkénti megoszlása (csak összesítve). |
+| `POST /api/subscribe` | Önálló hírlevél-feliratkozás a blogról (kettős opt-in). |
 | `GET /blog`, `/blog/{slug}`, `/blog/kepek/{id}.jpg`, `/blog/rss.xml`, `/blog/sitemap.xml` | A nyilvános blog (szerveroldalon renderelve, megosztási előnézettel). |
 
 ```bash
@@ -146,6 +149,8 @@ tesztek: `python -m unittest backend/tests/test_blog.py -v`.
 2. Vercel env: `ANTHROPIC_API_KEY`, majd redeploy. (A `vercel.json` a függvény időkorlátját 300 mp-re
    emeli, mert egy hosszabb cikk tényellenőrzése 1-2 percig is tarthat.)
 3. Adatfeldolgozói feltételek elfogadása az Anthropicnál (l. az adatkezelési nyilvántartás 4. pontját).
+4. Supabase → SQL Editor: `backend/migrations/2026-09-14_szerzok_es_valaszmegoszlas.sql` (profilfotó,
+   szerző a bejegyzésekben, a dashboard válaszmegoszlása), majd a fájl végén lévő ellenőrző lekérdezés.
 
 ## DNS (WebSupport)
 

@@ -14,7 +14,7 @@
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
 | **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5.2. pont indokolását |
-| **A nyilvántartás verziója** | 2.4 |
+| **A nyilvántartás verziója** | 2.5 |
 | **Hatályos** | 2026. szeptember 14. |
 | **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
@@ -101,6 +101,12 @@
 > táblát **külön** kérdezik le, közös azonosító vagy összekapcsolás nélkül — az 5.1. pont
 > anonimitási feltételei ezért változatlanul teljesülnek.
 
+> **Szerzőként megjelenő munkatársak.** Ha egy munkatársat választanak egy bejegyzés szerzőjének, a neve —
+> és ha ő maga feltöltött ilyet, a profilfotója — a bejegyzés alatt nyilvánosan megjelenik. A profilfotót
+> kizárólag a munkatárs maga töltheti fel és távolíthatja el (hozzájárulás, GDPR 6. cikk (1) a)); a
+> feltöltő ablak a nyilvános megjelenésre előre figyelmeztet. A fotó eltávolítása után a már publikált
+> bejegyzésekben az újrapublikálásig a korábbi kép marad — **nyitott pont:** kérésre ezeket is frissíteni kell.
+>
 > **A blog szövege nyilvánosságnak szánt tartalom**, de a vázlat megnevezett személyeket is
 > említhet. Ezért a szerkesztési útmutató: magánszemély nevét csak akkor írjuk le, ha közszereplőként,
 > a közszereplésével összefüggésben említjük. Az ellenőrzéshez a szöveg az Anthropichoz kerül (USA) —
@@ -194,6 +200,7 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 
 | Verzió | Dátum | Változás |
 |---|---|---|
+| 2.5 | 2026. szeptember 14. | A 4. pont kiegészült: a blogbejegyzés szerzőjeként megjelenő munkatárs neve és (saját feltöltésű) profilfotója nyilvánosan megjelenik. A dashboardon megjelent a kérdőív-válaszok kérdésenkénti megoszlása — kizárólag összesített darabszám, kérdések közötti összekapcsolás nélkül, így az 5.1. pont anonimitási feltételei változatlanul teljesülnek. |
 | 2.4 | 2026. szeptember 14. | Az 1. pont kiegészült: hírlevélre a blog oldalain lévő önálló űrlapon is fel lehet iratkozni (`subscribers.source = 'blog'`), ugyanazzal a hozzájárulással és megerősítő levéllel. Az adatkezelési tájékoztató 2.2. pontja ennek megfelelően frissítve (2.1 verzió). |
 | 2.3 | 2026. szeptember 14. | A 4. pont kiegészült a blogszerkesztéssel: szerzőségi és publikálási napló, képfeltöltés jogcímmel, új adatfeldolgozó az Anthropic (helyesírás- és tényellenőrzés). A nyilvános blog nem használ sütit és külső erőforrást; a megosztó gombok sima hivatkozások. |
 | 2.2 | 2026. szeptember 11. | Felvéve a 4. pont: a belső felület (dashboard) felhasználóinak adatkezelése — meghívásos hozzáférés, jelszó + e-mailes kód, eseménynapló IP-cím nélkül. A korábbi 4–6. pont 5–7. lett. A 6. pont kiegészült a belső felület biztonsági intézkedéseivel és az e-mailes második faktor ismert korlátjával. |

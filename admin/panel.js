@@ -97,6 +97,46 @@
     document.addEventListener('sj:themechange', function () { Object.keys(charts).forEach(function (k) { charts[k].render(); }); });
     applyPreset('30');
     load();
+    loadDistribution();
+  }
+
+  /* ------------------------------------------------------------------ válaszmegoszlás */
+  async function loadDistribution() {
+    var grid = $('distGrid');
+    try {
+      var data = await SJ.api('/survey-summary');
+      $('distTotal').textContent = SJ.num(data.total);
+      grid.textContent = '';
+      data.questions.forEach(function (q, i) { grid.appendChild(distCard(q, i)); });
+      SJ.showMsg($('distMsg'), '');
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      SJ.showMsg($('distMsg'), e.message, 'error');
+    }
+  }
+
+  var pct = new Intl.NumberFormat('hu-HU', { style: 'percent', maximumFractionDigits: 0 });
+
+  function distCard(q, index) {
+    var rows = node('ul', { class: 'dist-rows' });
+    q.answers.forEach(function (a) {
+      var share = q.answered ? a.n / q.answered : 0;
+      var bar = node('span', { class: 'dist-bar' });
+      bar.style.width = (share * 100) + '%'; // 0–100%-os skála: a teljes sáv a válaszolók 100%-a
+      if (!a.n) bar.classList.add('is-zero');
+      rows.appendChild(node('li', { class: 'dist-row' }, [
+        node('span', { class: 'dist-label', text: a.label }),
+        node('span', { class: 'dist-track', 'aria-hidden': 'true' }, [bar]),
+        node('span', { class: 'dist-value', text: pct.format(share) + ' · ' + SJ.num(a.n) })
+      ]));
+    });
+    var meta = SJ.num(q.answered) + ' válasz' + (q.skipped ? ' · ' + SJ.num(q.skipped) + ' nem válaszolt' : '') + (q.note ? ' · ' + q.note : '');
+    return node('article', { class: 'card dist-card' + (q.key === 'county' ? ' dist-wide' : '') }, [
+      node('span', { class: 'dist-num', text: String(index + 1).padStart(2, '0') }),
+      node('h3', { text: q.text }),
+      node('p', { class: 'muted dist-meta', text: meta }),
+      q.answers.length ? rows : node('p', { class: 'muted', text: 'Még nincs válasz.' })
+    ]);
   }
 
   function setPressed(preset) {
