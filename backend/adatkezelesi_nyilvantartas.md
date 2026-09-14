@@ -14,8 +14,8 @@
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
 | **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5.2. pont indokolását |
-| **A nyilvántartás verziója** | 2.2 |
-| **Hatályos** | 2026. szeptember 11. |
+| **A nyilvántartás verziója** | 2.3 |
+| **Hatályos** | 2026. szeptember 14. |
 | **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
 ---
@@ -89,8 +89,8 @@
 | **Az adatkezelés célja** | A stopjeger.hu belső felületéhez (dashboard, később blog-szerkesztés) hozzáférő munkatársak azonosítása, a hozzáférés biztonságának fenntartása és a hozzáférések naplózása |
 | **Jogalap** | GDPR 6. cikk (1) f) — az Adatkezelő jogos érdeke a belső rendszer védelméhez, a jogosulatlan hozzáférés megakadályozásához és az incidensek kivizsgálhatóságához. Érdekmérlegelés elvégezve: a kezelt adatkör a hozzáféréshez feltétlenül szükségesre korlátozott, IP-cím nem kerül tárolásra |
 | **Érintettek kategóriái** | A felületre meghívott munkatársak és önkéntesek |
-| **Személyes adatok kategóriái** | E-mail-cím; név (nem kötelező); szerepkör; fiókállapot; a jelszó **kizárólag scrypt-hash** formában; a meghívó- és jelszó-visszaállító tokenek, valamint a munkamenet-token **SHA-256-hash** formában; az e-mailes belépési kódok **HMAC** formában; a meghívás, az aktiválás és az utolsó belépés időpontja; a sikertelen belépések száma és az esetleges zárolás ideje; eseménynapló (belépés, sikertelen belépés, meghívás, letiltás, jelszócsere) **IP-cím nélkül** |
-| **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (meghívó-, jelszó-visszaállító és belépési kód levelek) |
+| **Személyes adatok kategóriái** | E-mail-cím; név (nem kötelező); szerepkör; fiókállapot; a jelszó **kizárólag scrypt-hash** formában; a meghívó- és jelszó-visszaállító tokenek, valamint a munkamenet-token **SHA-256-hash** formában; az e-mailes belépési kódok **HMAC** formában; a meghívás, az aktiválás és az utolsó belépés időpontja; a sikertelen belépések száma és az esetleges zárolás ideje; eseménynapló (belépés, sikertelen belépés, meghívás, letiltás, jelszócsere) **IP-cím nélkül**; a blogszerkesztésnél: ki hozta létre, módosította és publikálta a bejegyzést, ki töltött fel képet és milyen jogcímet jelölt meg, ki hagyta figyelmen kívül a tényellenőrzés jelzéseit |
+| **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis, képtárhely); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (meghívó-, jelszó-visszaállító és belépési kód levelek); Anthropic, PBC (a blogbejegyzések helyesírás- és tényellenőrzése: csak a bejegyzés címe, bevezetője és szövege jut el hozzá, a munkatárs azonosítója nem) |
 | **Harmadik országba továbbítás** | Mint az 1. pontban |
 | **Törlési határidő** | Fiók: a hozzáférés megszűnésekor letiltandó, a munkakapcsolat vagy az önkéntes közreműködés megszűnését követő 30 napon belül törlendő. Belépési kódok, tokenek, munkamenetek: lejáratuk után legfeljebb 7 nappal automatikusan törlődnek. Eseménynapló: 1 év — **nyitott pont:** az éves törlés még nincs automatizálva, addig évente kézzel kell elvégezni |
 | **Biztonsági intézkedések** | L. a 6. pontot |
@@ -100,6 +100,13 @@
 > jut el a böngészőig. Az összesítő adatbázis-függvények a `survey_responses` és a `subscribers`
 > táblát **külön** kérdezik le, közös azonosító vagy összekapcsolás nélkül — az 5.1. pont
 > anonimitási feltételei ezért változatlanul teljesülnek.
+
+> **A blog szövege nyilvánosságnak szánt tartalom**, de a vázlat megnevezett személyeket is
+> említhet. Ezért a szerkesztési útmutató: magánszemély nevét csak akkor írjuk le, ha közszereplőként,
+> a közszereplésével összefüggésben említjük. Az ellenőrzéshez a szöveg az Anthropichoz kerül (USA) —
+> **nyitott pont:** az Anthropic kereskedelmi feltételeinek és adatfeldolgozói kiegészítésének
+> elfogadása, a harmadik országba továbbítás jogalapjának (DPF / általános szerződési feltételek)
+> rögzítése.
 
 ---
 
@@ -187,6 +194,7 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 
 | Verzió | Dátum | Változás |
 |---|---|---|
+| 2.3 | 2026. szeptember 14. | A 4. pont kiegészült a blogszerkesztéssel: szerzőségi és publikálási napló, képfeltöltés jogcímmel, új adatfeldolgozó az Anthropic (helyesírás- és tényellenőrzés). A nyilvános blog nem használ sütit és külső erőforrást; a megosztó gombok sima hivatkozások. |
 | 2.2 | 2026. szeptember 11. | Felvéve a 4. pont: a belső felület (dashboard) felhasználóinak adatkezelése — meghívásos hozzáférés, jelszó + e-mailes kód, eseménynapló IP-cím nélkül. A korábbi 4–6. pont 5–7. lett. A 6. pont kiegészült a belső felület biztonsági intézkedéseivel és az e-mailes második faktor ismert korlátjával. |
 | 1.0 | 2026. szeptember 9. | Első kiállítás. Adatkezelő: Agro-Biotech Kft. Felvéve a webanalitikai adatkezelés és a süti-hozzájárulás. |
 | 2.1 | 2026. szeptember 8. | Google Analytics kivezetve, helyette sütimentes látogatottság-mérés a tárhelyszolgáltatónál. A süti-hozzájárulás és a süti-sáv megszűnt. A Supabase Pro csomaggal a napi mentés és a 7 napos naplómegőrzés biztosított. |

@@ -433,3 +433,13 @@ except Exception as _admin_exc:
     @app.api_route('/api/admin/{rest:path}', methods=['GET', 'POST'])
     async def admin_unavailable(rest: str):
         raise HTTPException(status_code=503, detail='A belső felület jelenleg nem érhető el')
+
+# --- Blog (/blog és /api/admin/blog) -----------------------------------------------
+# Az admin modulra épül (munkamenet, CSRF), ezért utána és ugyanígy védetten töltjük be.
+try:
+    import _blog
+    _blog.configure(supabase_client)
+    app.include_router(_blog.admin_router)
+    app.include_router(_blog.public_router)
+except Exception as _blog_exc:
+    print('A blog modulja nem töltődött be: %r' % (_blog_exc,))

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Blog — stopjeger.hu belső felület</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/admin/admin.css">
+<link rel="stylesheet" href="/admin/blog.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="/admin/vezerlopult/">STOP JÉGER <span>· belső felület</span></a>
+    <nav class="nav" aria-label="Fő menü">
+      <a href="/admin/vezerlopult/">Kezdőlap</a>
+      <a href="/admin/vezerlopult/#dashboard">Dashboard</a>
+      <a href="/admin/blog/" aria-current="page">Blog</a>
+      <a href="/admin/vezerlopult/#felhasznalok" id="navUsers" hidden>Felhasználók</a>
+    </nav>
+    <div class="who">
+      <span class="who-name" id="whoName"></span>
+      <span class="role-badge" id="whoRole"></span>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Sötét/világos téma váltása" title="Sötét/világos téma váltása">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 14.5A8.5 8.5 0 0 1 9.5 3.2a.5.5 0 0 0-.6-.7 9.5 9.5 0 1 0 12.6 12.6.5.5 0 0 0-.7-.6Z"/></svg>
+      </button>
+      <button id="logoutBtn" class="btn btn-ghost btn-sm" type="button">Kijelentkezés</button>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+  <p id="fatal" class="msg error" role="alert" hidden></p>
+
+  <!-- ===================== Bejegyzések listája ===================== -->
+  <section id="viewList" hidden>
+    <div class="view-head">
+      <div>
+        <span class="eyebrow">Tartalom</span>
+        <h1>Blog</h1>
+      </div>
+      <a class="btn" href="#uj">+ Új bejegyzés</a>
+    </div>
+    <p class="muted">A bejegyzések a <a href="/blog" target="_blank" rel="noopener">stopjeger.hu/blog</a> oldalon jelennek meg. Publikálás előtt minden változat átmegy a Tudástárral összekötött tényellenőrzésen.</p>
+    <p id="aiNote" class="msg" hidden>A helyesírás- és a tényellenőrzés még nincs beállítva a szerveren (hiányzik az <code>ANTHROPIC_API_KEY</code>).</p>
+    <article class="card">
+      <div class="table-wrap">
+        <table class="data-table" id="postsTable">
+          <thead><tr><th>Cím</th><th>Állapot</th><th>Utoljára módosítva</th><th>Publikálva</th><th class="num">Műveletek</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p id="listEmpty" class="muted list-empty" hidden>Még nincs bejegyzés. Kezdd az „Új bejegyzés” gombbal.</p>
+      <p id="listMsg" class="msg" role="status" aria-live="polite" hidden></p>
+    </article>
+  </section>
+
+  <!-- ===================== Szerkesztő ===================== -->
+  <section id="viewEditor" hidden>
+    <div class="ed-head">
+      <a class="link-back" href="#">← Bejegyzések</a>
+      <span class="badge" id="edStatus">Vázlat</span>
+      <span class="save-state" id="saveState" role="status" aria-live="polite"></span>
+      <div class="ed-actions">
+        <button class="btn btn-ghost btn-sm" type="button" id="btnDelete" hidden>Törlés</button>
+        <button class="btn btn-ghost btn-sm" type="button" id="btnUnpublish" hidden>Visszavonás a blogról</button>
+        <button class="btn btn-ghost btn-sm" type="button" id="btnSave">Mentés</button>
+        <button class="btn btn-sm" type="button" id="btnPublish">Publikálás…</button>
+      </div>
+    </div>
+
+    <div id="sharePanel" class="share-panel" hidden>
+      <div class="share-panel-head">
+        <b>Kint van a blogon</b>
+        <span class="muted" id="shareChanges" hidden>— a legutóbbi módosítások még nincsenek publikálva</span>
+      </div>
+      <div class="share-url">
+        <input type="text" id="shareUrl" readonly aria-label="A bejegyzés hivatkozása">
+        <button class="btn btn-ghost btn-sm" type="button" id="shareCopy">Link másolása</button>
+        <a class="btn btn-ghost btn-sm" id="shareOpen" href="#" target="_blank" rel="noopener">Megnyitás ↗</a>
+      </div>
+      <div class="share-row" id="shareLinks"></div>
+    </div>
+
+    <p id="edMsg" class="msg" role="status" aria-live="polite" hidden></p>
+
+    <div class="ed-grid">
+      <div class="ed-main">
+        <label class="field title-field"><span>Cím</span>
+          <input type="text" id="postTitle" maxlength="200" placeholder="A bejegyzés címe" autocomplete="off"></label>
+        <div class="field-fix" id="titleFix" hidden></div>
+
+        <div class="toolbar" role="toolbar" aria-label="Szövegformázás és ellenőrzés">
+          <div class="tb-group" role="group" aria-label="Bekezdésformátum">
+            <button type="button" class="tb" data-block="p" title="Normál bekezdés">¶</button>
+            <button type="button" class="tb" data-block="h2" title="Alcím">H2</button>
+            <button type="button" class="tb" data-block="h3" title="Kisebb alcím">H3</button>
+            <button type="button" class="tb" data-block="blockquote" title="Idézet">❝</button>
+          </div>
+          <div class="tb-group" role="group" aria-label="Kiemelés">
+            <button type="button" class="tb tb-b" data-cmd="bold" title="Félkövér (Ctrl+B)">B</button>
+            <button type="button" class="tb tb-i" data-cmd="italic" title="Dőlt (Ctrl+I)">I</button>
+            <button type="button" class="tb" data-cmd="link" title="Hivatkozás">🔗</button>
+            <button type="button" class="tb" data-cmd="insertUnorderedList" title="Felsorolás">• ≡</button>
+            <button type="button" class="tb" data-cmd="insertOrderedList" title="Számozott lista">1. ≡</button>
+          </div>
+          <div class="tb-group" role="group" aria-label="Kép és visszavonás">
+            <button type="button" class="tb tb-wide" id="btnImage" title="Kép feltöltése és beszúrása">Kép</button>
+            <button type="button" class="tb tb-wide" id="btnUndo" title="Az utolsó automatikus módosítás (formázás, javítás) visszavonása" disabled>↶ Vissza</button>
+          </div>
+          <div class="tb-group tb-assist" role="group" aria-label="Szerkesztési segédek">
+            <button type="button" class="tb tb-wide" id="btnFormat" title="Automatikus formázás: alcímek, listák, magyar idézőjel és gondolatjel, felesleges szóközök">✨ Formázás</button>
+            <button type="button" class="tb tb-wide" id="btnSpell" title="Helyesírás-ellenőrzés az utolsó ellenőrzés óta módosított részeken">Aa Helyesírás</button>
+            <button type="button" class="tb tb-wide" id="btnFact" title="Tényellenőrzés a Tudástár alapján">⚖ Tényellenőrzés</button>
+          </div>
+        </div>
+
+        <div class="fix-bar" id="fixBar" hidden>
+          <span><b id="fixCount">0</b> javítási javaslat — <ins class="sj-fix-new">kékkel</ins> az új, <del class="sj-fix-old">pirossal</del> a régi szöveg. Kattints egy javaslatra az egyenkénti döntéshez.</span>
+          <span class="fix-actions">
+            <button type="button" class="btn btn-sm" id="fixAcceptAll">Mind elfogadása</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="fixRejectAll">Mind elvetése</button>
+          </span>
+        </div>
+
+        <div id="editor" class="editor prose" contenteditable="true" role="textbox" aria-multiline="true" aria-label="A bejegyzés szövege" spellcheck="true" lang="hu"></div>
+        <p class="hint editor-hint">Írd vagy másold ide a szöveget. A beillesztett szövegből a felesleges formázás kimarad; a ✨ Formázás gomb rendbe teszi a szerkezetet és a tipográfiát. A helyesírás-ellenőrzés mindig csak az utolsó ellenőrzés óta módosított bekezdéseket nézi (vagy a kijelölteket), a javaslatokat kékkel és pirossal jelöli.</p>
+      </div>
+
+      <aside class="ed-side">
+        <div class="card side-card">
+          <h2>Megjelenés</h2>
+          <label class="field"><span>Bevezető (a listában és megosztáskor látszik)</span>
+            <textarea id="postExcerpt" rows="4" maxlength="400" placeholder="Egy-két mondat, ami kedvet csinál a cikkhez."></textarea></label>
+          <div class="field-fix" id="excerptFix" hidden></div>
+          <p class="hint counter"><span id="excerptCount">0</span>/400 — ha üresen hagyod, a Formázás gomb kitölti az első bekezdésből.</p>
+
+          <div class="cover-box">
+            <span class="field-label">Borítókép (megosztáskor is ez látszik)</span>
+            <figure id="coverPreview" hidden><img alt=""><figcaption></figcaption></figure>
+            <div class="cover-actions">
+              <button type="button" class="btn btn-ghost btn-sm" id="coverSet">Borítókép feltöltése</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="coverRemove" hidden>Eltávolítás</button>
+            </div>
+          </div>
+
+          <label class="field"><span>Szerző a cikk alatt</span>
+            <input type="text" id="postAuthor" maxlength="120" placeholder="STOP JÉGER-kezdeményezés" autocomplete="off"></label>
+          <label class="field"><span>Webcím</span>
+            <span class="slug-wrap"><span class="slug-prefix">stopjeger.hu/blog/</span><input type="text" id="postSlug" maxlength="90" autocomplete="off" spellcheck="false"></span></label>
+          <p class="hint" id="slugHint">A címből készül. Első publikálás után már nem változtatható, mert a megosztott hivatkozások elromlanának.</p>
+        </div>
+
+        <div class="card side-card" id="factCard" hidden>
+          <h2>Tényellenőrzés</h2>
+          <p class="hint" id="factMeta"></p>
+          <p id="factSummary"></p>
+          <ol class="issues" id="factIssues"></ol>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== Képfeltöltés ===================== -->
+<dialog id="dlgImage" class="dlg" aria-labelledby="dlgImageTitle">
+  <form method="dialog" id="formImage" novalidate>
+    <h2 id="dlgImageTitle">Kép feltöltése</h2>
+    <div class="rights-warning" role="note">
+      <b>⚠ Figyelem: a kép jogdíjas lehet!</b>
+      <p>Egy interneten talált fotó, grafika vagy képernyőkép felhasználása engedély nélkül jogsértő lehet — és egy jogvita a kezdeményezés hitelességét is rontja. <b>Csak AI-generált vagy jogdíjmentes képet javaslunk</b> (pl. saját fotó, vagy olyan licenc, ami kereskedelmi felhasználást is enged, forrásmegjelöléssel).</p>
+    </div>
+
+    <label class="field"><span>Kép (JPEG, PNG vagy WebP)</span>
+      <input type="file" id="imgFile" accept="image/jpeg,image/png,image/webp" required></label>
+    <div class="img-preview" id="imgPreview" hidden><img alt=""><span class="hint" id="imgInfo"></span></div>
+
+    <fieldset class="rights">
+      <legend>Honnan származik a kép?</legend>
+      <label><input type="radio" name="rights" value="ai"> AI-generált kép</label>
+      <label><input type="radio" name="rights" value="jogdijmentes"> Jogdíjmentes kép (szabad licenc)</label>
+      <label><input type="radio" name="rights" value="sajat"> Saját készítésű fotó vagy grafika</label>
+    </fieldset>
+
+    <label class="field"><span>Mit ábrázol? (alternatív szöveg, a látássérült olvasóknak)</span>
+      <input type="text" id="imgAlt" maxlength="300" required placeholder="pl. Talajgenerátor egy szántóföld szélén"></label>
+    <label class="field"><span>Képaláírás / forrás</span>
+      <input type="text" id="imgCredit" maxlength="200" placeholder="pl. Fotó: Kovács Anna · CC BY 4.0"></label>
+    <p class="hint">AI-generált képnél a képaláírás jelezze, hogy illusztráció — különben valódi fotónak hiheti az olvasó.</p>
+
+    <label class="confirm"><input type="checkbox" id="imgConfirm"> Megerősítem, hogy a kép felhasználására jogosultak vagyunk, és nem jogdíjas anyag.</label>
+
+    <p id="imgMsg" class="msg" role="status" aria-live="polite" hidden></p>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-ghost" id="imgCancel">Mégse</button>
+      <button type="submit" class="btn" id="imgSubmit">Feltöltés</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ===================== Publikálás / tényellenőrzés eredménye ===================== -->
+<dialog id="dlgPublish" class="dlg dlg-wide" aria-labelledby="dlgPublishTitle">
+  <div>
+    <h2 id="dlgPublishTitle">Publikálás</h2>
+    <p id="pubLead"></p>
+    <ol class="issues" id="pubIssues"></ol>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-ghost" id="pubBack">Vissza a szerkesztéshez</button>
+      <button type="button" class="btn" id="pubGo">Publikálás</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="fix-pop" id="fixPop" role="dialog" aria-label="Javítási javaslat" hidden>
+  <p class="fix-pop-reason" id="fixPopReason"></p>
+  <div class="fix-pop-actions">
+    <button type="button" class="btn btn-sm" id="fixPopAccept">Elfogadom</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="fixPopReject">Elvetem</button>
+  </div>
+</div>
+
+<script src="/admin/common.js"></script>
+<script src="/admin/blog.js"></script>
+</body>
+</html>

@@ -5,3 +5,4 @@ supabase
 python-multipart
 aiofiles
 requests
+anthropic>=1.5.0

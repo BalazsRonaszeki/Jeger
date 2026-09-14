@@ -36,7 +36,9 @@
       credentials: 'same-origin',
       headers: { 'X-Requested-With': 'stopjeger-admin', 'Accept': 'application/json' }
     };
-    if (opts.body !== undefined) {
+    if (opts.form !== undefined) {
+      init.body = opts.form; // FormData: a böngésző állítja be a multipart Content-Type-ot
+    } else if (opts.body !== undefined) {
       init.headers['Content-Type'] = 'application/json';
       init.body = JSON.stringify(opts.body);
     }

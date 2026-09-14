@@ -16,6 +16,7 @@
     <nav class="nav" aria-label="Fő menü">
       <a href="#" data-nav="home">Kezdőlap</a>
       <a href="#dashboard" data-nav="dashboard">Dashboard</a>
+      <a href="/admin/blog/">Blog</a>
       <a href="#felhasznalok" data-nav="users" id="navUsers" hidden>Felhasználók</a>
     </nav>
     <div class="who">
@@ -45,11 +46,12 @@
         <span class="tile-desc">Látogatók, kérdőív-kitöltések és hírlevél-feliratkozások napi bontásban, tetszőleges időszakra.</span>
         <span class="tile-go">Megnyitás →</span>
       </a>
-      <div class="tile is-disabled" aria-disabled="true">
-        <span class="tile-kicker">Tartalom <span class="badge warn">Fejlesztés alatt</span></span>
+      <a class="tile" href="/admin/blog/">
+        <span class="tile-kicker">Tartalom</span>
         <b>Blog</b>
-        <span class="tile-desc">Bejegyzések írása, szerkesztése és közzététele. Hamarosan elérhető.</span>
-      </div>
+        <span class="tile-desc">Bejegyzések írása helyesírás- és tényellenőrzéssel, képfeltöltés, publikálás a stopjeger.hu/blog oldalra.</span>
+        <span class="tile-go">Megnyitás →</span>
+      </a>
       <a class="tile" href="#felhasznalok" id="tileUsers" hidden>
         <span class="tile-kicker">Hozzáférés</span>
         <b>Felhasználók</b>

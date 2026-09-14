@@ -42,6 +42,10 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `GET /api/admin/session`, `GET /api/admin/stats?from=&to=` | Munkamenet-állapot; dashboard (napi összesítők, max. 366 nap). |
 | `GET /api/admin/users`, `POST /api/admin/users/invite`, `/users/{id}/disable\|enable\|resend` | Felhasználókezelés (csak admin). |
 | `POST /api/admin/bootstrap` | Az **első** admin meghívása `X-Admin-Password` fejléccel; csak amíg nincs admin. |
+| `GET/POST /api/admin/blog/posts`, `/posts/{id}`, `/posts/{id}/delete` | Blogbejegyzések listája, létrehozása, mentése (verziószámos ütközésvédelem), vázlat törlése. |
+| `POST /api/admin/blog/spellcheck`, `/posts/{id}/factcheck` | Helyesírás- és tényellenőrzés (Claude API; a tényellenőrzés a Tudástárral dolgozik). |
+| `POST /api/admin/blog/posts/{id}/publish`, `/unpublish`, `POST /api/admin/blog/images` | Publikálás (friss tényellenőrzés-token kell), visszavonás, képfeltöltés jogcímmel. |
+| `GET /blog`, `/blog/{slug}`, `/blog/kepek/{id}.jpg`, `/blog/rss.xml`, `/blog/sitemap.xml` | A nyilvános blog (szerveroldalon renderelve, megosztási előnézettel). |
 
 ```bash
 curl -H "X-Admin-Password: <jelszo>" \
@@ -74,6 +78,9 @@ Environment változók (Vercel → Project → Settings → Environment Variable
 | `VERCEL_API_TOKEN` | a dashboard látogatószámaihoz: Vercel access token |
 | `VERCEL_PROJECT_ID` | a Vercel-projekt azonosítója |
 | `VERCEL_TEAM_ID` | csak ha a projekt team alatt van |
+| `ANTHROPIC_API_KEY` | **blog:** a helyesírás- és tényellenőrzéshez — nélküle a két gomb 503-at ad, és publikálni csak ellenőrzés nélkül (naplózva) lehet |
+| `BLOG_AI_MODEL` | opcionális, default `claude-opus-5` |
+| `BLOG_SPELL_EFFORT`, `BLOG_FACTCHECK_EFFORT` | opcionális, default `medium`, ill. `high` |
 
 ## Belső felület (`/admin`)
 
@@ -110,6 +117,35 @@ jelszó-visszaállító levél — a munkatársak postafiókján ezért külön�
    ```
 
    A további munkatársakat az admin a felületről hívja meg.
+
+## Blog (`/admin/blog/` → `stopjeger.hu/blog`)
+
+Kód: `api/_blog.py`, felület: `admin/blog/`, `admin/blog.js`, nyilvános stílus: `assets/blog/`,
+tesztek: `python -m unittest backend/tests/test_blog.py -v`.
+
+- **Szerkesztő:** beillesztéskor a felesleges formázás kimarad; **✨ Formázás** (alcímek, listák, magyar
+  idézőjel és gondolatjel, szóközök, üres cím/bevezető kitöltése — visszavonható); képfeltöltés
+  jogcímmel és a jogdíjas képekre figyelmeztetéssel (a böngésző 1600 px-es JPEG-be kódolja újra, ami
+  a helyadatokat is eltávolítja); automatikus mentés.
+- **Helyesírás:** mindig csak az utolsó ellenőrzés óta módosított bekezdések (vagy a kijelöltek) mennek
+  el; a javaslat kékkel (új) és pirossal áthúzva (régi) jelenik meg, egyenként vagy együtt elfogadható.
+  Elfogadatlan javaslattal nem lehet publikálni.
+- **Tényellenőrzés:** a nyilvános `/tudastar` oldal forrásait kapja referenciaként. Publikáláskor
+  mindig lefut; vitatható állításnál felugró ablak: *Vissza a szerkesztéshez* vagy *Figyelmen kívül
+  hagyom és publikálom* (naplózva, a bejegyzés `fact_check` mezőjében is). A token a mentett tartalom
+  hash-éhez kötött — ha közben változott a szöveg, újra kell ellenőrizni.
+- **Publikálás:** a nyilvános oldal a publikáláskor rögzített változatot mutatja; egy kint lévő cikk
+  szerkesztése csak újabb ellenőrzés + publikálás után látszik. A webcím az első publikálás után rögzül.
+- **Megosztás:** Facebook, X, LinkedIn, e-mail és link másolása — sima hivatkozások, külső szkript
+  és süti nélkül. A `/blog` oldalak szigorú CSP-vel mennek ki; a CDN 60 mp-ig gyorsítótáraz.
+
+**Élesítés lépései:**
+
+1. Supabase → SQL Editor: `backend/migrations/2026-09-14_blog.sql` egyben, majd a fájl végén lévő
+   **ellenőrző lekérdezés** — minden sornak `ok`-nak kell lennie (a `blog-kepek` tárhely is).
+2. Vercel env: `ANTHROPIC_API_KEY`, majd redeploy. (A `vercel.json` a függvény időkorlátját 300 mp-re
+   emeli, mert egy hosszabb cikk tényellenőrzése 1-2 percig is tarthat.)
+3. Adatfeldolgozói feltételek elfogadása az Anthropicnál (l. az adatkezelési nyilvántartás 4. pontját).
 
 ## DNS (WebSupport)
 
