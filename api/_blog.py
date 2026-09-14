@@ -1170,6 +1170,25 @@ THEME_TOGGLE = (
     '</button>')
 
 
+NEWSLETTER = (
+    '<section class="newsletter" id="hirlevel" aria-labelledby="hirlevelCim"><div class="wrap narrow"><div class="nl-box">'
+    '<div class="nl-text"><h2 id="hirlevelCim">Hírlevél</h2>'
+    '<p>Szólunk, ha új bejegyzés jelenik meg, vagy fontos fejlemény történik a jégeső-elhárítás ügyében.</p></div>'
+    '<button class="nl-open" type="button" aria-expanded="false" aria-controls="nlForm" hidden>Feliratkozás a hírlevélre</button>'
+    '<form class="nl-form" id="nlForm" action="/api/subscribe" method="post" novalidate>'
+    '<label class="nl-field"><span>E-mail-cím</span>'
+    '<input type="email" name="email" autocomplete="email" required placeholder="nev@example.com"></label>'
+    '<input class="nl-hp" type="text" name="hp_field" tabindex="-1" autocomplete="off" aria-hidden="true">'
+    '<label class="nl-consent"><input type="checkbox" name="consent" required>'
+    '<span>Hozzájárulok, hogy az e-mail-címemet a JÉGER és más időjárás-befolyásoló rendszerek ügyében küldött '
+    'tájékoztatáshoz felhasználjátok. Bármikor leiratkozhatok. Részletek: '
+    '<a href="/adatkezeles.html">adatkezelési tájékoztató</a>.</span></label>'
+    '<button class="nl-submit" type="submit">Feliratkozás a hírlevélre</button>'
+    '<p class="nl-status" role="status" aria-live="polite"></p>'
+    '</form></div></div></section>'
+)
+
+
 def share_links(url, title, excerpt=''):
     """A megosztó hivatkozások. Sima linkek: külső szkript nem töltődik, adat csak kattintásra megy ki."""
     from urllib.parse import quote
@@ -1216,6 +1235,7 @@ def page(title, description, canonical, body, og_image=None, og_type='website', 
     ) % {'title': _esc(title), 'og_title': _esc(og_title or title), 'desc': _esc(description), 'url': _esc(canonical), 'type': og_type,
          'image': _esc(image), 'extra': extra_head}
     foot = (
+        NEWSLETTER +
         '<footer class="site-foot"><div class="wrap">STOP JÉGER-kezdeményezés · <a href="/">Főoldal</a> · '
         '<a href="/blog">Blog</a> · <a href="/tudastar">Tudástár</a> · <a href="/kerdoiv">Kérdőív</a> · '
         '<a href="/adatkezeles.html">Adatkezelési tájékoztató</a></div></footer>'
@@ -1230,7 +1250,8 @@ def html_response(markup, status=200, cache=PUBLIC_CACHE):
 
 
 def not_found_page():
-    body = ('<header class="hero"><div class="wrap narrow"><a class="back" href="/blog">← a blog összes bejegyzése</a>'
+    body = ('<header class="hero"><div class="wrap narrow"><nav class="crumbs" aria-label="Navigáció">'
+            '<a href="/">← stopjeger.hu főoldal</a><span aria-hidden="true">·</span><a href="/blog">a blog összes bejegyzése</a></nav>'
             '<div class="eyebrow">Blog</div><h1>Ez a bejegyzés nem érhető el</h1>'
             '<p class="lede">Lehet, hogy a hivatkozás elírás, vagy a bejegyzést visszavonták.</p></div></header>')
     return html_response(page('Nem található — STOP JÉGER blog', 'A keresett bejegyzés nem érhető el.',
@@ -1278,7 +1299,8 @@ def blog_index(oldal: int = 1):
     if page_no * PAGE_SIZE < total:
         pager.append('<a href="/blog?oldal=%d">Régebbi bejegyzések →</a>' % (page_no + 1))
     body = (
-        '<header class="hero"><div class="wrap"><a class="back" href="/">← vissza a főoldalra</a>'
+        '<header class="hero"><div class="wrap"><nav class="crumbs" aria-label="Navigáció">'
+        '<a href="/">← stopjeger.hu főoldal</a></nav>'
         '<div class="eyebrow">STOP JÉGER-kezdeményezés &nbsp;·&nbsp; Blog</div><h1>Blog</h1>'
         '<p class="lede">Hírek, elemzések és háttéranyagok a jégeső-elhárításról — mindig forrással. '
         'Az állításaink tudományos hátterét a <a href="/tudastar">Tudástárban</a> gyűjtjük.</p></div></header>'
@@ -1381,11 +1403,15 @@ def blog_post(slug: str):
                   .replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026'))
 
     body = (
-        '<header class="hero"><div class="wrap narrow"><a class="back" href="/blog">← a blog összes bejegyzése</a>'
+        '<header class="hero"><div class="wrap narrow"><nav class="crumbs" aria-label="Navigáció">'
+        '<a href="/">← stopjeger.hu főoldal</a><span aria-hidden="true">·</span><a href="/blog">a blog összes bejegyzése</a></nav>'
         '<div class="eyebrow">STOP JÉGER-kezdeményezés &nbsp;·&nbsp; Blog</div><h1>%(title)s</h1>%(lede)s'
         '<div class="byline">%(byline)s</div>%(share_top)s</div></header>'
         '<main class="wrap narrow">%(cover)s<article class="prose">%(body)s</article>'
         '<section class="share-end"><h2>Hasznosnak találtad? Oszd meg!</h2>%(share_end)s</section>'
+        '<aside class="cta cta-home"><div><b>Ismered a stopjeger.hu oldalt?</b><p>Ezen az oldalon találsz mindent, '
+        'amit a magyarországi szabályozatlan időjárás-manipulációról összeszedtünk.</p></div>'
+        '<a class="cta-btn" href="/">Irány a főoldal →</a></aside>'
         '<aside class="cta"><div><b>Honnan tudjuk?</b><p>Az állításaink forrásait, korlátaikkal együtt, a Tudástárban gyűjtjük.</p></div>'
         '<a class="cta-btn" href="/tudastar">Tudástár →</a></aside></main>'
     ) % {'title': _esc(title), 'lede': ('<p class="lede">%s</p>' % _esc(excerpt)) if excerpt else '',

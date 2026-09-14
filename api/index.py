@@ -1,4 +1,5 @@
 import os
+import re
 import secrets
 import time
 import uuid
@@ -117,15 +118,27 @@ def brevo_ready():
     return bool(BREVO_API_KEY)
 
 
-def send_confirmation_email(address: str, token: str) -> bool:
+EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
+# A megerősítő levél első bekezdése aszerint, hol iratkozott fel.
+CONFIRM_INTRO = {
+    'kerdoiv': ('Köszönjük, hogy kitöltötte a JÉGER-kérdőívet, és kérte a tájékoztatást '
+                'a kezdeményezés fejleményeiről.',
+                'Koszonjuk, hogy kitoltotte a JEGER-kerdoivet es kerte a tajekoztatast.'),
+    'blog': ('Köszönjük, hogy feliratkozott a JÉGER-kezdeményezés hírlevelére a stopjeger.hu blogján.',
+             'Koszonjuk, hogy feliratkozott a JEGER-kezdemenyezes hirlevelere a stopjeger.hu blogjan.'),
+}
+
+
+def send_confirmation_email(address: str, token: str, source: str = 'kerdoiv') -> bool:
     if not brevo_ready():
         return False
 
+    intro_html, intro_text = CONFIRM_INTRO.get(source, CONFIRM_INTRO['kerdoiv'])
     link = '%s/api/confirm?token=%s' % (SITE_URL, token)
     html = (
         '<p>Kedves Olvasónk!</p>'
-        '<p>Köszönjük, hogy kitöltötte a JÉGER-kérdőívet, és kérte a tájékoztatást '
-        'a kezdeményezés fejleményeiről.</p>'
+        '<p>' + intro_html + '</p>'
         '<p><b>Egy lépés maradt:</b> erősítse meg a feliratkozását az alábbi hivatkozással.</p>'
         '<p><a href="%s" style="display:inline-block;padding:12px 22px;background:#b3560a;'
         'color:#fff;text-decoration:none;border-radius:8px;font-weight:600">'
@@ -140,8 +153,7 @@ def send_confirmation_email(address: str, token: str) -> bool:
     ) % (link, link)
 
     text = (
-        'Kedves Olvasonk!\n\n'
-        'Koszonjuk, hogy kitoltotte a JEGER-kerdoivet es kerte a tajekoztatast.\n\n'
+        'Kedves Olvasonk!\n\n' + intro_text + '\n\n'
         'Egy lepes maradt - erositse meg a feliratkozasat:\n%s\n\n'
         'A hivatkozas 48 oraig ervenyes. Ha nem On kerte, hagyja figyelmen kivul ezt a levelet.\n'
         'Leiratkozas barmikor: info@stopjeger.hu\n'
@@ -311,6 +323,52 @@ async def survey(request: Request,
             })
 
     return JSONResponse({'ok': True, 'subscribed': subscribed})
+
+
+@app.post('/api/subscribe')
+async def subscribe(request: Request,
+                    email: str = Form(None),
+                    consent: str = Form(None),
+                    hp_field: str = Form(None)):
+    """Önálló hírlevél-feliratkozás (a blog oldalairól). Ugyanaz a kettős opt-in, mint a kérdőívnél.
+
+    A válasz szándékosan ugyanaz akkor is, ha a cím már szerepel: így az űrlapból nem puhatolható
+    ki, ki van feliratkozva.
+    """
+    if hp_field:
+        raise HTTPException(status_code=400, detail='Érvénytelen beküldés')
+
+    ip = ip_from_request(request)
+    if not check_rate(ip):
+        raise HTTPException(status_code=429, detail='Túl sok kérést küldött, kérjük próbálja később')
+
+    address = (email or '').strip().lower()
+    if not EMAIL_RE.match(address) or len(address) > 254:
+        raise HTTPException(status_code=400, detail='Adj meg egy érvényes e-mail-címet.')
+    if consent not in ('on', 'yes'):
+        raise HTTPException(status_code=400, detail='A feliratkozáshoz el kell fogadnod a hozzájárulást.')
+
+    if not supabase_client:
+        raise HTTPException(status_code=503, detail='A szolgáltatás jelenleg nem érhető el')
+
+    try:
+        res = supabase_client.table('subscribers').insert({
+            'email': address,
+            'source': 'blog',
+            'consent': True,
+        }).execute()
+        token = (res.data or [{}])[0].get('confirm_token')
+    except Exception as exc:
+        detail = str(exc)
+        if 'subscribers_email_key' in detail or 'duplicate key' in detail or '23505' in detail:
+            token = token_for_existing(address)  # már megerősített címnél None: nem küldünk újra
+        else:
+            raise HTTPException(status_code=500, detail='A feliratkozás most nem sikerült, kérjük próbáld újra később.')
+
+    if token and not send_confirmation_email(address, token, 'blog'):
+        return JSONResponse({'ok': True, 'warning': 'A megerősítő levelet most nem sikerült elküldeni. Próbáld újra később.'})
+
+    return JSONResponse({'ok': True})
 
 
 @app.get('/api/confirm')

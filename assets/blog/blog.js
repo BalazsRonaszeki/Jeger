@@ -50,6 +50,41 @@
     });
   });
 
+  // Hírlevél: a gomb nyitja az űrlapot; beküldés fetch-csel, oldalfrissítés nélkül.
+  var nlOpen = document.querySelector('.nl-open');
+  var nlForm = document.getElementById('nlForm');
+  if (nlOpen && nlForm) {
+    nlOpen.hidden = false;
+    nlForm.hidden = true;
+    nlOpen.addEventListener('click', function () {
+      nlForm.hidden = false;
+      nlOpen.hidden = true;
+      nlOpen.setAttribute('aria-expanded', 'true');
+      nlForm.querySelector('input[type=email]').focus();
+    });
+    var nlStatus = nlForm.querySelector('.nl-status');
+    var say = function (text, kind) { nlStatus.textContent = text; nlStatus.className = 'nl-status' + (kind ? ' ' + kind : ''); };
+    nlForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var email = nlForm.elements.email.value.trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { say('Adj meg egy érvényes e-mail-címet.', 'error'); return; }
+      if (!nlForm.elements.consent.checked) { say('A feliratkozáshoz fogadd el a hozzájárulást.', 'error'); return; }
+      var btn = nlForm.querySelector('.nl-submit');
+      btn.disabled = true;
+      say('Feliratkozás…');
+      fetch('/api/subscribe', { method: 'POST', body: new FormData(nlForm), headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, data: d }; }); })
+        .then(function (res) {
+          if (!res.ok) { say(res.data.detail || 'A feliratkozás most nem sikerült. Próbáld újra később.', 'error'); return; }
+          if (res.data.warning) { say(res.data.warning, 'error'); return; }
+          nlForm.reset();
+          say('Köszönjük! Küldtünk egy megerősítő levelet — a feliratkozás a benne lévő hivatkozásra kattintva lesz érvényes.', 'ok');
+        })
+        .catch(function () { say('Nem sikerült elérni a szervert. Ellenőrizd az internetkapcsolatot.', 'error'); })
+        .then(function () { btn.disabled = false; });
+    });
+  }
+
   if (navigator.share) {
     document.querySelectorAll('.share-native').forEach(function (btn) {
       btn.hidden = false;

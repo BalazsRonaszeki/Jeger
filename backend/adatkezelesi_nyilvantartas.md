@@ -14,7 +14,7 @@
 | **Adószám** | 32031973-2-07 |
 | **Kapcsolattartás adatvédelmi ügyekben** | info@stopjeger.hu |
 | **Adatvédelmi tisztviselő** | Nem kijelölt — l. az 5.2. pont indokolását |
-| **A nyilvántartás verziója** | 2.3 |
+| **A nyilvántartás verziója** | 2.4 |
 | **Hatályos** | 2026. szeptember 14. |
 | **Következő felülvizsgálat** | 2027. szeptember 8., illetve minden új adatfeldolgozó bevonásakor |
 
@@ -25,8 +25,8 @@
 | Szempont | Tartalom |
 |---|---|
 | **Az adatkezelés célja** | A kezdeményezés fejleményeiről szóló tájékoztató levelek küldése azoknak, akik ezt kérték |
-| **Jogalap** | GDPR 6. cikk (1) a) — az érintett hozzájárulása (a kérdőív végén, önálló jelölőnégyzettel, az e-mail-cím megadásával együtt) |
-| **Érintettek kategóriái** | Azok a kérdőívkitöltők, akik a tájékoztatást kérték és e-mail-címet adtak meg |
+| **Jogalap** | GDPR 6. cikk (1) a) — az érintett hozzájárulása (a kérdőív végén, vagy a blog oldalainak alján lévő feliratkozó űrlapon; mindkét helyen önálló jelölőnégyzettel, az e-mail-cím megadásával együtt) |
+| **Érintettek kategóriái** | Azok a kérdőívkitöltők és blogolvasók, akik a tájékoztatást kérték és e-mail-címet adtak meg |
 | **Személyes adatok kategóriái** | E-mail-cím; a feliratkozás forrása; a hozzájárulás ténye és időpontja; a megerősítés ténye és időpontja; leiratkozás ténye és időpontja |
 | **Címzettek kategóriái** | Adatfeldolgozók: Supabase, Inc. (adatbázis); Vercel Inc. (webkiszolgálás); Sendinblue SAS / Brevo (levélküldés) |
 | **Harmadik országba továbbítás** | Vercel Inc. (USA) — a beküldés pillanatában átmeneti áthaladás. Garancia: SCC a Vercel DPA-jában. Tárolás kizárólag az EU-ban (Supabase, eu-west-1, Írország). A levélküldő EU-s adatközpontot használ. |
@@ -194,6 +194,7 @@ kell vezetni, amely tartalmazza az incidens tényeit, hatásait és a megtett in
 
 | Verzió | Dátum | Változás |
 |---|---|---|
+| 2.4 | 2026. szeptember 14. | Az 1. pont kiegészült: hírlevélre a blog oldalain lévő önálló űrlapon is fel lehet iratkozni (`subscribers.source = 'blog'`), ugyanazzal a hozzájárulással és megerősítő levéllel. Az adatkezelési tájékoztató 2.2. pontja ennek megfelelően frissítve (2.1 verzió). |
 | 2.3 | 2026. szeptember 14. | A 4. pont kiegészült a blogszerkesztéssel: szerzőségi és publikálási napló, képfeltöltés jogcímmel, új adatfeldolgozó az Anthropic (helyesírás- és tényellenőrzés). A nyilvános blog nem használ sütit és külső erőforrást; a megosztó gombok sima hivatkozások. |
 | 2.2 | 2026. szeptember 11. | Felvéve a 4. pont: a belső felület (dashboard) felhasználóinak adatkezelése — meghívásos hozzáférés, jelszó + e-mailes kód, eseménynapló IP-cím nélkül. A korábbi 4–6. pont 5–7. lett. A 6. pont kiegészült a belső felület biztonsági intézkedéseivel és az e-mailes második faktor ismert korlátjával. |
 | 1.0 | 2026. szeptember 9. | Első kiállítás. Adatkezelő: Agro-Biotech Kft. Felvéve a webanalitikai adatkezelés és a süti-hozzájárulás. |
