@@ -984,6 +984,31 @@ def _me_out(user):
     return {'id': user['id'], 'name': user.get('name') or '', 'photo_id': user.get('photo_id')}
 
 
+class PhotoBody(BaseModel):
+    photo_id: str = ''   # '': a fotó törlése
+
+
+@admin_router.post('/users/{user_id}/photo', dependencies=[Depends(require_same_origin)])
+def user_photo(user_id: str, body: PhotoBody, admin=Depends(require_admin)):
+    """Adminisztrátor állítja be egy munkatárs profilfotóját (a munkatárs hozzájárulásával)."""
+    photo = (body.photo_id or '').strip().lower()
+    if photo and not UUID_RE.match(photo):
+        raise HTTPException(status_code=400, detail='Érvénytelen fotó.')
+    if not UUID_RE.match((user_id or '').lower()):
+        raise HTTPException(status_code=404, detail='Nincs ilyen felhasználó.')
+    try:
+        target = _admin.store.get_user(user_id.lower())
+        if not target:
+            raise HTTPException(status_code=404, detail='Nincs ilyen felhasználó.')
+        _admin.store.update_user(target['id'], {'photo_id': photo or None})
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=503, detail='A fotót nem sikerült beállítani. Lefutott a 2026-09-14_szerzok_es_valaszmegoszlas.sql migráció?')
+    safe_audit(admin['id'], 'user_photo_set' if photo else 'user_photo_removed', target['email'])
+    return no_store({'ok': True, 'photo_id': photo or None})
+
+
 @admin_router.get('/authors')
 def authors_list(user=Depends(current_user)):
     try:

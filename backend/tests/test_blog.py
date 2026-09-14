@@ -401,6 +401,22 @@ class BlogApiTests(test_admin.AdminTests):
         r = self.client.post('/api/admin/blog/posts', json={'title': 'x', 'author_id': str(uuid.uuid4())}, headers=H)
         self.assertEqual(r.status_code, 400)  # nem létező munkatárs
 
+    def test_admin_sets_photo_for_user_editor_cannot(self):
+        editor = self.editor()
+        target = self.store.insert_user({'email': 'lucia@example.org', 'name': 'Pártai Lucia', 'status': 'active'})
+        photo = str(uuid.uuid4())
+        url = '/api/admin/blog/users/%s/photo' % target['id']
+        self.assertEqual(self.client.post(url, json={'photo_id': photo}, headers=H).status_code, 403)
+        self.client.post('/api/admin/logout', headers=H)
+        self.editor(role='admin', email='admin@example.org')
+        r = self.client.post(url, json={'photo_id': photo}, headers=H)
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertEqual(self.store.users[target['id']]['photo_id'], photo)
+        self.assertIn(('user_photo_set', 'lucia@example.org'), [(a, d) for _, a, d in self.store.log])
+        self.assertEqual(self.client.post(url, json={'photo_id': ''}, headers=H).status_code, 200)
+        self.assertIsNone(self.store.users[target['id']]['photo_id'])
+        self.assertEqual(self.client.post('/api/admin/blog/users/%s/photo' % uuid.uuid4(), json={}, headers=H).status_code, 404)
+
     def test_delete_only_drafts(self):
         self.editor()
         post = self.create()

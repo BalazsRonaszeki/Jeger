@@ -226,7 +226,7 @@ class SupabaseStore:
 
     def list_users(self):
         return self.c.table('admin_users').select(
-            'id,email,name,role,status,created_at,activated_at,last_login_at'
+            'id,email,name,role,status,created_at,activated_at,last_login_at,photo_id'
         ).order('created_at').execute().data or []
 
     def count_admins(self):

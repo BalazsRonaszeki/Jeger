@@ -177,7 +177,7 @@
       <div class="table-wrap">
         <table class="data-table" id="usersTable">
           <thead>
-            <tr><th>Név</th><th>E-mail</th><th>Szerepkör</th><th>Állapot</th><th>Utolsó belépés</th><th class="num">Műveletek</th></tr>
+            <tr><th><span class="visually-hidden">Fotó</span></th><th>Név</th><th>E-mail</th><th>Szerepkör</th><th>Állapot</th><th>Utolsó belépés</th><th class="num">Műveletek</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -186,6 +186,8 @@
     </article>
   </section>
 </main>
+
+<input type="file" id="userPhotoFile" accept="image/jpeg,image/png,image/webp" hidden>
 
 <script src="/admin/common.js"></script>
 <script src="/admin/panel.js"></script>

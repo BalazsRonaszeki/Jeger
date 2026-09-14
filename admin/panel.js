@@ -408,7 +408,19 @@
         } else {
           actions.appendChild(node('span', { class: 'muted', text: 'te' }));
         }
+        if (u.status !== 'disabled') {
+          actions.insertBefore(node('button', { type: 'button', class: 'btn btn-ghost btn-sm', text: u.photo_id ? 'Fotó cseréje' : 'Fotó',
+            onclick: function () { pickUserPhoto(u); } }), actions.firstChild);
+          if (u.photo_id) {
+            actions.insertBefore(node('button', { type: 'button', class: 'btn btn-ghost btn-sm', text: 'Fotó törlése',
+              onclick: function () { setUserPhoto(u, ''); } }), actions.children[1]);
+          }
+        }
+        var avatar = node('span', { class: 'user-avatar' });
+        if (u.photo_id) avatar.appendChild(node('img', { src: '/blog/kepek/' + u.photo_id + '.jpg', alt: '' }));
+        else avatar.textContent = (u.name || u.email).split(/\s+/).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join('');
         tbody.appendChild(node('tr', {}, [
+          node('td', {}, [avatar]),
           node('td', { text: u.name || '—' }),
           node('td', { text: u.email }),
           node('td', { text: ROLE[u.role] || u.role }),
@@ -422,6 +434,67 @@
       if (handleAuthError(e)) return;
       SJ.showMsg($('usersMsg'), e.message, 'error');
     }
+  }
+
+  /* ---- profilfotó beállítása egy munkatársnak ---- */
+  var photoTarget = null;
+
+  function pickUserPhoto(u) {
+    if (!u.name) { SJ.showMsg($('usersMsg'), 'Előbb legyen neve a felhasználónak (a Blog → A profilod dobozban adhatja meg).', 'error'); return; }
+    if (!window.confirm((u.name) + ' fotója nyilvánosan megjelenik a bejegyzései alatt. Hozzájárult ehhez?')) return;
+    photoTarget = u;
+    $('userPhotoFile').value = '';
+    $('userPhotoFile').click();
+  }
+
+  $('userPhotoFile').addEventListener('change', async function () {
+    var file = $('userPhotoFile').files[0];
+    var u = photoTarget;
+    if (!file || !u) return;
+    SJ.showMsg($('usersMsg'), 'Fotó feltöltése…');
+    try {
+      var blob = await squareJpeg(file, 480);
+      var form = new FormData();
+      form.append('file', blob, 'profil.jpg');
+      form.append('rights', 'sajat');
+      form.append('confirm', 'on');
+      form.append('alt', u.name + ' portréja');
+      var img = await SJ.api('/blog/images', { method: 'POST', form: form });
+      await setUserPhoto(u, img.id);
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      SJ.showMsg($('usersMsg'), e.message, 'error');
+    }
+  });
+
+  async function setUserPhoto(u, photoId) {
+    try {
+      await SJ.api('/blog/users/' + encodeURIComponent(u.id) + '/photo', { method: 'POST', body: { photo_id: photoId } });
+      await loadUsers();
+      SJ.showMsg($('usersMsg'), (photoId ? 'Fotó beállítva: ' : 'Fotó törölve: ') + u.name, 'ok');
+    } catch (e) {
+      if (handleAuthError(e)) return;
+      SJ.showMsg($('usersMsg'), e.message, 'error');
+    }
+  }
+
+  /* Középről négyzetesre vágott JPEG; az újrakódolás a helyadatokat (EXIF/GPS) is eltávolítja. */
+  async function squareJpeg(file, size) {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('JPEG, PNG vagy WebP képet válassz.');
+    var bitmap;
+    try { bitmap = await createImageBitmap(file); } catch (e) { throw new Error('Ezt a képet nem sikerült beolvasni.'); }
+    var side = Math.min(bitmap.width, bitmap.height);
+    var out = Math.min(size, side);
+    var canvas = document.createElement('canvas');
+    canvas.width = canvas.height = out;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, out, out);
+    ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, out, out);
+    if (bitmap.close) bitmap.close();
+    var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/jpeg', 0.88); });
+    if (!blob) throw new Error('A képet nem sikerült előkészíteni.');
+    return blob;
   }
 
   function actionBtn(label, user, action, cls) {
