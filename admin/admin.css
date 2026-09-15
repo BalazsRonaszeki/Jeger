@@ -230,3 +230,50 @@ a.tile:hover{transform:translateY(-2px); border-color:var(--accent); color:inher
 @media (prefers-reduced-motion: reduce){
   .tile,#dashBody{transition:none}
 }
+
+/* ---------- képkivágó (cropper.js) ---------- */
+.crop-dlg{
+  width:min(52rem, calc(100vw - 2rem)); max-height:calc(100vh - 2rem); overflow:auto; border:1px solid var(--line); border-radius:14px;
+  background:var(--surface); color:var(--ink); padding:1.2rem 1.3rem; box-shadow:var(--shadow);
+}
+.crop-dlg::backdrop{background:rgba(10,15,12,.6)}
+.crop-dlg h2{font-size:1.25rem; margin-bottom:.7rem}
+.crop-ratios{display:flex; flex-wrap:wrap; gap:.35rem; margin:0 0 .7rem}
+.crop-ratio{font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.74rem; font-weight:600; padding:.35rem .7rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); cursor:pointer}
+.crop-ratio:hover{border-color:var(--accent); color:var(--accent)}
+.crop-ratio[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.crop-ratio:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+/* a sötétítés és a sarokfogantyúk a kép szélén túl is látszanak, a keretet a külső doboz vágja le */
+.crop-wrap{display:flex; justify-content:center; background:var(--surface-2); border-radius:10px; padding:.9rem; overflow:hidden}
+.crop-stage{position:relative; line-height:0; touch-action:none; user-select:none; -webkit-user-select:none; cursor:crosshair}
+.crop-stage canvas{display:block; max-width:100%; max-height:min(60vh, 36rem); width:auto; height:auto}
+.crop-box{
+  position:absolute; box-sizing:border-box; border:2px solid #fff; cursor:move; touch-action:none;
+  box-shadow:0 0 0 1px rgba(0,0,0,.35), 0 0 0 100vmax rgba(8,12,10,.58);
+  /* harmadolóvonalak */
+  background:
+    linear-gradient(to right, transparent calc(33.333% - .5px), rgba(255,255,255,.45) calc(33.333% - .5px), rgba(255,255,255,.45) calc(33.333% + .5px), transparent calc(33.333% + .5px), transparent calc(66.666% - .5px), rgba(255,255,255,.45) calc(66.666% - .5px), rgba(255,255,255,.45) calc(66.666% + .5px), transparent calc(66.666% + .5px)),
+    linear-gradient(to bottom, transparent calc(33.333% - .5px), rgba(255,255,255,.45) calc(33.333% - .5px), rgba(255,255,255,.45) calc(33.333% + .5px), transparent calc(33.333% + .5px), transparent calc(66.666% - .5px), rgba(255,255,255,.45) calc(66.666% - .5px), rgba(255,255,255,.45) calc(66.666% + .5px), transparent calc(66.666% + .5px));
+}
+.crop-box:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.crop-box.is-round{border-radius:50%}
+.crop-stage.is-dragging,.crop-stage.is-dragging .crop-box{cursor:grabbing}
+.crop-handle{position:absolute; width:26px; height:26px; touch-action:none}
+.crop-handle::after{content:""; position:absolute; left:50%; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; background:#fff; border:1px solid rgba(0,0,0,.45); border-radius:2px}
+.crop-nw{left:-13px; top:-13px; cursor:nwse-resize}
+.crop-se{right:-13px; bottom:-13px; cursor:nwse-resize}
+.crop-ne{right:-13px; top:-13px; cursor:nesw-resize}
+.crop-sw{left:-13px; bottom:-13px; cursor:nesw-resize}
+.crop-box.is-round .crop-nw{left:calc(14.6% - 13px); top:calc(14.6% - 13px)}
+.crop-box.is-round .crop-ne{right:calc(14.6% - 13px); top:calc(14.6% - 13px)}
+.crop-box.is-round .crop-sw{left:calc(14.6% - 13px); bottom:calc(14.6% - 13px)}
+.crop-box.is-round .crop-se{right:calc(14.6% - 13px); bottom:calc(14.6% - 13px)}
+.crop-hint{margin:.7rem 0 0}
+.crop-info{margin:.3rem 0 0; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.76rem}
+.crop-info.crop-warn{color:var(--warn)}
+.crop-actions{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-top:1rem}
+.crop-spacer{flex:1}
+@media (max-width: 480px){
+  .crop-dlg{padding:1rem .9rem}
+  .crop-stage canvas{max-height:50vh}
+}

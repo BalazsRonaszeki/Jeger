@@ -451,11 +451,17 @@
     var file = $('userPhotoFile').files[0];
     var u = photoTarget;
     if (!file || !u) return;
-    SJ.showMsg($('usersMsg'), 'Fotó feltöltése…');
+    SJ.showMsg($('usersMsg'), '');
     try {
-      var blob = await squareJpeg(file, 480);
+      var cropped = await SJ.cropImage(file, {
+        title: u.name + ' profilfotójának kivágása', square: 480, round: true,
+        hint: 'A körben lévő rész jelenik meg a neve mellett a bejegyzései alatt. Húzd a keretet, a sarkainál méretezd.'
+      });
+      $('userPhotoFile').value = '';
+      if (!cropped) return;
+      SJ.showMsg($('usersMsg'), 'Fotó feltöltése…');
       var form = new FormData();
-      form.append('file', blob, 'profil.jpg');
+      form.append('file', cropped.blob, 'profil.jpg');
       form.append('rights', 'sajat');
       form.append('confirm', 'on');
       form.append('alt', u.name + ' portréja');
@@ -476,25 +482,6 @@
       if (handleAuthError(e)) return;
       SJ.showMsg($('usersMsg'), e.message, 'error');
     }
-  }
-
-  /* Középről négyzetesre vágott JPEG; az újrakódolás a helyadatokat (EXIF/GPS) is eltávolítja. */
-  async function squareJpeg(file, size) {
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('JPEG, PNG vagy WebP képet válassz.');
-    var bitmap;
-    try { bitmap = await createImageBitmap(file); } catch (e) { throw new Error('Ezt a képet nem sikerült beolvasni.'); }
-    var side = Math.min(bitmap.width, bitmap.height);
-    var out = Math.min(size, side);
-    var canvas = document.createElement('canvas');
-    canvas.width = canvas.height = out;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, out, out);
-    ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, out, out);
-    if (bitmap.close) bitmap.close();
-    var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/jpeg', 0.88); });
-    if (!blob) throw new Error('A képet nem sikerült előkészíteni.');
-    return blob;
   }
 
   function actionBtn(label, user, action, cls) {

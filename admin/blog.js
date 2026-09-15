@@ -1315,10 +1315,31 @@
   }
 
   /* ================================================================== képek */
-  var imgState = { target: 'body', range: null, prepared: null, autoCredit: false };
+  var imgState = { target: 'body', range: null, file: null, crop: null, prepared: null, autoCredit: false };
+
+  /* A kivágó beállításai célonként: a borítókép a megosztási kép arányára (1,91:1) vágódik,
+     így a bejegyzés tetején, a listában és megosztáskor is ugyanaz a részlet látszik. */
+  var CROP = {
+    cover: {
+      title: 'Borítókép kivágása',
+      ratios: [{ label: '1,91 : 1', value: 1200 / 628 }],
+      minWidth: 1000,
+      hint: 'A keretben lévő rész lesz a borítókép: ez látszik a bejegyzés tetején, a bejegyzéslistában és megosztáskor (Facebook, LinkedIn). Húzd a keretet, a sarkainál méretezd.'
+    },
+    profile: {
+      title: 'Profilfotó kivágása', square: 480, round: true,
+      hint: 'A körben lévő rész jelenik meg a neved mellett. Húzd a keretet, a sarkainál méretezd.'
+    },
+    body: {
+      title: 'Kép kivágása',
+      ratios: [{ label: 'Szabad', value: 0 }, { label: '16 : 9', value: 16 / 9 }, { label: '4 : 3', value: 4 / 3 }, { label: '1 : 1', value: 1 }, { label: '3 : 4', value: 3 / 4 }],
+      hint: 'Húzd a keretet, a sarkainál méretezd. Ha az egész kép kell, csak kattints a „Kivágás alkalmazása” gombra.'
+    }
+  };
 
   $('btnImage').addEventListener('click', function () { openImageDialog('body'); });
   $('coverSet').addEventListener('click', function () { openImageDialog('cover'); });
+  $('coverCrop').addEventListener('click', recropCover);
   $('coverRemove').addEventListener('click', function () {
     cover = { id: '', alt: '', credit: '' };
     renderCover();
@@ -1334,12 +1355,13 @@
       fig.querySelector('figcaption').textContent = cover.credit;
     }
     $('coverRemove').hidden = !cover.id;
+    $('coverCrop').hidden = !cover.id;
     $('coverSet').textContent = cover.id ? 'Csere' : 'Borítókép feltöltése';
   }
 
   function openImageDialog(target) {
     var r = editorRange();
-    imgState = { target: target, range: r ? r.cloneRange() : null, prepared: null, autoCredit: false };
+    imgState = { target: target, range: r ? r.cloneRange() : null, file: null, crop: null, prepared: null, autoCredit: false };
     $('formImage').reset();
     $('imgPreview').hidden = true;
     SJ.showMsg($('imgMsg'), '');
@@ -1350,6 +1372,30 @@
       $('imgAlt').value = $('profileName').value.trim() + ' portréja';
     }
     $('dlgImage').showModal();
+  }
+
+  /* A már feltöltött borítókép újravágása: a kivágott rész új képként kerül fel, a leírás és a forrás megmarad. */
+  async function recropCover() {
+    if (!cover.id) return;
+    var btn = $('coverCrop');
+    btn.disabled = true;
+    try {
+      var res = await fetch('/blog/kepek/' + cover.id + '.jpg', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error();
+      var blob = await res.blob();
+      openImageDialog('cover');
+      $('dlgImageTitle').textContent = 'Borítókép kivágása';
+      $('imgAlt').value = cover.alt;
+      $('imgCredit').value = cover.credit;
+      imgState.autoCredit = cover.credit === AI_CREDIT;
+      await cropSelected(new File([blob], 'boritokep.jpg', { type: blob.type || 'image/jpeg' }));
+      if (!imgState.prepared) $('dlgImage').close();
+      else SJ.showMsg($('imgMsg'), 'Jelöld be újra, honnan származik a kép, és erősítsd meg a felhasználási jogot.');
+    } catch (e) {
+      flash('A borítóképet most nem sikerült betölteni.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   $('imgCancel').addEventListener('click', function () { $('dlgImage').close(); });
@@ -1368,62 +1414,42 @@
   });
   $('imgCredit').addEventListener('input', function () { imgState.autoCredit = false; });
 
-  $('imgFile').addEventListener('change', async function () {
+  $('imgFile').addEventListener('change', function () {
     var file = $('imgFile').files[0];
-    imgState.prepared = null;
-    $('imgPreview').hidden = true;
-    if (!file) return;
-    SJ.showMsg($('imgMsg'), 'A kép előkészítése…');
-    try {
-      var prepared = await prepareImage(file, imgState.target === 'profile' ? 480 : 0);
-      imgState.prepared = prepared;
-      var reader = new FileReader();
-      reader.onload = function () {
-        $('imgPreview').querySelector('img').src = reader.result;
-        $('imgInfo').textContent = prepared.width + ' × ' + prepared.height + ' px · ' + Math.round(prepared.blob.size / 1024) + ' KB (átméretezve, helyadatok nélkül)';
-        $('imgPreview').hidden = false;
-      };
-      reader.readAsDataURL(prepared.blob);
-      SJ.showMsg($('imgMsg'), '');
-    } catch (e) {
-      SJ.showMsg($('imgMsg'), e.message || 'Ezt a képet nem sikerült beolvasni.', 'error');
-    }
+    if (file) cropSelected(file);
+  });
+  $('imgRecrop').addEventListener('click', function () {
+    if (imgState.file) cropSelected(imgState.file);
   });
 
-  /* Újrakódolás JPEG-be, legfeljebb 1600 px-re: kisebb fájl, és a helyadatok (EXIF/GPS) is kimaradnak. */
-  /* square > 0: középről négyzetesre vágva, ekkora oldalhosszra (profilfotó). */
-  async function prepareImage(file, square) {
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('JPEG, PNG vagy WebP képet tölts fel.');
-    if (file.size > 25 * 1024 * 1024) throw new Error('A kép túl nagy (legfeljebb 25 MB).');
-    var bitmap;
-    try { bitmap = await createImageBitmap(file); } catch (e) { throw new Error('Ezt a képet nem sikerült beolvasni.'); }
-    var sx = 0, sy = 0, sw = bitmap.width, sh = bitmap.height, w, h;
-    if (square) {
-      var side = Math.min(bitmap.width, bitmap.height);
-      sx = Math.round((bitmap.width - side) / 2);
-      sy = Math.round((bitmap.height - side) / 2);
-      sw = sh = side;
-      w = h = Math.min(square, side);
-    } else {
-      var scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
-      w = Math.max(1, Math.round(bitmap.width * scale));
-      h = Math.max(1, Math.round(bitmap.height * scale));
+  /* Kivágás a SJ.cropImage ablakban. Mégse esetén a korábbi kivágás (ha volt) megmarad. */
+  async function cropSelected(file) {
+    SJ.showMsg($('imgMsg'), '');
+    var opts = Object.assign({}, CROP[imgState.target] || CROP.body);
+    if (file === imgState.file && imgState.crop) opts.initial = imgState.crop;
+    var result;
+    try {
+      result = await SJ.cropImage(file, opts);
+    } catch (e) {
+      SJ.showMsg($('imgMsg'), e.message || 'Ezt a képet nem sikerült beolvasni.', 'error');
+      if (!imgState.prepared) $('imgFile').value = '';
+      return;
     }
-    var canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, w, h);
-    ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, w, h);
-    if (bitmap.close) bitmap.close();
-    var quality = 0.86, blob = null;
-    do {
-      blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/jpeg', quality); });
-      quality -= 0.12;
-    } while (blob && blob.size > 3.5 * 1024 * 1024 && quality > 0.4);
-    if (!blob) throw new Error('A képet nem sikerült előkészíteni.');
-    return { blob: blob, width: w, height: h };
+    if (!result) {
+      // mégse: új fájlnál visszaáll az előző állapot; így ugyanaz a fájl újra kiválasztható
+      if (file !== imgState.file) $('imgFile').value = '';
+      return;
+    }
+    imgState.file = file;
+    imgState.crop = { crop: result.crop, ratio: result.ratio };
+    imgState.prepared = result;
+    var reader = new FileReader();
+    reader.onload = function () {
+      $('imgPreview').querySelector('img').src = reader.result;
+      $('imgInfo').textContent = result.width + ' × ' + result.height + ' px · ' + Math.round(result.blob.size / 1024) + ' KB (kivágva, helyadatok nélkül)';
+      $('imgPreview').hidden = false;
+    };
+    reader.readAsDataURL(result.blob);
   }
 
   $('formImage').addEventListener('submit', async function (ev) {

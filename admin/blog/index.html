@@ -143,6 +143,7 @@
             <figure id="coverPreview" hidden><img alt=""><figcaption></figcaption></figure>
             <div class="cover-actions">
               <button type="button" class="btn btn-ghost btn-sm" id="coverSet">Borítókép feltöltése</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="coverCrop" hidden>Kivágás</button>
               <button type="button" class="btn btn-ghost btn-sm" id="coverRemove" hidden>Eltávolítás</button>
             </div>
           </div>
@@ -192,7 +193,7 @@
 
     <label class="field"><span>Kép (JPEG, PNG vagy WebP)</span>
       <input type="file" id="imgFile" accept="image/jpeg,image/png,image/webp" required></label>
-    <div class="img-preview" id="imgPreview" hidden><img alt=""><span class="hint" id="imgInfo"></span></div>
+    <div class="img-preview" id="imgPreview" hidden><img alt=""><div><span class="hint" id="imgInfo"></span><br><button type="button" class="btn btn-ghost btn-sm" id="imgRecrop">Kivágás módosítása</button></div></div>
 
     <fieldset class="rights">
       <legend>Honnan származik a kép?</legend>
@@ -241,6 +242,7 @@
 </div>
 
 <script src="/admin/common.js"></script>
+<script src="/admin/cropper.js"></script>
 <script src="/admin/blog.js"></script>
 </body>
 </html>

@@ -168,7 +168,8 @@ fieldset.rights label{display:block; padding:.15rem 0; cursor:pointer}
 label.confirm{display:flex; gap:.5rem; align-items:flex-start; font-size:.92rem; cursor:pointer}
 label.confirm input{margin-top:.3rem}
 .img-preview{display:flex; gap:.8rem; align-items:center; margin:-.3rem 0 .9rem}
-.img-preview img{width:7rem; height:4.5rem; object-fit:cover; border-radius:6px; border:1px solid var(--line)}
+.img-preview img{width:7rem; height:4.5rem; object-fit:contain; background:var(--surface-2); border-radius:6px; border:1px solid var(--line)}
+.img-preview .btn{margin-top:.35rem}
 input[type=file]{font:inherit; font-size:.9rem; max-width:100%}
 
 /* ---------- szerző, profil ---------- */
