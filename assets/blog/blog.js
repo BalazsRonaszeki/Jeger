@@ -78,7 +78,7 @@
           if (!res.ok) { say(res.data.detail || 'A feliratkozás most nem sikerült. Próbáld újra később.', 'error'); return; }
           if (res.data.warning) { say(res.data.warning, 'error'); return; }
           nlForm.reset();
-          say('Köszönjük! Küldtünk egy megerősítő levelet — a feliratkozás a benne lévő hivatkozásra kattintva lesz érvényes.', 'ok');
+          say('Köszönjük! Küldtünk egy megerősítő levelet — a feliratkozás a benne lévő hivatkozásra kattintva lesz érvényes. Ha pár percen belül nem érkezik meg, nézd meg a Spam / Levélszemét mappát (Gmailben a Promóciók fület) is.', 'ok');
         })
         .catch(function () { say('Nem sikerült elérni a szervert. Ellenőrizd az internetkapcsolatot.', 'error'); })
         .then(function () { btn.disabled = false; });
