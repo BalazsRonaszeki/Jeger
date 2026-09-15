@@ -262,17 +262,14 @@ class BlogApiTests(test_admin.AdminTests):
         r = self.client.post('/api/admin/blog/spellcheck', json={'blocks': [{'id': 'b', 'text': 'x'}]}, headers=H)
         self.assertEqual(r.status_code, 503)
         self.assertEqual(self.client.post('/api/admin/blog/posts/%s/factcheck' % post['id'], headers=H).status_code, 503)
-        # beállított AI nélkül szerkesztő is publikálhat ellenőrzés nélkül (naplózva)
-        r = self.publish(post, unchecked=True)
+        # a publikálás modellt nem hív, így AI nélkül is működik
+        r = self.publish(post)
         self.assertEqual(r.status_code, 200, r.text)
-        self.assertIn('blog_published_unchecked', [a for _, a, _ in self.store.log])
+        self.assertIn(('blog_published', post['slug'] + '; tényellenőrzés nélkül'), [(a, d) for _, a, d in self.store.log])
 
-    def test_publish_requires_factcheck_and_ack_of_warnings(self):
+    def test_publish_is_deterministic_and_factcheck_optional(self):
         self.editor()
         post = self.create()
-        self.assertEqual(self.publish(post).status_code, 409)             # nincs ellenőrzés
-        self.assertEqual(self.publish(post, unchecked=True).status_code, 409)  # szerkesztő nem kerülheti meg
-
         self.fact_issues = [{'quote': 'A hatékonyság nincs bizonyítva.', 'problem': 'p', 'suggestion': 's',
                              'severity': 'alacsony', 'category': 'nem_ellenorizheto', 'sources': ['T01', 'T999']}]
         fc = self.factcheck(post)
@@ -280,60 +277,28 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertTrue(fc['issues'][0]['located'])
         self.assertEqual([s['id'] for s in fc['issues'][0]['sources']], ['T01'])  # ismeretlen azonosító eldobva
         self.assertIn('[T01]', self.llm_calls[-1]['system'])                      # a Tudástár a promptban van
+        self.assertTrue(self.client.get('/api/admin/blog/posts/%s' % post['id'], headers=H).json()['post']['fact_check_current'])
+        calls = len(self.llm_calls)
 
-        self.assertEqual(self.publish(post, token=fc['token']).status_code, 409)  # jelzés van, nincs nyugtázva
-        r = self.publish(post, token=fc['token'], ignore_warnings=True)
+        r = self.publish(post)                                   # a jelzés nem blokkol
         self.assertEqual(r.status_code, 200, r.text)
         published = r.json()['post']
         self.assertEqual(published['status'], 'published')
         self.assertFalse(published['has_unpublished_changes'])
-        self.assertTrue(any(a == 'blog_published' and 'figyelmen kívül' in d for _, a, d in self.store.log))
-        self.assertTrue(self.blog.posts[post['id']]['fact_check']['ignored_by'])
+        self.assertEqual(len(self.llm_calls), calls)             # publikáláskor nincs modellhívás
+        self.assertIn(('blog_published', post['slug'] + '; tényellenőrzés: 1 jelzés'), [(a, d) for _, a, d in self.store.log])
+        self.assertEqual(len(self.blog.posts[post['id']]['fact_check']['issues']), 1)  # az eredmény megmarad
 
-    def test_token_bound_to_content(self):
-        self.editor()
-        post = self.create()
-        fc = self.factcheck(post)
-        post = self.save(post, body_html='<p>Közben átírt szöveg.</p>').json()['post']
-        self.assertEqual(self.publish(post, token=fc['token']).status_code, 409)
-        fc = self.factcheck(post)
-        self.assertEqual(self.publish(post, token=fc['token']).status_code, 200)
-
-    def test_publish_reuses_unchanged_factcheck(self):
-        self.editor()
-        post = self.create()
-        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
-        self.assertEqual(r.status_code, 200, r.text)
-        self.assertNotIn('reused', r.json())                 # nincs mentett ellenőrzés: lefut
-        self.assertEqual(len(self.llm_calls), 1)
-
-        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
-        self.assertTrue(r.json()['reused'])                  # változatlan tartalom: nincs új modellhívás
-        self.assertEqual(len(self.llm_calls), 1)
-        self.factcheck(post)                                 # a kézi ellenőrzés mindig újra lefut
-        self.assertEqual(len(self.llm_calls), 2)
-
-        _blog.FACT_RULES, rules = _blog.FACT_RULES + ' Új szabály.', _blog.FACT_RULES
-        try:                                                 # változott az ellenőrzés alapja: újra lefut
-            r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
-            self.assertNotIn('reused', r.json())
-            self.assertEqual(len(self.llm_calls), 3)
-        finally:
-            _blog.FACT_RULES = rules
-
-        post = self.save(post, body_html='<p>Közben átírt szöveg.</p>').json()['post']
-        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
-        self.assertNotIn('reused', r.json())                 # átírt szöveg: újra lefut
-        self.assertEqual(len(self.llm_calls), 4)
-        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
-        self.assertTrue(r.json()['reused'])
-        self.assertEqual(self.publish(post, token=r.json()['token']).status_code, 200)
+        post = self.save(published, body_html='<p>Közben átírt szöveg.</p>').json()['post']
+        self.assertFalse(post['fact_check_current'])
+        self.assertEqual(self.publish(post).status_code, 200)
+        self.assertEqual(len(self.llm_calls), calls)
+        self.assertEqual(self.store.log[-1][2], post['slug'] + '; a legutóbbi tényellenőrzés óta módosult')
 
     def test_pending_fix_marks_block_publish(self):
         self.editor()
         post = self.create(body_html='<p><del class="sj-fix-old" data-fix="a">rosz</del><ins class="sj-fix-new" data-fix="a">rossz</ins></p>')
-        fc = self.factcheck(post)
-        r = self.publish(post, token=fc['token'])
+        r = self.publish(post)
         self.assertEqual(r.status_code, 409)
         self.assertIn('helyesírási', r.json()['detail'])
 
@@ -341,7 +306,7 @@ class BlogApiTests(test_admin.AdminTests):
         self.editor()
         post = self.create(author_display='Kovács Anna')
         self.assertEqual(self.client.get('/blog/%s' % post['slug']).status_code, 404)  # vázlat nem látszik
-        post = self.publish(post, token=self.factcheck(post)['token']).json()['post']
+        post = self.publish(post).json()['post']
 
         r = self.client.get('/blog/%s' % post['slug'])
         self.assertEqual(r.status_code, 200)
@@ -428,7 +393,7 @@ class BlogApiTests(test_admin.AdminTests):
 
         post = self.create(author_id=user['id'], author_display='ezt figyelmen kívül kell hagyni')
         self.assertEqual((post['author_display'], post['author_photo']), ('Kovács Anna', photo))
-        post = self.publish(post, token=self.factcheck(post)['token']).json()['post']
+        post = self.publish(post).json()['post']
         page = self.client.get('/blog/%s' % post['slug']).text
         self.assertIn('<img class="avatar" src="/blog/kepek/%s.jpg"' % photo, page)
         self.assertIn('Kovács Anna', page)
@@ -458,7 +423,7 @@ class BlogApiTests(test_admin.AdminTests):
     def test_delete_only_drafts(self):
         self.editor()
         post = self.create()
-        post = self.publish(post, token=self.factcheck(post)['token']).json()['post']
+        post = self.publish(post).json()['post']
         self.assertEqual(self.client.post('/api/admin/blog/posts/%s/delete' % post['id'], headers=H).status_code, 400)
         draft = self.create()
         self.assertEqual(self.client.post('/api/admin/blog/posts/%s/delete' % draft['id'], headers=H).status_code, 200)

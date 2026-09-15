@@ -1527,8 +1527,7 @@
     }
   });
 
-  /* reuse: publikáláskor a szerver a mentett eredményt adja vissza, ha azóta semmi nem változott. */
-  async function runFactcheck(reuse) {
+  async function runFactcheck() {
     if (!aiReady) {
       var err = new Error('A tényellenőrzés még nincs beállítva a szerveren (ANTHROPIC_API_KEY).');
       err.status = 503;
@@ -1536,8 +1535,9 @@
     }
     await saveNow();
     if (!post) throw new Error('Előbb írj valamit a bejegyzésbe.');
-    var res = await SJ.api('/blog/posts/' + post.id + '/factcheck' + (reuse ? '?reuse=true' : ''), { method: 'POST' });
+    var res = await SJ.api('/blog/posts/' + post.id + '/factcheck', { method: 'POST' });
     post.fact_check = res;
+    post.fact_check_current = true;
     renderFactCard(res, true);
     return res;
   }
@@ -1546,7 +1546,7 @@
     $('factCard').hidden = false;
     $('factMeta').textContent = 'Ellenőrizve: ' + SJ.dateTime(fc.checked_at) +
       (fc.tudastar_sources ? ' · ' + fc.tudastar_sources + ' Tudástár-forrás alapján' : '') +
-      (current ? '' : ' · a szöveg azóta módosult, publikálás előtt újra lefut');
+      (current ? '' : ' · a szöveg azóta módosult');
     $('factSummary').textContent = fc.summary || '';
     renderIssues($('factIssues'), fc.issues || [], false);
     if (!(fc.issues || []).length) $('factIssues').appendChild(node('li', { class: 'issue issue-clean', text: '✓ Nem talált vitatható állítást.' }));
@@ -1621,7 +1621,6 @@
   }
 
   /* ================================================================== publikálás */
-  var pubAction = null;
 
   $('btnPublish').addEventListener('click', startPublish);
 
@@ -1645,77 +1644,60 @@
     if (!editor.textContent.trim()) { flash('A bejegyzés még üres.', 'error'); return; }
 
     lockEditor(true);
-    $('btnPublish').textContent = 'Tényellenőrzés…';
     try {
       await saveNow();
-      if (!aiReady) {
-        openPublishDialog({ mode: 'unavailable', message: 'A tényellenőrzés nincs beállítva a szerveren (hiányzik az ANTHROPIC_API_KEY), ezért most nem futott le.' });
-        return;
-      }
-      var fc = await runFactcheck(true);
-      openPublishDialog({ mode: fc.issues.length ? 'issues' : 'clean', fc: fc });
+      if (isDirty()) throw new Error('A bejegyzést most nem sikerült menteni, ezért nem publikálható. Próbáld újra.');
+      openPublishDialog();
     } catch (e) {
-      if (handleAuthError(e)) return;
-      if (e.status === 409) { flash(e.message, 'error'); return; }
-      openPublishDialog({ mode: 'error', message: e.message });
+      if (!handleAuthError(e)) flash(e.message, 'error');
     } finally {
       lockEditor(false);
     }
   }
 
-  function openPublishDialog(opts) {
-    var dlg = $('dlgPublish'), lead = $('pubLead'), go = $('pubGo');
+  /* Megerősítés publikálás előtt. A tényellenőrzés opcionális: itt csak a mentett eredménye látszik,
+     modellhívás nem indul. */
+  function openPublishDialog() {
+    var lead = $('pubLead'), go = $('pubGo');
+    var republish = post.status === 'published';
+    var fc = post.fact_check && Array.isArray(post.fact_check.issues) ? post.fact_check : null;
+    var issues = fc && post.fact_check_current ? fc.issues : [];
     $('pubIssues').textContent = '';
     lead.className = '';
-    go.hidden = false;
+    $('dlgPublishTitle').textContent = republish ? 'Mehetnek a módosítások?' : 'Mehet a blogra?';
+    go.textContent = republish ? 'Módosítások publikálása' : 'Publikálás';
     go.className = 'btn';
-    $('pubBack').textContent = 'Vissza a szerkesztéshez';
-    var republish = post.status === 'published';
-    var reused = opts.fc && opts.fc.reused
-      ? ' (A ' + SJ.dateTime(opts.fc.checked_at) + '-kor lefutott ellenőrzés eredménye — azóta nem változott a bejegyzés.)' : '';
+    $('pubBack').textContent = 'Mégse';
 
-    if (opts.mode === 'clean') {
-      $('dlgPublishTitle').textContent = republish ? 'Mehetnek a módosítások?' : 'Mehet a blogra?';
-      lead.textContent = '✓ A tényellenőrzés nem talált vitatható állítást (' + (opts.fc.tudastar_sources || 0) + ' Tudástár-forrás alapján). ' + (opts.fc.summary || '') + reused;
-      go.textContent = republish ? 'Módosítások publikálása' : 'Publikálás';
-      pubAction = { token: opts.fc.token };
-      $('pubBack').textContent = 'Mégse';
-    } else if (opts.mode === 'issues') {
-      var count = opts.fc.issues.length;
-      $('dlgPublishTitle').textContent = count === 1 ? 'Vitatható állítás a bejegyzésben' : count + ' vitatható állítás a bejegyzésben';
-      lead.textContent = 'A tényellenőrzés a Tudástár alapján vitathatónak találta az alábbiakat. Javítsd őket, vagy — ha biztos vagy a dolgodban — hagyd figyelmen kívül a jelzést. A döntésed a naplóba kerül.' + reused;
-      renderIssues($('pubIssues'), opts.fc.issues, true);
-      go.textContent = 'Figyelmen kívül hagyom és publikálom';
-      go.className = 'btn btn-danger';
-      pubAction = { token: opts.fc.token, ignore_warnings: true };
+    if (!fc) {
+      lead.textContent = 'Ehhez a bejegyzéshez nem futott tényellenőrzés. Ha szeretnéd, előbb indítsd el a „Tényellenőrzés” gombbal — nem kötelező.';
+    } else if (!post.fact_check_current) {
+      lead.textContent = 'A legutóbbi tényellenőrzés (' + SJ.dateTime(fc.checked_at) + ') óta módosult a bejegyzés. Ha szeretnéd, futtasd újra a „Tényellenőrzés” gombbal — nem kötelező.';
+    } else if (!issues.length) {
+      lead.textContent = '✓ A tényellenőrzés (' + SJ.dateTime(fc.checked_at) + ') nem talált vitatható állítást.';
     } else {
-      var canSkip = opts.mode === 'unavailable' || (me && me.role === 'admin');
-      $('dlgPublishTitle').textContent = 'A tényellenőrzés most nem futott le';
-      lead.textContent = opts.message + (canSkip ? ' Publikálhatsz ellenőrzés nélkül is — ezt a napló rögzíti.' : ' Próbáld újra néhány perc múlva.');
-      lead.className = 'msg error';
-      go.hidden = !canSkip;
-      go.textContent = 'Publikálás ellenőrzés nélkül';
-      go.className = 'btn btn-danger';
-      pubAction = { unchecked: true };
+      lead.textContent = 'A tényellenőrzés (' + SJ.dateTime(fc.checked_at) + ') ' + issues.length + ' vitatható állítást jelzett ebben a változatban:';
+      renderIssues($('pubIssues'), issues, true);
+      $('pubBack').textContent = 'Vissza a szerkesztéshez';
     }
-    dlg.showModal();
+    $('dlgPublish').showModal();
     $('pubBack').focus();
   }
 
   $('pubBack').addEventListener('click', function () {
     $('dlgPublish').close();
-    var issues = post && post.fact_check && post.fact_check.issues;
-    if (pubAction && pubAction.ignore_warnings && issues && issues.length) {
+    var issues = post && post.fact_check_current && post.fact_check && post.fact_check.issues;
+    if (issues && issues.length) {
       $('factCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       highlightQuote(issues[0].quote);
     }
   });
 
   $('pubGo').addEventListener('click', async function () {
-    if (!post || !pubAction) return;
+    if (!post) return;
     var done = busyButton($('pubGo'), 'Publikálás…');
     try {
-      var res = await SJ.api('/blog/posts/' + post.id + '/publish', { method: 'POST', body: Object.assign({ version: post.version }, pubAction) });
+      var res = await SJ.api('/blog/posts/' + post.id + '/publish', { method: 'POST', body: { version: post.version } });
       post = res.post;
       $('dlgPublish').close();
       updateMeta();

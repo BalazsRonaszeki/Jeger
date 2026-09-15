@@ -7,9 +7,9 @@ Tervezési döntések röviden:
   addig nem látszik, amíg újra át nem megy a tényellenőrzésen és a publikáláson.
 * A HTML-t a szerver saját engedélylistás szűrője építi újra (nem szűr, hanem újraszerializál):
   csak az ismert címkék és attribútumok maradnak meg, minden szöveg escape-elve kerül ki.
-* Publikálni csak friss tényellenőrzés után lehet: az ellenőrzés egy HMAC-kal aláírt tokent ad,
-  ami a mentett tartalom hash-éhez kötött. Ha a tartalom közben változott, újra kell ellenőrizni.
-  Ha nem változott (és a Tudástár meg a szabályok sem), a publikálás a mentett eredményt használja újra.
+* A publikálás determinisztikus: nem hív modellt. A tényellenőrzés opcionális (a szerkesztő gombjával
+  indul); az eredménye a bejegyzés fact_check mezőjébe kerül, és a publikálás naplóbejegyzése rögzíti,
+  hogy a kiadott változatot ellenőrizték-e, és hány jelzéssel.
   A jelzések figyelmen kívül hagyása naplózódik.
 * A képeket a szerver a saját domainjén szolgálja ki (/blog/kepek/...), mert a nyilvános oldal
   hozzájárulás nélkül nem indít külső kérést. A böngésző feltöltés előtt újrakódolja őket,
@@ -18,9 +18,7 @@ Tervezési döntések röviden:
   (call_llm_json), hogy tesztelhető legyen.
 """
 
-import base64
 import hashlib
-import hmac
 import html
 import json
 import os
@@ -51,7 +49,6 @@ SLUG_MAX = 90
 BODY_MAX = 400_000
 IMAGE_MAX_BYTES = 4 * 1024 * 1024      # a Vercel kéréstörzs-korlátja 4,5 MB
 SPELL_MAX_CHARS = 24_000
-FACTCHECK_TOKEN_TTL = 2 * 3600
 PAGE_SIZE = 12
 BUCKET = 'blog-kepek'
 IMAGE_RIGHTS = ('ai', 'jogdijmentes', 'sajat')
@@ -412,34 +409,14 @@ def content_hash(post):
     return hashlib.sha256(payload.encode('utf-8')).hexdigest()
 
 
-def _b64url(raw):
-    return base64.urlsafe_b64encode(raw).decode('ascii').rstrip('=')
-
-
-def _unb64url(value):
-    return base64.urlsafe_b64decode(value + '=' * (-len(value) % 4))
-
-
-def sign_factcheck(post_id, digest, issue_count):
-    payload = '%s|%s|%d|%d' % (post_id, digest, issue_count, int(time.time()))
-    sig = hmac.new(_admin.auth_secret(), ('blog-factcheck|' + payload).encode('utf-8'), hashlib.sha256).hexdigest()
-    return '%s.%s' % (_b64url(payload.encode('utf-8')), sig)
-
-
-def verify_factcheck(token, post_id, digest):
-    """A token által igazolt jelzésszámot adja vissza, vagy None-t, ha a token nem erre a tartalomra szól."""
-    try:
-        encoded, sig = (token or '').split('.')
-        payload = _unb64url(encoded).decode('utf-8')
-        expected = hmac.new(_admin.auth_secret(), ('blog-factcheck|' + payload).encode('utf-8'), hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(sig, expected):
-            return None
-        t_post, t_digest, count, issued = payload.split('|')
-        if t_post != post_id or t_digest != digest or time.time() - int(issued) > FACTCHECK_TOKEN_TTL:
-            return None
-        return int(count)
-    except Exception:
-        return None
+def fact_check_status(post, digest):
+    """A publikálás naplójához: ellenőrizték-e a kiadott változatot (a mentett eredményből, modellhívás nélkül)."""
+    fc = post.get('fact_check') or {}
+    if not isinstance(fc.get('issues'), list):
+        return 'tényellenőrzés nélkül'
+    if fc.get('hash') != digest:
+        return 'a legutóbbi tényellenőrzés óta módosult'
+    return 'tényellenőrzés: %d jelzés' % len(fc['issues'])
 
 
 def jpeg_size(data):
@@ -850,21 +827,6 @@ def run_spellcheck(blocks):
     return out
 
 
-def factcheck_basis(tudastar):
-    """Az ellenőrzés alapja (szabályok + Tudástár) ujjlenyomatként: ha ez változik, a korábbi eredmény nem használható újra."""
-    return hashlib.sha256((FACT_RULES + tudastar_prompt(tudastar)).encode('utf-8')).hexdigest()
-
-
-def reusable_factcheck(post, digest, basis):
-    """A mentett ellenőrzés, ha pontosan erre a tartalomra és ugyanerre az alapra futott — különben None."""
-    fc = post.get('fact_check') or {}
-    if fc.get('unchecked') or not isinstance(fc.get('issues'), list):
-        return None
-    if fc.get('hash') != digest or fc.get('basis') != basis:
-        return None
-    return fc
-
-
 def run_factcheck(post, tudastar):
     text = html_to_text(post.get('body_html') or '')
     article = 'Cím: %s\n\nBevezető: %s\n\nSzöveg:\n%s' % (post.get('title') or '', post.get('excerpt') or '', text)
@@ -913,13 +875,6 @@ class PostBody(BaseModel):
 
 class VersionBody(BaseModel):
     version: int = 0
-
-
-class PublishBody(BaseModel):
-    version: int = 0
-    token: str = ''
-    ignore_warnings: bool = False
-    unchecked: bool = False
 
 
 class SpellBlock(BaseModel):
@@ -1143,45 +1098,37 @@ def spellcheck(body: SpellBody, user=Depends(current_user)):
 
 
 @admin_router.post('/posts/{post_id}/factcheck', dependencies=[Depends(require_same_origin)])
-def factcheck(post_id: str, reuse: bool = False, user=Depends(current_user)):
-    """reuse=true (publikáláskor): ha a mentett ellenőrzés még érvényes — azóta sem a bejegyzés, sem a
-    Tudástár és a szabályok nem változtak —, azt adja vissza friss tokennel, új modellhívás nélkül."""
+def factcheck(post_id: str, user=Depends(current_user)):
     post = _post_or_404(post_id)
     if not llm_ready():
         raise HTTPException(status_code=503, detail='A tényellenőrzés nincs beállítva (hiányzik az ANTHROPIC_API_KEY).')
+    if not rate_ok('blog-fact', user['id'], 12, 600):
+        raise HTTPException(status_code=429, detail='Túl sok tényellenőrzés rövid idő alatt. Várj néhány percet.')
     if not html_to_text(post.get('body_html')).strip():
         raise HTTPException(status_code=400, detail='A bejegyzés még üres.')
     try:
         tudastar = load_tudastar()
     except Exception:
         raise HTTPException(status_code=502, detail='A Tudástárat nem sikerült betölteni, így a tényellenőrzés most nem futhat le.')
-
-    digest, basis = content_hash(post), factcheck_basis(tudastar)
-    stored = reusable_factcheck(post, digest, basis) if reuse else None
-    if stored:
-        return no_store(dict(stored, reused=True, token=sign_factcheck(post_id, digest, len(stored['issues']))))
-
-    if not rate_ok('blog-fact', user['id'], 12, 600):
-        raise HTTPException(status_code=429, detail='Túl sok tényellenőrzés rövid idő alatt. Várj néhány percet.')
     try:
         result = run_factcheck(post, tudastar)
     except LLMError as exc:
         raise HTTPException(status_code=exc.status, detail=str(exc))
 
-    checked = dict(result, hash=digest, basis=basis, checked_at=iso(now_utc()), checked_by=user['id'],
+    checked = dict(result, hash=content_hash(post), checked_at=iso(now_utc()), checked_by=user['id'],
                    tudastar_sources=len(tudastar['entries']))
     try:
         store.set_fact_check(post_id, checked)
     except Exception:
         pass
-    return no_store(dict(checked, token=sign_factcheck(post_id, digest, len(result['issues']))))
+    return no_store(checked)
 
 
 @admin_router.post('/posts/{post_id}/publish', dependencies=[Depends(require_same_origin)])
-def publish(post_id: str, body: PublishBody, user=Depends(current_user)):
+def publish(post_id: str, body: VersionBody, user=Depends(current_user)):
     post = _post_or_404(post_id)
     if post['version'] != body.version:
-        raise HTTPException(status_code=409, detail='A bejegyzés közben megváltozott. Mentsd, és futtasd újra az ellenőrzést.')
+        raise HTTPException(status_code=409, detail='A bejegyzés közben megváltozott. Töltsd újra az oldalt, és publikáld újra.')
     if not post.get('title'):
         raise HTTPException(status_code=400, detail='Adj címet a bejegyzésnek.')
     if not html_to_text(post.get('body_html')).strip():
@@ -1190,25 +1137,9 @@ def publish(post_id: str, body: PublishBody, user=Depends(current_user)):
         raise HTTPException(status_code=409, detail='Előbb fogadd el vagy vesd el a helyesírási javaslatokat.')
 
     digest = content_hash(post)
-    issues = verify_factcheck(body.token, post_id, digest)
-    fact = dict(post.get('fact_check') or {})
-    if issues is None:
-        allowed = body.unchecked and (not llm_ready() or user.get('role') == 'admin')
-        if not allowed:
-            raise HTTPException(status_code=409, detail='A publikálás előtt le kell futnia a tényellenőrzésnek erre a változatra.')
-        action, detail = 'blog_published_unchecked', post['slug']
-        fact = {'hash': digest, 'unchecked': True, 'published_by': user['id'], 'published_at': iso(now_utc())}
-    else:
-        if issues and not body.ignore_warnings:
-            raise HTTPException(status_code=409, detail='A tényellenőrzés vitatható állítást talált.')
-        action = 'blog_published'
-        detail = post['slug'] + ('; figyelmen kívül hagyott jelzések: %d' % issues if issues else '')
-        if issues:
-            fact.update(ignored_by=user['id'], ignored_at=iso(now_utc()))
-
     now = iso(now_utc())
     fields = {
-        'status': 'published', 'version': post['version'] + 1, 'pub_hash': digest, 'fact_check': fact,
+        'status': 'published', 'version': post['version'] + 1, 'pub_hash': digest,
         'pub_title': post['title'], 'pub_excerpt': post.get('excerpt') or '', 'pub_body_html': post['body_html'],
         'pub_author': post.get('author_display') or '', 'pub_author_photo': post.get('author_photo'),
         'pub_cover_image': post.get('cover_image'),
@@ -1222,7 +1153,7 @@ def publish(post_id: str, body: PublishBody, user=Depends(current_user)):
     updated = store.update_post(post_id, post['version'], fields)
     if not updated:
         raise HTTPException(status_code=409, detail='A bejegyzés közben megváltozott. Próbáld újra.')
-    safe_audit(user['id'], action, detail)
+    safe_audit(user['id'], 'blog_published', '%s; %s' % (post['slug'], fact_check_status(post, digest)))
     return no_store({'post': post_out(updated)})
 
 

@@ -44,7 +44,7 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `POST /api/admin/bootstrap` | Az **első** admin meghívása `X-Admin-Password` fejléccel; csak amíg nincs admin. |
 | `GET/POST /api/admin/blog/posts`, `/posts/{id}`, `/posts/{id}/delete` | Blogbejegyzések listája, létrehozása, mentése (verziószámos ütközésvédelem), vázlat törlése. |
 | `POST /api/admin/blog/spellcheck`, `/posts/{id}/factcheck` | Helyesírás- és tényellenőrzés (Claude API; a tényellenőrzés a Tudástárral dolgozik). |
-| `POST /api/admin/blog/posts/{id}/publish`, `/unpublish`, `POST /api/admin/blog/images` | Publikálás (friss tényellenőrzés-token kell), visszavonás, képfeltöltés jogcímmel. |
+| `POST /api/admin/blog/posts/{id}/publish`, `/unpublish`, `POST /api/admin/blog/images` | Publikálás (modellhívás nélkül; a napló rögzíti a tényellenőrzés állapotát), visszavonás, képfeltöltés jogcímmel. |
 | `GET /api/admin/blog/authors`, `POST /api/admin/blog/me` | Szerzőválasztó (aktív munkatársak névvel, fotóval); saját név és profilfotó. |
 | `GET /api/admin/survey-summary` | A kérdőív válaszainak kérdésenkénti megoszlása (csak összesítve). |
 | `POST /api/subscribe` | Önálló hírlevél-feliratkozás a blogról (kettős opt-in). |
@@ -81,7 +81,7 @@ Environment változók (Vercel → Project → Settings → Environment Variable
 | `VERCEL_API_TOKEN` | a dashboard látogatószámaihoz: Vercel access token |
 | `VERCEL_PROJECT_ID` | a Vercel-projekt azonosítója |
 | `VERCEL_TEAM_ID` | csak ha a projekt team alatt van |
-| `ANTHROPIC_API_KEY` | **blog:** a helyesírás- és tényellenőrzéshez — nélküle a két gomb 503-at ad, és publikálni csak ellenőrzés nélkül (naplózva) lehet |
+| `ANTHROPIC_API_KEY` | **blog:** a helyesírás- és tényellenőrzéshez — nélküle a két gomb 503-at ad; a publikálást nem érinti |
 | `BLOG_AI_MODEL` | opcionális, default `claude-opus-5` |
 | `BLOG_SPELL_EFFORT`, `BLOG_FACTCHECK_EFFORT` | opcionális, default `medium`, ill. `high` |
 
@@ -133,12 +133,13 @@ tesztek: `python -m unittest backend/tests/test_blog.py -v`.
 - **Helyesírás:** mindig csak az utolsó ellenőrzés óta módosított bekezdések (vagy a kijelöltek) mennek
   el; a javaslat kékkel (új) és pirossal áthúzva (régi) jelenik meg, egyenként vagy együtt elfogadható.
   Elfogadatlan javaslattal nem lehet publikálni.
-- **Tényellenőrzés:** a nyilvános `/tudastar` oldal forrásait kapja referenciaként. Publikáláskor
-  mindig lefut; vitatható állításnál felugró ablak: *Vissza a szerkesztéshez* vagy *Figyelmen kívül
-  hagyom és publikálom* (naplózva, a bejegyzés `fact_check` mezőjében is). A token a mentett tartalom
-  hash-éhez kötött — ha közben változott a szöveg, újra kell ellenőrizni.
-- **Publikálás:** a nyilvános oldal a publikáláskor rögzített változatot mutatja; egy kint lévő cikk
-  szerkesztése csak újabb ellenőrzés + publikálás után látszik. A webcím az első publikálás után rögzül.
+- **Tényellenőrzés:** opcionális, a „Tényellenőrzés” gombbal indul; a nyilvános `/tudastar` oldal
+  forrásait kapja referenciaként. Az eredmény a bejegyzés `fact_check` mezőjébe kerül (a tartalom
+  hash-ével, így látszik, ha azóta módosult a szöveg).
+- **Publikálás:** determinisztikus, modellt nem hív. A megerősítő ablak a mentett tényellenőrzés
+  állapotát mutatja (nem futott / módosult azóta / jelzések), de nem blokkol; a napló rögzíti.
+  A nyilvános oldal a publikáláskor rögzített változatot mutatja; egy kint lévő cikk
+  szerkesztése csak újabb publikálás után látszik. A webcím az első publikálás után rögzül.
 - **Megosztás:** Facebook, X, LinkedIn, e-mail és link másolása — sima hivatkozások, külső szkript
   és süti nélkül. A `/blog` oldalak szigorú CSP-vel mennek ki; a CDN 60 mp-ig gyorsítótáraz.
 
