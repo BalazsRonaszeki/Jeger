@@ -579,7 +579,7 @@
 
   function cleanInto(src, dst, stats) {
     Array.prototype.forEach.call(src.childNodes, function (n) {
-      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.data.replace(/[\r\n]+/g, ' '))); return; }
+      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(plainLetters(n.data.replace(/[\r\n]+/g, ' ')))); return; }
       if (n.nodeType !== 1 || DROP_TAGS.test(n.nodeName)) return;
       var tag = n.nodeName;
       if (tag === 'IMG' || tag === 'PICTURE') { stats.images++; return; }
@@ -615,6 +615,11 @@
     return m ? { type: 'ol', length: m[0].length } : null;
   }
 
+  /* „Díszes szöveg”-generátorok betűi (𝐁𝐨𝐥𝐝, 𝓦𝓲𝓷𝓰, Ｗｉｄｅ, Ⓐ): normál betűre cseréljük, mint a szerver is. */
+  function plainLetters(s) {
+    return s.replace(/[\u{1D400}-\u{1D7FF}\uFF01-\uFF5E\u24B6-\u24E9\u{1F130}-\u{1F149}]/gu, function (c) { return c.normalize('NFKC'); });
+  }
+
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -642,7 +647,7 @@
     if (!cd) return;
     ev.preventDefault();
     var html = cd.getData('text/html');
-    var text = cd.getData('text/plain');
+    var text = plainLetters(cd.getData('text/plain'));
     var out = '', images = 0;
     if (html) {
       var doc = new DOMParser().parseFromString(html, 'text/html');
@@ -1522,7 +1527,8 @@
     }
   });
 
-  async function runFactcheck() {
+  /* reuse: publikáláskor a szerver a mentett eredményt adja vissza, ha azóta semmi nem változott. */
+  async function runFactcheck(reuse) {
     if (!aiReady) {
       var err = new Error('A tényellenőrzés még nincs beállítva a szerveren (ANTHROPIC_API_KEY).');
       err.status = 503;
@@ -1530,7 +1536,7 @@
     }
     await saveNow();
     if (!post) throw new Error('Előbb írj valamit a bejegyzésbe.');
-    var res = await SJ.api('/blog/posts/' + post.id + '/factcheck', { method: 'POST' });
+    var res = await SJ.api('/blog/posts/' + post.id + '/factcheck' + (reuse ? '?reuse=true' : ''), { method: 'POST' });
     post.fact_check = res;
     renderFactCard(res, true);
     return res;
@@ -1646,7 +1652,7 @@
         openPublishDialog({ mode: 'unavailable', message: 'A tényellenőrzés nincs beállítva a szerveren (hiányzik az ANTHROPIC_API_KEY), ezért most nem futott le.' });
         return;
       }
-      var fc = await runFactcheck();
+      var fc = await runFactcheck(true);
       openPublishDialog({ mode: fc.issues.length ? 'issues' : 'clean', fc: fc });
     } catch (e) {
       if (handleAuthError(e)) return;
@@ -1665,17 +1671,19 @@
     go.className = 'btn';
     $('pubBack').textContent = 'Vissza a szerkesztéshez';
     var republish = post.status === 'published';
+    var reused = opts.fc && opts.fc.reused
+      ? ' (A ' + SJ.dateTime(opts.fc.checked_at) + '-kor lefutott ellenőrzés eredménye — azóta nem változott a bejegyzés.)' : '';
 
     if (opts.mode === 'clean') {
       $('dlgPublishTitle').textContent = republish ? 'Mehetnek a módosítások?' : 'Mehet a blogra?';
-      lead.textContent = '✓ A tényellenőrzés nem talált vitatható állítást (' + (opts.fc.tudastar_sources || 0) + ' Tudástár-forrás alapján). ' + (opts.fc.summary || '');
+      lead.textContent = '✓ A tényellenőrzés nem talált vitatható állítást (' + (opts.fc.tudastar_sources || 0) + ' Tudástár-forrás alapján). ' + (opts.fc.summary || '') + reused;
       go.textContent = republish ? 'Módosítások publikálása' : 'Publikálás';
       pubAction = { token: opts.fc.token };
       $('pubBack').textContent = 'Mégse';
     } else if (opts.mode === 'issues') {
       var count = opts.fc.issues.length;
       $('dlgPublishTitle').textContent = count === 1 ? 'Vitatható állítás a bejegyzésben' : count + ' vitatható állítás a bejegyzésben';
-      lead.textContent = 'A tényellenőrzés a Tudástár alapján vitathatónak találta az alábbiakat. Javítsd őket, vagy — ha biztos vagy a dolgodban — hagyd figyelmen kívül a jelzést. A döntésed a naplóba kerül.';
+      lead.textContent = 'A tényellenőrzés a Tudástár alapján vitathatónak találta az alábbiakat. Javítsd őket, vagy — ha biztos vagy a dolgodban — hagyd figyelmen kívül a jelzést. A döntésed a naplóba kerül.' + reused;
       renderIssues($('pubIssues'), opts.fc.issues, true);
       go.textContent = 'Figyelmen kívül hagyom és publikálom';
       go.className = 'btn btn-danger';

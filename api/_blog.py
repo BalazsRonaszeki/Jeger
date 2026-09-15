@@ -9,6 +9,7 @@ Tervezési döntések röviden:
   csak az ismert címkék és attribútumok maradnak meg, minden szöveg escape-elve kerül ki.
 * Publikálni csak friss tényellenőrzés után lehet: az ellenőrzés egy HMAC-kal aláírt tokent ad,
   ami a mentett tartalom hash-éhez kötött. Ha a tartalom közben változott, újra kell ellenőrizni.
+  Ha nem változott (és a Tudástár meg a szabályok sem), a publikálás a mentett eredményt használja újra.
   A jelzések figyelmen kívül hagyása naplózódik.
 * A képeket a szerver a saját domainjén szolgálja ki (/blog/kepek/...), mert a nyilvános oldal
   hozzájárulás nélkül nem indít külső kérést. A böngésző feltöltés előtt újrakódolja őket,
@@ -90,6 +91,17 @@ class _Node:
         self.children = []
 
 
+# A „díszes szöveg”-generátorok betűi (𝐁𝐨𝐥𝐝, 𝓦𝓲𝓷𝓰, Ｗｉｄｅ, Ⓐ, 🄰) nem betűtípusok, hanem külön
+# Unicode-karakterek, így a szűrőn átjutnának, és a blog saját betűtípusa helyett látszanának.
+# Normál betűre cseréljük őket. Csak ezekre a tartományokra alkalmazunk NFKC-t, mert az általános
+# NFKC mást is átírna (pl. ½, ², ™).
+FANCY_LETTERS_RE = re.compile('[\U0001D400-\U0001D7FF\uFF01-\uFF5E\u24B6-\u24E9\U0001F130-\U0001F149]')
+
+
+def plain_letters(text):
+    return FANCY_LETTERS_RE.sub(lambda m: unicodedata.normalize('NFKC', m.group()), text) if text else text
+
+
 class _TreeBuilder(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
@@ -122,7 +134,7 @@ class _TreeBuilder(HTMLParser):
         self._pop_to(tag)
 
     def handle_data(self, data):
-        self.stack[-1].children.append(data)
+        self.stack[-1].children.append(plain_letters(data))
 
 
 def _parse(markup):
@@ -369,7 +381,7 @@ def slugify(text):
 
 
 def clean_line(value, limit):
-    return re.sub(r'\s+', ' ', value or '').strip()[:limit]
+    return re.sub(r'\s+', ' ', plain_letters(value or '')).strip()[:limit]
 
 
 def budapest(dt):
@@ -838,6 +850,21 @@ def run_spellcheck(blocks):
     return out
 
 
+def factcheck_basis(tudastar):
+    """Az ellenőrzés alapja (szabályok + Tudástár) ujjlenyomatként: ha ez változik, a korábbi eredmény nem használható újra."""
+    return hashlib.sha256((FACT_RULES + tudastar_prompt(tudastar)).encode('utf-8')).hexdigest()
+
+
+def reusable_factcheck(post, digest, basis):
+    """A mentett ellenőrzés, ha pontosan erre a tartalomra és ugyanerre az alapra futott — különben None."""
+    fc = post.get('fact_check') or {}
+    if fc.get('unchecked') or not isinstance(fc.get('issues'), list):
+        return None
+    if fc.get('hash') != digest or fc.get('basis') != basis:
+        return None
+    return fc
+
+
 def run_factcheck(post, tudastar):
     text = html_to_text(post.get('body_html') or '')
     article = 'Cím: %s\n\nBevezető: %s\n\nSzöveg:\n%s' % (post.get('title') or '', post.get('excerpt') or '', text)
@@ -1116,25 +1143,32 @@ def spellcheck(body: SpellBody, user=Depends(current_user)):
 
 
 @admin_router.post('/posts/{post_id}/factcheck', dependencies=[Depends(require_same_origin)])
-def factcheck(post_id: str, user=Depends(current_user)):
+def factcheck(post_id: str, reuse: bool = False, user=Depends(current_user)):
+    """reuse=true (publikáláskor): ha a mentett ellenőrzés még érvényes — azóta sem a bejegyzés, sem a
+    Tudástár és a szabályok nem változtak —, azt adja vissza friss tokennel, új modellhívás nélkül."""
     post = _post_or_404(post_id)
     if not llm_ready():
         raise HTTPException(status_code=503, detail='A tényellenőrzés nincs beállítva (hiányzik az ANTHROPIC_API_KEY).')
-    if not rate_ok('blog-fact', user['id'], 12, 600):
-        raise HTTPException(status_code=429, detail='Túl sok tényellenőrzés rövid idő alatt. Várj néhány percet.')
     if not html_to_text(post.get('body_html')).strip():
         raise HTTPException(status_code=400, detail='A bejegyzés még üres.')
     try:
         tudastar = load_tudastar()
     except Exception:
         raise HTTPException(status_code=502, detail='A Tudástárat nem sikerült betölteni, így a tényellenőrzés most nem futhat le.')
+
+    digest, basis = content_hash(post), factcheck_basis(tudastar)
+    stored = reusable_factcheck(post, digest, basis) if reuse else None
+    if stored:
+        return no_store(dict(stored, reused=True, token=sign_factcheck(post_id, digest, len(stored['issues']))))
+
+    if not rate_ok('blog-fact', user['id'], 12, 600):
+        raise HTTPException(status_code=429, detail='Túl sok tényellenőrzés rövid idő alatt. Várj néhány percet.')
     try:
         result = run_factcheck(post, tudastar)
     except LLMError as exc:
         raise HTTPException(status_code=exc.status, detail=str(exc))
 
-    digest = content_hash(post)
-    checked = dict(result, hash=digest, checked_at=iso(now_utc()), checked_by=user['id'],
+    checked = dict(result, hash=digest, basis=basis, checked_at=iso(now_utc()), checked_by=user['id'],
                    tudastar_sources=len(tudastar['entries']))
     try:
         store.set_fact_check(post_id, checked)

@@ -108,6 +108,14 @@ class SanitizerTests(unittest.TestCase):
         out = _blog.sanitize_html('<p>&lt;script&gt; "idéző" <a href="/tudastar" title="x">belső</a></p>')
         self.assertEqual(out, '<p>&lt;script&gt; &quot;idéző&quot; <a href="/tudastar">belső</a></p>')
 
+    def test_fonts_cannot_be_overridden(self):
+        out = _blog.sanitize_html('<p style="font-family:Wingdings"><font face="Wingdings">a</font> '
+                                  '<span style="font-size:40px">b</span> 𝓦𝓲𝓷𝓰 '
+                                  '𝐁𝐨𝐥𝐝 Ｗｉｄｅ Ⓐ ½ ² ™</p>'
+                                  '<style>p{font-family:Wingdings}</style>')
+        self.assertEqual(out, '<p>a b Wing Bold Wide A ½ ² ™</p>')
+        self.assertEqual(_blog.clean_line('𝐄𝐌𝐄𝐋𝐓Ü𝐊', 50), 'EMELTÜK')
+
     def test_only_own_images_in_figures(self):
         img_id = str(uuid.uuid4())
         out = _blog.sanitize_html('<figure><img src="/blog/kepek/%s.jpg" alt="Generátor" width="1600" height="900" '
@@ -290,6 +298,36 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertEqual(self.publish(post, token=fc['token']).status_code, 409)
         fc = self.factcheck(post)
         self.assertEqual(self.publish(post, token=fc['token']).status_code, 200)
+
+    def test_publish_reuses_unchanged_factcheck(self):
+        self.editor()
+        post = self.create()
+        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertNotIn('reused', r.json())                 # nincs mentett ellenőrzés: lefut
+        self.assertEqual(len(self.llm_calls), 1)
+
+        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
+        self.assertTrue(r.json()['reused'])                  # változatlan tartalom: nincs új modellhívás
+        self.assertEqual(len(self.llm_calls), 1)
+        self.factcheck(post)                                 # a kézi ellenőrzés mindig újra lefut
+        self.assertEqual(len(self.llm_calls), 2)
+
+        _blog.FACT_RULES, rules = _blog.FACT_RULES + ' Új szabály.', _blog.FACT_RULES
+        try:                                                 # változott az ellenőrzés alapja: újra lefut
+            r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
+            self.assertNotIn('reused', r.json())
+            self.assertEqual(len(self.llm_calls), 3)
+        finally:
+            _blog.FACT_RULES = rules
+
+        post = self.save(post, body_html='<p>Közben átírt szöveg.</p>').json()['post']
+        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
+        self.assertNotIn('reused', r.json())                 # átírt szöveg: újra lefut
+        self.assertEqual(len(self.llm_calls), 4)
+        r = self.client.post('/api/admin/blog/posts/%s/factcheck?reuse=true' % post['id'], headers=H)
+        self.assertTrue(r.json()['reused'])
+        self.assertEqual(self.publish(post, token=r.json()['token']).status_code, 200)
 
     def test_pending_fix_marks_block_publish(self):
         self.editor()
