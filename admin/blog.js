@@ -654,6 +654,7 @@
       var holder = document.createElement('div');
       var stats = { images: 0 };
       cleanInto(doc.body, holder, stats);
+      stripSourceBold(holder);
       out = holder.innerHTML;
       images = stats.images;
     }
@@ -995,6 +996,26 @@
     $('fixBar').hidden = n === 0;
   }
 
+  /* Ha a szöveg nagy része félkövér, az nem kiemelés, hanem a forrás (Word, Google Docs, e-mail,
+     közösségi média) egész szövegre kiterjedő formázása — ezt levesszük, a valódi kiemelések maradnak. */
+  var BOLD_SOURCE_SHARE = 0.6;
+
+  function boldShare(root) {
+    var total = root.textContent.replace(/\s+/g, '').length, bold = 0;
+    if (!total) return 0;
+    root.querySelectorAll('strong, b').forEach(function (el) {
+      var outer = el.parentElement && el.parentElement.closest('strong, b');
+      if (!outer || !root.contains(outer)) bold += el.textContent.replace(/\s+/g, '').length;
+    });
+    return bold / total;
+  }
+
+  function stripSourceBold(root) {
+    if (boldShare(root) <= BOLD_SOURCE_SHARE) return false;
+    Array.prototype.slice.call(root.querySelectorAll('strong, b')).forEach(unwrap);
+    return true;
+  }
+
   function unwrap(el) {
     var parent = el.parentNode;
     while (el.firstChild) parent.insertBefore(el.firstChild, el);
@@ -1130,7 +1151,8 @@
     hidePop();
     if (!editor.textContent.trim()) { flash('Még nincs mit formázni.', ''); return; }
     snapshot();
-    var stats = { headings: 0, lists: 0, typo: 0, title: false, excerpt: false };
+    var stats = { headings: 0, lists: 0, typo: 0, title: false, excerpt: false, bold: false };
+    var sourceBold = boldShare(editor) > BOLD_SOURCE_SHARE;
 
     // A még nem ellenőrzött blokkok jelölése túléli az átalakítást (új elemek keletkeznek).
     withoutTracking(function () {
@@ -1221,6 +1243,14 @@
         }
       });
 
+      // 4b. az egész szövegre kiterjedő félkövér a forrásból jött, nem kiemelés
+      if (sourceBold) {
+        Array.prototype.slice.call(editor.querySelectorAll('strong')).forEach(function (el) {
+          if (el.isConnected && !el.closest('ins.sj-fix-new, del.sj-fix-old')) unwrap(el);
+        });
+        stats.bold = true;
+      }
+
       // 5. tipográfia
       typography(stats);
 
@@ -1262,6 +1292,7 @@
     var parts = [];
     if (stats.headings) parts.push(stats.headings + ' alcím');
     if (stats.lists) parts.push(stats.lists + ' lista');
+    if (stats.bold) parts.push('a szinte teljes szövegre kiterjedő félkövér levéve');
     if (stats.typo) parts.push(stats.typo + ' tipográfiai javítás (idézőjel, gondolatjel, szóköz)');
     if (stats.title) parts.push('cím az első sorból');
     if (stats.excerpt) parts.push('bevezető az első bekezdésből');
