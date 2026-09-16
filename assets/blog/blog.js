@@ -89,8 +89,57 @@
     document.querySelectorAll('.share-native').forEach(function (btn) {
       btn.hidden = false;
       btn.addEventListener('click', function () {
-        navigator.share({ title: btn.getAttribute('data-title'), url: btn.getAttribute('data-url') }).catch(function () {});
+        var data = { title: btn.getAttribute('data-title'), url: btn.getAttribute('data-url') };
+        var intro = btn.getAttribute('data-text');
+        if (intro) data.text = intro;
+        navigator.share(data).catch(function () {});
       });
     });
+  }
+
+  /* Olvasásszámláló. Csak akkor jelez, ha a látogató tényleg olvasni kezdte a cikket:
+     vagy eltelt 15 másodperc a látható oldalon, vagy legörgetett a feléig. Egy oldalbetöltés
+     legfeljebb egyszer számít. Sütit és semmilyen böngészőben tárolt azonosítót nem használ,
+     ezért ugyanaz az olvasó újratöltéskor újra beleszámít — cserébe nem követünk senkit. */
+  var article = document.querySelector('article.prose[data-post]');
+  if (article) {
+    var slug = article.getAttribute('data-post');
+    var sent = false, timer = 0;
+
+    var count = function () {
+      if (sent) return;
+      sent = true;
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', onVisible);
+      try {
+        fetch('/api/blog/olvasas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug: slug }),
+          cache: 'no-store',
+          keepalive: true
+        }).catch(function () { /* a számláló sosem zavarhatja az olvasást */ });
+      } catch (e) { /* régi böngésző: nem számolunk */ }
+    };
+
+    var onScroll = function () {
+      var doc = document.documentElement;
+      var scrolled = doc.scrollHeight - doc.clientHeight;
+      if (scrolled <= 0 || (doc.scrollTop || document.body.scrollTop) / scrolled > 0.5) count();
+    };
+
+    var startTimer = function () { timer = setTimeout(count, 15000); };
+
+    var onVisible = function () {
+      if (document.visibilityState !== 'visible') return;
+      document.removeEventListener('visibilitychange', onVisible);
+      startTimer();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Előretöltött vagy háttérben nyitott lapon csak akkor indul az óra, ha tényleg látszik.
+    if (document.visibilityState === 'visible') startTimer();
+    else document.addEventListener('visibilitychange', onVisible);
   }
 })();

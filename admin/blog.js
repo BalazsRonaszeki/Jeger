@@ -118,6 +118,7 @@
           node('td', {}, [node('span', { class: 'badge ' + badge[1], text: badge[0] })]),
           node('td', { text: SJ.dateTime(p.updated_at) }),
           node('td', { text: SJ.dateTime(p.published_at) }),
+          node('td', { class: 'num', text: p.published_at ? SJ.num(p.views_total || 0) : '—' }),
           node('td', { class: 'num' }, [actions])
         ]));
       });

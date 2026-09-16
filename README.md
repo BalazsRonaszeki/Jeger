@@ -48,6 +48,7 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `GET /api/admin/blog/authors`, `POST /api/admin/blog/me` | Szerzőválasztó (aktív munkatársak névvel, fotóval); saját név és profilfotó. |
 | `GET /api/admin/survey-summary` | A kérdőív válaszainak kérdésenkénti megoszlása (csak összesítve). |
 | `POST /api/subscribe` | Önálló hírlevél-feliratkozás a blogról (kettős opt-in). |
+| `POST /api/blog/olvasas` | Olvasásszámláló a nyilvános blogról. Süti- és azonosítómentes; mindig `204`, hibát sem jelez. |
 | `GET /blog`, `/blog/{slug}`, `/blog/kepek/{id}.jpg`, `/blog/rss.xml`, `/blog/sitemap.xml` | A nyilvános blog (szerveroldalon renderelve, megosztási előnézettel). |
 
 ```bash
@@ -142,6 +143,15 @@ tesztek: `python -m unittest backend/tests/test_blog.py -v`.
   szerkesztése csak újabb publikálás után látszik. A webcím az első publikálás után rögzül.
 - **Megosztás:** Facebook, X, LinkedIn, e-mail és link másolása — sima hivatkozások, külső szkript
   és süti nélkül. A `/blog` oldalak szigorú CSP-vel mennek ki; a CDN 60 mp-ig gyorsítótáraz.
+  A bevezető szöveget ott adjuk át előre kitöltve, ahol a hálózat engedi (Facebook `quote`,
+  X `text`, e-mail törzse, natív megosztás `text`); a LinkedIn 2021 óta minden előre kitöltött
+  szöveget eldob. A megosztási kártyán amúgy is az `og:description` látszik, az a bevezető.
+- **Olvasásszámláló:** csak a belső felületen látszik (bejegyzés-lista, „Olvasás” oszlop).
+  A böngésző küld egy jelzést a `POST /api/blog/olvasas`-ra, ha a látogató 15 mp-ig a látható
+  oldalon maradt, vagy legörgetett a cikk feléig. **Személyes adatot nem tárol:** se süti, se IP,
+  se böngészőben tárolt azonosító — csak a bejegyzés napi darabszáma nő. Ezért ugyanaz az olvasó
+  újratöltéskor újra beleszámít: ez tudatos csere a követésmentességért. Szerveroldalon nem lehetne
+  számolni, mert a CDN 60 mp-ig gyorsítótárazza a lapot.
 
 **Élesítés lépései:**
 
@@ -152,6 +162,9 @@ tesztek: `python -m unittest backend/tests/test_blog.py -v`.
 3. Adatfeldolgozói feltételek elfogadása az Anthropicnál (l. az adatkezelési nyilvántartás 4. pontját).
 4. Supabase → SQL Editor: `backend/migrations/2026-09-14_szerzok_es_valaszmegoszlas.sql` (profilfotó,
    szerző a bejegyzésekben, a dashboard válaszmegoszlása), majd a fájl végén lévő ellenőrző lekérdezés.
+5. Supabase → SQL Editor: `backend/migrations/2026-09-16_olvasasszamlalo.sql` (olvasásszámláló),
+   majd a fájl végén lévő ellenőrző lekérdezés. A kód e nélkül is elindul — a lista ilyenkor
+   egyszerűen nem kér `views_total`-t —, de a számláló csak a migráció után kezd nőni.
 
 ## DNS (WebSupport)
 
@@ -162,6 +175,13 @@ A zóna a WebSupportnál marad, **nem** a Vercel névszerverein — az M365 leve
 |---|---|---|
 | `stopjeger.hu` | A | `216.198.79.1` |
 | `www` | CNAME | `1131f777d922ce36.vercel-dns-017.com.` |
+
+**Az elsődleges domain a `stopjeger.hu` (www nélkül), a `www` erre irányítson át** — Vercel →
+Project → Settings → Domains. Ez nem kozmetika: a `SITE_URL` alapértelmezése, a `canonical`, az
+`og:url`, az RSS, a sitemap és a hírlevelek mind az apexet írják. Ha a Vercel a `www`-t teszi
+elsődlegessé, a megosztott link körbe-körbe irányít (apex → www → `og:url` vissza az apexre), és a
+Facebook link-beolvasója ezt körkörös átirányításként utasíthatja el — a megosztás olyankor egyes
+felhasználóknál előnézet nélkül vagy hibával áll meg, másoknál a gyorsítótárból még működik.
 
 ## Nyitott feladatok
 

@@ -80,6 +80,11 @@ class FakeBlogStore:
         self.images[data['id']] = dict(data)
         return dict(data)
 
+    def bump_views(self, slug):
+        row = next((p for p in self.posts.values() if p['slug'] == slug and p['status'] == 'published'), None)
+        if row:
+            row['views_total'] = row.get('views_total', 0) + 1
+
     def upload_object(self, path, data):
         self.objects[path] = data
 
@@ -302,6 +307,37 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertEqual(r.status_code, 409)
         self.assertIn('helyesírási', r.json()['detail'])
 
+    def test_read_counter_counts_only_published_posts(self):
+        self.editor()
+        post = self.publish(self.create()).json()['post']
+        slug = post['slug']
+
+        r = self.client.get('/blog/%s' % slug)
+        self.assertIn('data-post="%s"' % slug, r.text)   # a szkript innen tudja, mit jelezzen
+
+        self.assertEqual(self.client.post('/api/blog/olvasas', json={'slug': slug}).status_code, 204)
+        self.assertEqual(self.client.post('/api/blog/olvasas', json={'slug': slug}).status_code, 204)
+        self.assertEqual(self.blog.posts[post['id']]['views_total'], 2)
+
+        # ismeretlen, érvénytelen és vázlat állapotú cikk csendben nem számít
+        for payload in ({'slug': 'nincs-ilyen'}, {'slug': '../../etc'}, {'slug': ''}, {}):
+            self.assertEqual(self.client.post('/api/blog/olvasas', json=payload).status_code, 204)
+        self.assertEqual(self.blog.posts[post['id']]['views_total'], 2)
+
+        # a számláló a szerkesztő listájában látszik, a nyilvános oldalon nem
+        self.assertEqual(self.client.get('/api/admin/blog/posts', headers=H).json()['posts'][0]['views_total'], 2)
+        page = self.client.get('/blog/%s' % slug).text
+        self.assertNotIn('views_total', page)
+        self.assertEqual(page.count('olvasás'), 1)   # csak a becsült olvasási idő; olvasottsági szám nem megy ki
+
+    def test_read_counter_rejects_foreign_origin(self):
+        self.editor()
+        post = self.publish(self.create()).json()['post']
+        r = self.client.post('/api/blog/olvasas', json={'slug': post['slug']},
+                             headers={'Origin': 'https://rosszindulatu.example'})
+        self.assertEqual(r.status_code, 204)
+        self.assertEqual(self.blog.posts[post['id']].get('views_total', 0), 0)
+
     def test_public_pages_show_only_published_snapshot(self):
         self.editor()
         post = self.create(author_display='Kovács Anna')
@@ -320,6 +356,11 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertIn('https://x.com/intent/post?url=', page)
         self.assertIn('https://www.linkedin.com/sharing/share-offsite/?url=', page)
         self.assertIn('mailto:?subject=', page)
+        # a bevezető szöveget is felkínáljuk ott, ahol a hálózat engedi
+        intro = 'Mit%20mond%20a%20tudom%C3%A1ny%3F%0A%0AR%C3%B6vid%20bevezet%C5%91.'
+        self.assertIn('&amp;quote=' + intro, page)   # a href-ben az & escape-elve szerepel
+        self.assertIn('&amp;text=' + intro, page)
+        self.assertIn('data-text="Rövid bevezető."', page)
         self.assertIn('data-copy="http://testserver/blog/mit-mond-a-tudomany"', page)
         self.assertIn('<meta property="og:title" content="Mit mond a tudomány?">', page)
 

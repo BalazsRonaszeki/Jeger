@@ -445,7 +445,8 @@ def jpeg_size(data):
 # Adatréteg
 # ---------------------------------------------------------------------------
 
-LIST_COLUMNS = 'id,slug,title,status,version,published_at,pub_updated_at,updated_at,created_at,pub_hash'
+LIST_COLUMNS_BASE = 'id,slug,title,status,version,published_at,pub_updated_at,updated_at,created_at,pub_hash'
+LIST_COLUMNS = LIST_COLUMNS_BASE + ',views_total'
 PUBLIC_LIST_COLUMNS = 'slug,pub_title,pub_excerpt,pub_cover_image,pub_cover_alt,published_at'
 
 
@@ -458,7 +459,11 @@ class SupabaseBlogStore:
         return rows[0] if rows else None
 
     def list_posts(self):
-        return self.c.table('blog_posts').select(LIST_COLUMNS).order('updated_at', desc=True).execute().data or []
+        try:
+            return self.c.table('blog_posts').select(LIST_COLUMNS).order('updated_at', desc=True).execute().data or []
+        except Exception:
+            # Az olvasásszámláló migrációja (2026-09-16) még nem futott le: a lista enélkül is működjön.
+            return self.c.table('blog_posts').select(LIST_COLUMNS_BASE).order('updated_at', desc=True).execute().data or []
 
     def get_post(self, post_id):
         return self._one(self.c.table('blog_posts').select('*').eq('id', post_id).limit(1).execute().data)
@@ -492,6 +497,10 @@ class SupabaseBlogStore:
     def published_slugs(self):
         return self.c.table('blog_posts').select('slug,published_at,pub_updated_at').eq('status', 'published') \
             .order('published_at', desc=True).execute().data or []
+
+    def bump_views(self, slug):
+        """Egy olvasas a publikalt cikkhez. Szemelyes adatot nem ir: csak a napi darabszamot noveli."""
+        self.c.rpc('blog_view_bump', {'p_slug': slug}).execute()
 
     def insert_image(self, data):
         return self._one(self.c.table('blog_images').insert(data).execute().data)
@@ -1242,14 +1251,27 @@ NEWSLETTER = (
 )
 
 
+def share_intro(title, excerpt, limit):
+    """A megosztáshoz felkínált bevezető szöveg, a hálózat hosszkorlátjára vágva."""
+    text = ('%s\n\n%s' % (title, excerpt)).strip() if excerpt else (title or '')
+    return text if len(text) <= limit else text[:limit - 1].rstrip(' .,;:–—') + '…'
+
+
 def share_links(url, title, excerpt=''):
-    """A megosztó hivatkozások. Sima linkek: külső szkript nem töltődik, adat csak kattintásra megy ki."""
+    """A megosztó hivatkozások. Sima linkek: külső szkript nem töltődik, adat csak kattintásra megy ki.
+
+    Ahol a hálózat engedi, a bevezető szöveget is átadjuk, hogy a megosztónak ne kelljen begépelnie:
+    a Facebooknak `quote`-ként (a szerkesztőmezőt ő maga tölti ki belőle, ha épp engedi — a
+    megosztási kártyán amúgy is az og:description jelenik meg), az X-nek `text`-ként, az e-mailnek
+    a levél törzsében. A LinkedIn 2021 óta minden előre kitöltött szöveget eldob, ott csak a link megy."""
     from urllib.parse import quote
     u, t = quote(url, safe=''), quote(title, safe='')
     body = quote(('%s\n\n%s\n\n%s' % (title, excerpt, url)) if excerpt else ('%s\n\n%s' % (title, url)), safe='')
     return [
-        ('facebook', 'Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + u),
-        ('x', 'X', 'https://x.com/intent/post?url=%s&text=%s' % (u, t)),
+        ('facebook', 'Facebook', 'https://www.facebook.com/sharer/sharer.php?u=%s&quote=%s'
+                                 % (u, quote(share_intro(title, excerpt, 600), safe=''))),
+        ('x', 'X', 'https://x.com/intent/post?url=%s&text=%s'
+                   % (u, quote(share_intro(title, excerpt, 240), safe=''))),
         ('linkedin', 'LinkedIn', 'https://www.linkedin.com/sharing/share-offsite/?url=' + u),
         ('mail', 'E-mail', 'mailto:?subject=%s&body=%s' % (t, body)),
     ]
@@ -1263,8 +1285,8 @@ def share_bar(url, title, excerpt, extra_class=''):
             key, _esc(href), target, ICONS[key], label))
     items.append('<button class="share-btn share-copy" type="button" data-copy="%s" hidden>%s<span>Link másolása</span></button>'
                  % (_esc(url), ICONS['link']))
-    items.append('<button class="share-btn share-native" type="button" data-title="%s" data-url="%s" hidden>%s<span>Megosztás…</span></button>'
-                 % (_esc(title), _esc(url), ICONS['share']))
+    items.append('<button class="share-btn share-native" type="button" data-title="%s" data-text="%s" data-url="%s" hidden>%s<span>Megosztás…</span></button>'
+                 % (_esc(title), _esc(excerpt or ''), _esc(url), ICONS['share']))
     return ('<div class="share %s" role="group" aria-label="Megosztás"><span class="share-label">Megosztás</span>%s'
             '<span class="share-status" role="status" aria-live="polite"></span></div>') % (extra_class, ''.join(items))
 
@@ -1409,6 +1431,31 @@ def blog_image(name: str):
         'X-Content-Type-Options': 'nosniff'})
 
 
+class ViewBody(BaseModel):
+    slug: str = ''
+
+
+@public_router.post('/api/blog/olvasas', include_in_schema=False)
+def blog_view(body: ViewBody, request: Request):
+    """Olvasásszámláló. A böngésző küldi, ha a látogató tényleg olvasni kezdte a cikket.
+
+    Szándékosan nem tárol semmit a látogatóról: se sütit, se IP-t, se azonosítót — csak a
+    bejegyzés napi darabszáma nő eggyel. Az IP-t kizárólag a memóriában tartott fékezéshez
+    használjuk, ugyanúgy, mint a kérdőívnél. Bármi hiba esetén csendben 204-gyel válaszol:
+    egy elromlott számláló nem ronthatja el az olvasás élményét."""
+    origin = request.headers.get('origin')
+    if origin and origin.rstrip('/') not in _admin.allowed_origins():
+        return Response(status_code=204)
+    slug = (body.slug or '').strip()
+    if (store is not None and re.match(r'^[a-z0-9-]{1,%d}$' % SLUG_MAX, slug)
+            and rate_ok('blog-view', _admin.client_ip(request), 60, 600)):
+        try:
+            store.bump_views(slug)
+        except Exception:
+            pass
+    return Response(status_code=204)
+
+
 @public_router.get('/blog/{slug}', include_in_schema=False)
 def blog_post(slug: str):
     if store is None or not re.match(r'^[a-z0-9-]{1,%d}$' % SLUG_MAX, slug):
@@ -1464,7 +1511,7 @@ def blog_post(slug: str):
         '<a href="/">← stopjeger.hu főoldal</a><span aria-hidden="true">·</span><a href="/blog">a blog összes bejegyzése</a></nav>'
         '<div class="eyebrow">STOP JÉGER-kezdeményezés &nbsp;·&nbsp; Blog</div><h1>%(title)s</h1>%(lede)s'
         '<div class="byline">%(byline)s</div>%(share_top)s</div></header>'
-        '<main class="wrap narrow">%(cover)s<article class="prose">%(body)s</article>'
+        '<main class="wrap narrow">%(cover)s<article class="prose" data-post="%(slug)s">%(body)s</article>'
         '<section class="share-end"><h2>Hasznosnak találtad? Oszd meg!</h2>%(share_end)s</section>'
         '<aside class="cta cta-home"><div><b>Ismered a stopjeger.hu oldalt?</b><p>Ezen az oldalon találsz mindent, '
         'amit a magyarországi szabályozatlan időjárás-manipulációról összeszedtünk.</p></div>'
@@ -1473,7 +1520,7 @@ def blog_post(slug: str):
         '<a class="cta-btn" href="/tudastar">Tudástár →</a></aside></main>'
     ) % {'title': _esc(title), 'lede': ('<p class="lede">%s</p>' % _esc(excerpt)) if excerpt else '',
          'byline': ''.join(byline), 'share_top': share_bar(url, title, excerpt, 'share-top'), 'cover': cover,
-         'body': body_html, 'share_end': share_bar(url, title, excerpt)}
+         'slug': _esc(post['slug']), 'body': body_html, 'share_end': share_bar(url, title, excerpt)}
 
     return html_response(page('%s — STOP JÉGER blog' % title, excerpt or title, url, body,
                               og_image=image_url(cover_id, absolute=True) if cover_id else None,
