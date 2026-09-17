@@ -10,7 +10,8 @@
     tudastarnak_ellentmond: 'Ellentmond a Tudástárnak',
     tulzo_allitas: 'Túlzó állítás',
     szemelyes_vad: 'Személyre szóló vád',
-    nem_ellenorizheto: 'Nem ellenőrizhető'
+    nem_ellenorizheto: 'Nem ellenőrizhető',
+    jogi_kockazat: 'Jogi kockázat'
   };
   var AI_CREDIT = 'AI-generált illusztráció';
   var AUTOSAVE_MS = 4000;

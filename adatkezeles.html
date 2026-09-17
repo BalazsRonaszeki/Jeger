@@ -112,7 +112,7 @@ footer{
 
   <p class="eyebrow">Jogi tájékoztató</p>
   <h1>Adatkezelési tájékoztató</h1>
-  <p class="updated">Hatályos: 2026. szeptember 14. &nbsp;·&nbsp; 2.1 verzió</p>
+  <p class="updated">Hatályos: 2026. szeptember 17. &nbsp;·&nbsp; 2.2 verzió</p>
 
   <p class="lede">
     Jelen tájékoztató a <b>stopjeger.hu</b> oldalon folytatott közvélemény-kutatás, a hírlevél és a
@@ -123,8 +123,9 @@ footer{
 
   <div class="callout">
     <p>
-      <b>A kérdőív válaszai névtelenek.</b> A kérdésekre adott válaszokhoz nem tároljuk sem a nevét, sem az
-      e-mail címét, sem az IP-címét. Ha megadja az e-mail címét a hírlevélhez, az egy külön adatbázisba
+      <b>A kérdőív válaszai névtelenek.</b> A válaszok mellé az alkalmazás semmilyen azonosítót (név,
+      e-mail cím, IP-cím) nem tárol. A kiszolgáló a kérés beérkezésekor a kapcsolathoz tartozó technikai
+      adatokat átmenetileg kezelheti; ezeket nem tároljuk, és a válaszokhoz nem kapcsoljuk. Ha megadja az e-mail címét a hírlevélhez, az egy külön adatbázisba
       kerül, amelyet semmilyen azonosító nem köt össze a válaszaival — a kettő utólag sem
       összekapcsolható.
     </p>
@@ -156,8 +157,11 @@ footer{
     sérülne.
   </p>
   <p>
-    <b>Nem</b> tárolunk a válaszok mellé IP-címet, nevet, e-mail címet vagy bármely más azonosítót. Így
-    a válaszok önmagukban nem minősülnek személyes adatnak, és nem hozhatók kapcsolatba természetes
+    <b>Nem</b> tárolunk a válaszok mellé IP-címet, nevet, e-mail címet vagy bármely más azonosítót. A
+    kérés továbbításához a kiszolgáló (l. az 5. pontban a Vercelt) a beérkezés pillanatában
+    szükségszerűen látja a kapcsolat technikai adatait, köztük az IP-címet, és azokat a visszaélések
+    (pl. tömeges beküldés) kiszűrése érdekében a futó alkalmazás memóriájában felhasználhatja; ezeket az
+    adatokat nem írjuk sem lemezre, sem adatbázisba, és a válaszokhoz nem kapcsoljuk. Így a tárolt válaszok önmagukban nem minősülnek személyes adatnak, és nem hozhatók kapcsolatba természetes
     személlyel. Célja a jégeső-elhárítási és időjárás-befolyásoló rendszerekkel kapcsolatos társadalmi
     vélemények összesített, statisztikai feldolgozása és nyilvános közzététele.
   </p>
@@ -172,10 +176,17 @@ footer{
     feliratkozás a megadott címre küldött megerősítő levélben lévő hivatkozásra kattintva válik érvényessé.
   </p>
 
-  <h3>2.3. Kapcsolatfelvétel</h3>
+  <h3 id="kapcsolat">2.3. Kapcsolatfelvétel</h3>
   <p>
-    Az <code>info@stopjeger.hu</code> címre írt levelek esetén a levélben megadott adatokat (név,
-    e-mail cím, az üzenet tartalma) a megkeresés megválaszolása céljából kezeljük. Jogalapja a
+    Kapcsolatba léphet velünk közvetlenül az <code>info@stopjeger.hu</code> címre írt levélben, vagy a
+    főoldal „Gyakori kérdések” részében található kapcsolati űrlapon. Az űrlap <b>nem továbbít adatot
+    a weboldal kiszolgálójára, és nem ír adatbázisba</b>: a küldés gombra kattintva a látogató saját
+    levelezőprogramja nyílik meg a megírt üzenettel, az <code>info@stopjeger.hu</code> címzettel, és a
+    levelet a látogató maga küldi el. A megkeresés mindkét esetben e-mailként érkezik hozzánk.
+  </p>
+  <p>
+    A levélben megadott adatokat (név, e-mail cím, az üzenet tartalma) a megkeresés megválaszolása
+    céljából kezeljük. A név és az e-mail cím megadása a válaszadáshoz szükséges. Jogalapja a
     <b>GDPR 6. cikk (1) f)</b> pontja szerinti jogos érdek: a hozzánk intézett megkeresések
     megválaszolása. Az érdekmérlegelést elvégeztük; az adatkezelés az érintett érdekeit
     aránytalanul nem korlátozza.
@@ -196,6 +207,13 @@ footer{
     végberendezésen történő adattárolással, az Eht. 155. § (4) bekezdése szerinti hozzájárulás nem
     szükséges hozzá.
   </p>
+  <p>
+    A blogbejegyzéseknél ezen felül egy saját <b>olvasásszámlálót</b> is működtetünk: amikor a látogató
+    olvasni kezdi a cikket, a böngésző egy jelzést küld, és ennek hatására kizárólag az adott bejegyzés
+    napi olvasásszáma nő eggyel. A számláló sem sütit, sem IP-címet, sem egyéb azonosítót nem tárol; a
+    kérés IP-címét a kiszolgáló csak a visszaélésszerű, ismételt jelzések kiszűrésére, a futó
+    alkalmazás memóriájában használja.
+  </p>
 
   <h2>3. Meddig kezeljük az adatokat</h2>
   <div class="table-scroll">
@@ -212,6 +230,10 @@ footer{
     <tr>
       <td>Kapcsolatfelvételi levelezés</td>
       <td>Az ügy lezárását követő 1 év.</td>
+    </tr>
+    <tr>
+      <td>A kiszolgáló által a kérés beérkezésekor látott technikai adatok (pl. IP-cím)</td>
+      <td>Sem lemezre, sem adatbázisba nem kerülnek. A visszaélések kiszűréséhez a futó alkalmazás memóriájában használjuk őket, ahonnan a kiszolgálópéldány leállásával törlődnek.</td>
     </tr>
     <tr>
       <td>Látogatottsági adatok</td>
@@ -342,7 +364,7 @@ footer{
 
 <footer>
   <div class="wrap">
-    Agro-Biotech Kft. &nbsp;·&nbsp; <a href="/">stopjeger.hu</a>
+    Agro-Biotech Kft. &nbsp;·&nbsp; <a href="/">stopjeger.hu</a> &nbsp;·&nbsp; <a href="/impresszum.html">Impresszum</a>
   </div>
 </footer>
 

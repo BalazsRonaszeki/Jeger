@@ -16,6 +16,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://stopjeger.hu/impresszum.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
     <loc>https://stopjeger.hu/adatkezeles.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>

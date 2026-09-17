@@ -9,6 +9,7 @@ Adatkezelő: **Agro-Biotech Kft.** (adószám: 32031973-2-07)
   - `index.html` — a főoldal (háttéranyag: tudomány, technológia, felügyelet, interjúk, forrásjegyzék)
   - `kerdoiv/index.html` — a közvélemény-kutatás űrlapja
   - `adatkezeles.html` — adatkezelési tájékoztató
+  - `impresszum.html` — az üzemeltető adatai és a helyreigazítási kérelmek módja
   - `megerosites.html` — a hírlevél-megerősítés visszajelző oldala
   - Süti nincs; a látogatottság-mérés a sütimentes Vercel Web Analytics
     (`/_vercel/insights/script.js`), amit a Vercel dashboardon kell bekapcsolni
@@ -183,6 +184,23 @@ elsődlegessé, a megosztott link körbe-körbe irányít (apex → www → `og:
 Facebook link-beolvasója ezt körkörös átirányításként utasíthatja el — a megosztás olyankor egyes
 felhasználóknál előnézet nélkül vagy hibával áll meg, másoknál a gyorsítótárból még működik.
 
+## Tartalmi szabályok (jogi felülvizsgálat, 2026-09-17)
+
+Egy ügyvédi felülvizsgálat szerint az oldal fő jogi kockázata a néven nevezett személyekre és
+cégekre vonatkozó állításokból ered (Ptk. 2:44–2:48. §, Btk. 226–227. §). Ezért:
+
+- **Minden új, néven nevezett magánfélre (cég, magánüzemeltető) vonatkozó állítás közzététel előtt
+  jogi ellenőrzésen megy át.** Ez a blogbejegyzésekre is vonatkozik; a blog tényellenőrzője (`FACT_RULES`, `jogi_kockazat` kategória) ezeket a szempontokat jelzi.
+- Magáncégről szóló tényt a forráson keresztül közlünk: „X közérdekű adatigénylésre adott,
+  [dátum] szerinti válasza szerint…” — ne az oldal saját kijelentéseként.
+- Az értelmezést jelöljük („álláspontunk szerint”, „megítélésünk szerint”).
+- Kerüljük a rosszallást sugalló fordulatokat („valójában”, „felbukkant”, „eddig ismeretlen”).
+- Megtartandó védelmi elemek: forrásmegjelölés, a 0–3-as bizonyítottsági skála (csak 2–3 közölhető),
+  az ellenérvek közlése, a magánszemélyek címeinek kitakarása, az ok-okozatiság állításának mellőzése,
+  sütimentes működés, kattintásra betöltődő videók.
+- A kapcsolati űrlap szándékosan `mailto:` (nem ír adatbázisba). Ha ez változik, az adatkezelési
+  tájékoztató 2.3. pontját és az űrlap alatti tájékoztató sort is át kell írni.
+
 ## Nyitott feladatok
 
 - [x] Kettős opt-in: megerősítő levél + `/api/confirm` + `/megerosites.html` (működéshez `BREVO_API_KEY` kell)
@@ -193,6 +211,11 @@ felhasználóknál előnézet nélkül vagy hibával áll meg, másoknál a gyor
 - [x] Google Analytics kivezetve; helyette sütimentes Vercel Web Analytics, süti-sáv nélkül
 - [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
 - [x] Betűtípusok helyi kiszolgálása (`assets/fonts/fonts.css`), Google Fonts-hívás megszűnt
+- [ ] Impresszum: az ügyvezető neve a cégkivonatból (`impresszum.html`, `IMPRESSZUM-TODO`); a cégjegyzékszám kész
+- [ ] Írásos képmás-felhasználási hozzájárulás a portréval szereplő közreműködőktől (`assets/profiles/`)
+- [ ] Az idegen videó-előnézeti képek (`assets/video-thumbs/`) felhasználási jogcíme, vagy cseréjük saját grafikára
+- [ ] A fejlécgrafika (`assets/header-art.jpg`) felhasználási jogcímének igazolása és megőrzése
+- [ ] Élő süti- és nyomkövető-ellenőrzés a böngésző fejlesztői eszközeivel (jogi felülvizsgálat 3.6.)
 
 ## Lokális fejlesztés
 
