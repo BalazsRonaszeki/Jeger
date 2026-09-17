@@ -211,7 +211,7 @@ cégekre vonatkozó állításokból ered (Ptk. 2:44–2:48. §, Btk. 226–227.
 - [x] Google Analytics kivezetve; helyette sütimentes Vercel Web Analytics, süti-sáv nélkül
 - [x] A YouTube-előnézeti képek helyi kiszolgálása (kész: `assets/video-thumbs/yt-*.jpg`)
 - [x] Betűtípusok helyi kiszolgálása (`assets/fonts/fonts.css`), Google Fonts-hívás megszűnt
-- [ ] Impresszum: az ügyvezető neve a cégkivonatból (`impresszum.html`, `IMPRESSZUM-TODO`); a cégjegyzékszám kész
+- [x] Impresszum: cégjegyzékszám és ügyvezető (`impresszum.html`)
 - [ ] Írásos képmás-felhasználási hozzájárulás a portréval szereplő közreműködőktől (`assets/profiles/`)
 - [ ] Az idegen videó-előnézeti képek (`assets/video-thumbs/`) felhasználási jogcíme, vagy cseréjük saját grafikára
 - [ ] A fejlécgrafika (`assets/header-art.jpg`) felhasználási jogcímének igazolása és megőrzése
