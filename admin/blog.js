@@ -5,6 +5,7 @@
   var SJ = window.SJ;
   var $ = function (id) { return document.getElementById(id); };
   var ROLE = { admin: 'Adminisztrátor', editor: 'Szerkesztő' };
+  var NO_PUBLISH = 'Nincs publikálási jogod. Kérd egy adminisztrátortól.';
   var SEVERITY = { magas: 'Magas', kozepes: 'Közepes', alacsony: 'Alacsony' };
   var CATEGORY = {
     tudastarnak_ellentmond: 'Ellentmond a Tudástárnak',
@@ -227,7 +228,8 @@
     $('btnPublish').textContent = published ? 'Módosítások publikálása…' : 'Publikálás…';
     $('btnPublish').disabled = published && !changes;
     $('btnPublish').title = published && !changes ? 'Nincs publikálatlan módosítás.' : '';
-    $('btnUnpublish').hidden = !published;
+    if (!me.can_publish) { $('btnPublish').disabled = true; $('btnPublish').title = NO_PUBLISH; }
+    $('btnUnpublish').hidden = !published || !me.can_publish;
     $('btnDelete').hidden = !post || published;
     $('postSlug').disabled = !!(post && post.published_at);
     $('slugHint').textContent = post && post.published_at
@@ -245,7 +247,10 @@
     if (!conflict) setSaveState('Nem mentett módosítások');
     clearTimeout(autosaveTimer);
     autosaveTimer = setTimeout(function () { saveNow().catch(function () {}); }, AUTOSAVE_MS);
-    if (post && post.status === 'published') { $('shareChanges').hidden = false; $('btnPublish').disabled = false; $('btnPublish').title = ''; }
+    if (post && post.status === 'published') {
+      $('shareChanges').hidden = false;
+      if (me.can_publish) { $('btnPublish').disabled = false; $('btnPublish').title = ''; }
+    }
   }
 
   function payload() {

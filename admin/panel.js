@@ -424,6 +424,7 @@
           node('td', { text: u.name || '—' }),
           node('td', { text: u.email }),
           node('td', { text: ROLE[u.role] || u.role }),
+          node('td', {}, [publishBox(u)]),
           node('td', {}, [node('span', { class: 'badge ' + st[1], text: st[0] })]),
           node('td', { text: SJ.dateTime(u.last_login_at) }),
           node('td', { class: 'num' }, [actions])
@@ -434,6 +435,30 @@
       if (handleAuthError(e)) return;
       SJ.showMsg($('usersMsg'), e.message, 'error');
     }
+  }
+
+  /* ---- publikálási jog: az adminisztrátoré mindig megvan, a szerkesztőé itt kapcsolható ---- */
+  function publishBox(u) {
+    var isAdmin = u.role === 'admin';
+    var box = node('input', { type: 'checkbox', class: 'publish-box', 'aria-label': 'Publikálhat: ' + (u.name || u.email) });
+    box.checked = isAdmin || !!u.can_publish;
+    box.disabled = isAdmin;
+    if (isAdmin) box.title = 'Az adminisztrátor mindig publikálhat.';
+    box.addEventListener('change', async function () {
+      var allowed = box.checked;
+      box.disabled = true;
+      try {
+        await SJ.api('/users/' + encodeURIComponent(u.id) + '/publish-right', { method: 'POST', body: { allowed: allowed } });
+        u.can_publish = allowed;
+        SJ.showMsg($('usersMsg'), (allowed ? 'Publikálási jog megadva: ' : 'Publikálási jog elvéve: ') + u.email, 'ok');
+      } catch (e) {
+        if (handleAuthError(e)) return;
+        box.checked = !allowed;
+        SJ.showMsg($('usersMsg'), e.message, 'error');
+      }
+      box.disabled = false;
+    });
+    return box;
   }
 
   /* ---- profilfotó beállítása egy munkatársnak ---- */

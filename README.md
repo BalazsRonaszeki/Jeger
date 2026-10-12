@@ -41,7 +41,7 @@ dolgozzuk fel. Egy közös azonosító vagy egy másodperc pontosságú időbél
 | `POST /api/admin/login`, `/login/verify`, `/logout` | Belépés: jelszó, majd e-mailben kapott 6 jegyű kód; HttpOnly munkamenet-süti. |
 | `POST /api/admin/password/check`, `/password/set`, `/password/forgot` | Meghívó elfogadása, jelszó-visszaállítás. |
 | `GET /api/admin/session`, `GET /api/admin/stats?from=&to=` | Munkamenet-állapot; dashboard (napi összesítők, max. 366 nap). |
-| `GET /api/admin/users`, `POST /api/admin/users/invite`, `/users/{id}/disable\|enable\|resend` | Felhasználókezelés (csak admin). |
+| `GET /api/admin/users`, `POST /api/admin/users/invite`, `/users/{id}/disable\|enable\|resend\|publish-right` | Felhasználókezelés (csak admin); a `publish-right` a szerkesztő publikálási jogát adja meg vagy veszi el. |
 | `POST /api/admin/bootstrap` | Az **első** admin meghívása `X-Admin-Password` fejléccel; csak amíg nincs admin. |
 | `GET/POST /api/admin/blog/posts`, `/posts/{id}`, `/posts/{id}/delete` | Blogbejegyzések listája, létrehozása, mentése (verziószámos ütközésvédelem), vázlat törlése. |
 | `POST /api/admin/blog/spellcheck`, `/posts/{id}/factcheck` | Helyesírás- és tényellenőrzés (Claude API; a tényellenőrzés a Tudástárral dolgozik). |
@@ -166,6 +166,9 @@ tesztek: `python -m unittest backend/tests/test_blog.py -v`.
 5. Supabase → SQL Editor: `backend/migrations/2026-09-16_olvasasszamlalo.sql` (olvasásszámláló),
    majd a fájl végén lévő ellenőrző lekérdezés. A kód e nélkül is elindul — a lista ilyenkor
    egyszerűen nem kér `views_total`-t —, de a számláló csak a migráció után kezd nőni.
+6. Supabase → SQL Editor: `backend/migrations/2026-10-12_publikalasi_jog.sql` (publikálási jog
+   felhasználónként), majd a fájl végén lévő ellenőrző lekérdezés. **A kód élesítése előtt** futtasd:
+   e nélkül a Felhasználók lista hibát ad. A meglévő felhasználók megtartják a jogot, az újak nélküle indulnak.
 
 ## DNS (WebSupport)
 

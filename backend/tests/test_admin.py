@@ -254,6 +254,27 @@ class AdminTests(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(self.store.users[editor['id']]['status'], 'disabled')
 
+    def test_publish_right_toggle_is_admin_only(self):
+        editor, pw = self.make_active()
+        self.store.users[editor['id']]['can_publish'] = False
+        self.login(editor['email'], pw)
+        self.assertFalse(self.client.get('/api/admin/session').json()['user']['can_publish'])
+        url = '/api/admin/users/%s/publish-right' % editor['id']
+        self.assertEqual(self.client.post(url, json={'allowed': True}, headers=H).status_code, 403)
+
+        self.client.post('/api/admin/logout', headers=H)
+        admin, apw = self.make_active(email='admin@example.org', role='admin')
+        other = self.make_active(email='masik-admin@example.org', role='admin')[0]
+        self.login(admin['email'], apw)
+        self.assertTrue(self.client.get('/api/admin/session').json()['user']['can_publish'])  # admin mindig
+        self.assertEqual(self.client.post(url, json={'allowed': True}, headers=H).status_code, 200)
+        self.assertTrue(self.store.users[editor['id']]['can_publish'])
+        self.assertEqual(self.client.post(url, json={'allowed': False}, headers=H).status_code, 200)
+        self.assertFalse(self.store.users[editor['id']]['can_publish'])
+        self.assertIn('publish_right_revoked', [a for _, a, _ in self.store.log])
+        r = self.client.post('/api/admin/users/%s/publish-right' % other['id'], json={'allowed': False}, headers=H)
+        self.assertEqual(r.status_code, 400)  # adminisztrátortól nem vehető el
+
     def test_forgot_password_same_response_and_reset_revokes_sessions(self):
         user, pw = self.make_active()
         self.login(user['email'], pw)

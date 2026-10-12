@@ -379,6 +379,22 @@ class BlogApiTests(test_admin.AdminTests):
         self.assertEqual(r.status_code, 200, r.text)
         self.assertEqual(self.client.get('/blog/%s' % post['slug']).status_code, 404)
 
+    def test_publish_and_unpublish_need_publish_right(self):
+        user = self.editor()
+        post = self.create()
+        self.store.users[user['id']]['can_publish'] = False
+        r = self.publish(post)
+        self.assertEqual(r.status_code, 403)
+        self.assertEqual(self.blog.posts[post['id']]['status'], 'draft')
+        self.assertEqual(self.save(post, title='Átírt cím').status_code, 200)   # szerkeszteni továbbra is lehet
+
+        self.store.users[user['id']]['can_publish'] = True                      # a jog azonnal él, új belépés nélkül
+        post = self.publish(self.blog.posts[post['id']]).json()['post']
+        self.assertEqual(post['status'], 'published')
+        self.store.users[user['id']]['can_publish'] = False
+        r = self.client.post('/api/admin/blog/posts/%s/unpublish' % post['id'], json={'version': post['version']}, headers=H)
+        self.assertEqual(r.status_code, 403)
+
     def test_missing_tables_give_readable_503(self):
         class Broken:
             def __getattr__(self, name):

@@ -226,7 +226,7 @@ class SupabaseStore:
 
     def list_users(self):
         return self.c.table('admin_users').select(
-            'id,email,name,role,status,created_at,activated_at,last_login_at,photo_id'
+            'id,email,name,role,status,created_at,activated_at,last_login_at,photo_id,can_publish'
         ).order('created_at').execute().data or []
 
     def count_admins(self):
@@ -399,8 +399,15 @@ def require_same_origin(request: Request):
         raise HTTPException(status_code=403, detail='Érvénytelen kérés.')
 
 
+def can_publish(user):
+    """Az adminisztrátor mindig publikálhat; a szerkesztő csak akkor, ha megkapta a jogot.
+    Ha az oszlop még hiányzik (a migráció előtt), a korábbi viselkedés marad: mindenki publikálhat."""
+    return user.get('role') == 'admin' or bool(user.get('can_publish', True))
+
+
 def public_user(user):
-    return {'id': user['id'], 'email': user['email'], 'name': user.get('name'), 'role': user['role']}
+    return {'id': user['id'], 'email': user['email'], 'name': user.get('name'), 'role': user['role'],
+            'can_publish': can_publish(user)}
 
 
 def current_user(request: Request):
@@ -426,6 +433,12 @@ def current_user(request: Request):
 def require_admin(user=Depends(current_user)):
     if user.get('role') != 'admin':
         raise HTTPException(status_code=403, detail='Ehhez adminisztrátori jogosultság kell.')
+    return user
+
+
+def require_publisher(user=Depends(current_user)):
+    if not can_publish(user):
+        raise HTTPException(status_code=403, detail='Nincs publikálási jogod. Kérd egy adminisztrátortól.')
     return user
 
 
@@ -754,6 +767,20 @@ def users_resend(user_id: str, admin=Depends(require_admin)):
     if not create_invite(user, admin.get('name') or admin['email']):
         raise HTTPException(status_code=502, detail='A meghívó levelet nem sikerült elküldeni.')
     safe_audit(admin['id'], 'invite_resent', user['email'])
+    return no_store({'ok': True})
+
+
+class PublishRightBody(BaseModel):
+    allowed: bool = False
+
+
+@router.post('/users/{user_id}/publish-right', dependencies=[Depends(require_same_origin)])
+def users_publish_right(user_id: str, body: PublishRightBody, admin=Depends(require_admin)):
+    user = _target(user_id, admin)
+    if user.get('role') == 'admin':
+        raise HTTPException(status_code=400, detail='Az adminisztrátor mindig publikálhat.')
+    store.update_user(user['id'], {'can_publish': body.allowed})
+    safe_audit(admin['id'], 'publish_right_granted' if body.allowed else 'publish_right_revoked', user['email'])
     return no_store({'ok': True})
 
 

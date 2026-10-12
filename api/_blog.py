@@ -35,7 +35,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from pydantic import BaseModel
 
 import _admin
-from _admin import current_user, env, iso, no_store, now_utc, parse_ts, rate_ok, require_admin, require_same_origin, safe_audit, site_url
+from _admin import current_user, env, iso, no_store, now_utc, parse_ts, rate_ok, require_admin, require_publisher, require_same_origin, safe_audit, site_url
 
 admin_router = APIRouter(prefix='/api/admin/blog')
 public_router = APIRouter()
@@ -1150,7 +1150,7 @@ def factcheck(post_id: str, user=Depends(current_user)):
 
 
 @admin_router.post('/posts/{post_id}/publish', dependencies=[Depends(require_same_origin)])
-def publish(post_id: str, body: VersionBody, user=Depends(current_user)):
+def publish(post_id: str, body: VersionBody, user=Depends(require_publisher)):
     post = _post_or_404(post_id)
     if post['version'] != body.version:
         raise HTTPException(status_code=409, detail='A bejegyzés közben megváltozott. Töltsd újra az oldalt, és publikáld újra.')
@@ -1183,7 +1183,7 @@ def publish(post_id: str, body: VersionBody, user=Depends(current_user)):
 
 
 @admin_router.post('/posts/{post_id}/unpublish', dependencies=[Depends(require_same_origin)])
-def unpublish(post_id: str, body: VersionBody, user=Depends(current_user)):
+def unpublish(post_id: str, body: VersionBody, user=Depends(require_publisher)):
     post = _post_or_404(post_id)
     if post['status'] != 'published':
         raise HTTPException(status_code=400, detail='A bejegyzés nincs publikálva.')
