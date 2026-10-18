@@ -105,7 +105,7 @@
 > és ha ő maga feltöltött ilyet, a profilfotója — a bejegyzés alatt nyilvánosan megjelenik. A profilfotót
 > a munkatárs maga, vagy — az ő hozzájárulásával — egy adminisztrátor töltheti fel és távolíthatja el
 > (hozzájárulás, GDPR 6. cikk (1) a)); a feltöltés előtt a felület a nyilvános megjelenésre figyelmeztet, az
-> adminisztrátori beállítás a naplóba kerül. Az induló szerzők (Deák Hajnalka, Hajnal Zsolt, Pártai Lucia,
+> adminisztrátori beállítás a naplóba kerül. Az induló szerzők (Hajnal Zsolt, Pártai Lucia,
 > Vázsonyi László) fotója a főoldalon már nyilvánosan szerepel; szerzői avatarként való használatukhoz a
 > hozzájárulásukat rögzíteni kell. A fotó eltávolítása után a már publikált
 > bejegyzésekben az újrapublikálásig a korábbi kép marad — **nyitott pont:** kérésre ezeket is frissíteni kell.
